@@ -1,0 +1,417 @@
+
+/* =======================================================
+   DODAK 회원가입 페이지 스타일 (HTML에 맞춰 수정됨) (마이페이지) 
+   ======================================================= */
+
+/* 1. 전체 컨테이너 및 제목 */
+.container {
+    /* 🌟 max-width 값을 900px에서 1100px로 확장합니다. (원하시는 대로 조정 가능) 🌟 */
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 30px 40px;
+    background-color: var(--card-color, #fffaf3); /* 부드러운 배경색 */
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--border-color, #e0d9c8);
+    
+}
+
+.form-title {
+    color: var(--dodak-text-dark, #4b3832);
+    font-weight: 700;
+    font-size: 2.2rem;
+    text-align: center;
+    margin-bottom: 40px;
+    line-height: 1.3;
+}
+
+.title-icon { 
+    /* ❗ 핵심: 현재 크기(예상 30px)보다 2배 이상 키웁니다. */
+    width: 90px !important;  
+    height: auto; /* 비율 유지를 위해 height는 auto로 설정 */
+    
+    /* 필요하다면 상단 여백을 추가하여 제목과 간격을 띄울 수 있습니다. */
+    margin-top: 5px; 
+}
+
+/* 2. 섹션 스타일 */
+.form-section {
+    padding: 25px 0;
+    border-bottom: 1px dashed var(--border-color, #e0d9c8);
+    margin-bottom: 20px;
+}
+
+.form-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.section-title {
+    color: var(--dodak-brown, #8d6e63);
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.section-title i {
+    color: var(--dodak-brown-light, #a1887f);
+    margin-right: 10px;
+}
+
+/* 3. 상단 프로필 및 역할 선택 레이아웃 (수정) */
+.header-section-wrapper {
+    display: flex; 
+    justify-content: flex-start; /* 프로필과 역할 선택은 왼쪽에 붙도록 설정 */
+    align-items: center !important; 
+    
+    gap: 40px; 
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--border-color, #e0d9c8);
+    
+    position: static !important;
+    
+    /* ❗ 추가/수정: 전체 컨테이너 내에서 상단 Wrapper를 중앙에 배치하기 위한 설정 */
+    max-width: 600px; /* 너비 고정 */
+    margin-left: auto; 
+    margin-right: auto;
+}
+
+.profile-section {
+    flex-shrink: 0;
+    width: 150px;
+    
+    /* ❗ 수정: 스크롤을 유발했던 margin-left 250px 제거 및 마진 초기화 ❗ */
+    padding: 0 !important; 
+    margin: 0 !important; 
+}
+
+/* 🌟 역할 선택 섹션: 수직 보정 값 유지 🌟 */
+.role-select-section {
+    flex-grow: 1; 
+    
+    /* 수직 중앙 정렬 후 시각적 오차 보정 유지 */
+    position: relative;
+    top: -5px; 
+    
+    /* 마진/패딩 초기화 */
+    margin: 0 !important;
+    padding: 0 !important; 
+    
+    max-width: 250px; 
+}
+/* 4. 프로필 이미지 스타일 */
+.profile-image-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    margin: 0 auto 10px auto;
+    border: 3px solid var(--dodak-brown);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile-image-container .profile-image {
+    transition: transform 0.3s ease;
+    object-fit: cover;
+}
+
+.profile-image-container:hover .profile-image {
+    transform: scale(1.05);
+}
+
+.profile-image-container .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.profile-image-container:hover .overlay {
+    opacity: 1;
+}
+
+
+/* 5. 폼 요소 일반 스타일 */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    font-weight: 500;
+    color: var(--dodak-text-dark, #333);
+    margin-bottom: 0.4rem;
+}
+
+label.required::after {
+    content: " *";
+    color: var(--dodak-brown-dark, #6d4c41);
+}
+
+.form-control, .form-control:focus, .btn-secondary {
+    border-radius: 8px;
+    border: 1px solid var(--border-color, #e0d9c8);
+    background-color: white; /* 입력 필드 배경색 통일 */
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--dodak-brown-light, #a1887f);
+    box-shadow: 0 0 0 0.25rem rgba(136, 107, 91, 0.25); /* 옅은 갈색 쉐도우 */
+}
+
+.input-group .btn {
+    border-radius: 0 8px 8px 0;
+}
+
+/* ❗ 추가: 병원 선택 버튼 안 보임 문제 최종 해결 ❗ */
+.form-section .input-group {
+    display: flex !important;
+    align-items: stretch !important;
+    width: 100% !important;
+}
+
+.form-section .input-group .form-control {
+    flex-grow: 1 !important;
+    flex-shrink: 1 !important;
+    min-width: 0 !important; /* Flex 컨테이너에서 요소가 너무 커지는 것을 방지 */
+    margin-right: 5px; /* 버튼과 간격 확보 */
+}
+
+.form-section .input-group #openHospitalModalBtn {
+    flex-shrink: 0 !important; /* 절대 줄어들지 않음 */
+    width: 130px !important; /* 버튼 너비 고정 */
+    white-space: nowrap !important; /* 텍스트 줄바꿈 방지 */
+    opacity: 1 !important; 
+    visibility: visible !important; 
+    display: block !important; /* 혹시 display:none이 적용되었을 경우 해제 */
+}
+/* ------------------------------------------- */
+
+/* 6. Grid 레이아웃 (2열) */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 768px) {
+    .grid-2, .header-section-wrapper {
+        grid-template-columns: 1fr;
+        display: block; /* 모바일에서 flex/grid 해제 */
+        max-width: 100% !important; /* 모바일에서 너비 제한 해제 */
+        margin: auto !important;
+    }
+    .profile-section {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .container {
+        padding: 20px 20px;
+    }
+}
+
+/* 7. 도움말 텍스트 */
+.help-text, .form-text {
+    font-size: 0.85rem;
+    color: var(--dodak-text-muted, #757575);
+    margin-top: 5px;
+}
+
+/* 8. 약관 동의 섹션 및 마케팅 동의 섹션 */
+
+/* ❗ 기존 회원가입 약관 동의 섹션 (agreement-section) 코드는 삭제하고
+   아래 마케팅 동의 섹션 코드로 대체합니다. */
+.marketing-agreement-section {
+    padding: 25px 0;
+    border-bottom: 1px dashed var(--border-color, #e0d9c8);
+    margin-bottom: 20px;
+    background-color: transparent; /* 마이페이지에서는 배경색 없이 깔끔하게 */
+    border: none;
+    border-radius: 0;
+}
+
+.marketing-agreement-section .form-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem; /* 여백 조정 */
+}
+
+/* 체크박스 스타일 */
+.marketing-agreement-section input[type="checkbox"] {
+    transform: scale(1.1);
+    margin-right: 10px;
+    /* 커스텀 체크박스 스타일이 있다면 여기에 추가 */
+}
+
+.checkbox-text {
+    font-weight: 400;
+    font-size: 0.95rem;
+}
+
+/* 9. 버튼 스타일 */
+
+/* 일반 버튼 스타일 유지 */
+.btn-secondary {
+    background-color: var(--dodak-beige, #e9e5db);
+    color: var(--dodak-brown-dark, #6d4c41);
+    border-color: var(--dodak-light-brown, #a1887f);
+    font-weight: 500;
+}
+
+.btn-secondary:hover {
+    background-color: var(--dodak-light-brown, #a1887f);
+    color: white;
+    border-color: var(--dodak-brown-dark);
+}
+
+.btn-primary { /* #openHospitalModalBtn 제거 */
+    background-color: var(--dodak-brown);
+    border-color: var(--dodak-brown-dark);
+    color: white;
+    font-weight: 500;
+}
+
+.btn-primary:hover { /* #openHospitalModalBtn:hover 제거 */
+    background-color: var(--dodak-brown-dark);
+    border-color: var(--dodak-brown-dark);
+}
+
+/* ✅ 병원선택/추가 버튼을 중복제거 버튼(.btn-secondary)과 동일하게 조정 */
+#openHospitalModalBtn {
+    background-color: var(--dodak-beige, #e9e5db);
+    color: var(--dodak-brown-dark, #6d4c41);
+    border-color: var(--dodak-light-brown, #a1887f);
+    font-weight: 500;
+}
+
+#openHospitalModalBtn:hover {
+    background-color: var(--dodak-light-brown, #a1887f);
+    color: white;
+    border-color: var(--dodak-brown-dark);
+}
+
+/* 🌟 수정 버튼 스타일: 평소에도 잘 보이도록 color 속성 명확히 지정 🌟 */
+.btn-submit-small {
+    background-color: var(--dodak-brown, #8d6e63); /* 평소 배경색 */
+    border: 1px solid var(--dodak-brown-dark, #6d4c41); /* 평소 테두리 색 */
+    color: white; /* 🌟 텍스트 색상을 흰색으로 명확히 지정 🌟 */
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s; /* 색상 전환도 부드럽게 */
+    width: 220px; /* 고정 너비 조정 */
+}
+
+.btn-submit-small:hover {
+    background-color: var(--dodak-brown-dark, #6d4c41); /* 호버 시 배경색 */
+    color: white; /* 호버 시 텍스트 색상 */
+}
+
+/* 🌟 회원 탈퇴 버튼 스타일: 평소에도 텍스트 색상 지정 및 호버 색상 수정 🌟 */
+.btn-back-main {
+    background: none; /* 평소 배경색 없음 */
+    border: 1px solid var(--border-color, #e0d9c8); /* 평소 테두리 색 */
+    color: var(--dodak-text-muted, #757575); /* 평소 텍스트 색상 */
+    padding: 10px 25px;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    width: 220px; /* 고정 너비 조정 */
+}
+
+.btn-back-main.btn-danger-style {
+    background-color: white; /* 🌟 평소 배경색 흰색 🌟 */
+    border: 1px solid var(--mood-danger-light, #ffb7b2); /* 🌟 평소 테두리 연한 빨강 🌟 */
+    color: var(--mood-danger-light, #ffb7b2); /* 🌟 평소 텍스트 연한 빨강 🌟 */
+}
+
+.btn-back-main.btn-danger-style:hover {
+    background-color: var(--mood-danger-light, #ffb7b2); /* 🌟 호버 시 배경색 연한 빨강 🌟 */
+    color: white; /* 🌟 호버 시 텍스트 흰색 🌟 */
+    border-color: var(--mood-danger-light, #ffb7b2);
+}
+
+/* 기존 일반 .btn-back-main 호버 스타일도 유지 (danger-style에만 적용되지 않도록) */
+.btn-back-main:hover {
+    background-color: var(--dodak-beige, #f7f3ed);
+    color: var(--dodak-text-dark, #4b3832);
+}
+/* 단, .btn-danger-style이 적용된 경우 이 호버는 무시됩니다. */
+
+
+.footer-actions-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+    padding-top: 20px;
+    flex-wrap: wrap; 
+}
+
+/* 버튼 아이콘 여백 조정 */
+.footer-actions-grid .btn i {
+    margin-right: 5px;
+}
+/* =======================================================
+   모달 (병원 검색) 스타일
+   ======================================================= */
+
+
+
+.modal-content {
+    /* 모달 내용 스타일 */
+    background-color: var(--card-color);
+    border-radius: 15px;
+    padding: 30px;
+}
+
+.modal-title {
+    color: var(--dodak-brown);
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.sub-section-title {
+    font-size: 1.1rem;
+    color: var(--dodak-text-dark);
+    font-weight: 600;
+    padding-bottom: 5px;
+    margin-top: 20px;
+    border-bottom: 2px solid var(--dodak-beige);
+}
+
+.new-hospital-form {
+    border: 1px dashed var(--border-color);
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 10px;
+}
+
+.new-hospital-form h5 {
+    color: var(--dodak-brown-dark);
+    margin-bottom: 15px;
+}
+
+.new-hospital-form-actions {
+    text-align: right;
+    margin-top: 20px;
+}

@@ -1,0 +1,415 @@
+/* ⭐️ 로그인/회원가입 버튼 스타일 통일 */
+
+/* 로그인과 회원가입 버튼의 기본 스타일 */
+.login-btn,
+.signup-btn {
+    /* 폰트 색상을 연한 갈색으로 통일 (#8d6e63) */
+    color: #8d6e63 !important;
+    /* 테두리 색상 통일 */
+    border-color: #8d6e63 !important;
+    
+    /* 배경색을 투명으로 설정 (기존 .login-btn의 기본 상태) */
+    background-color: transparent !important; 
+    
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+/* 로그인과 회원가입 버튼의 호버 시 스타일 통일 */
+.login-btn:hover,
+.signup-btn:hover {
+    /* 배경색을 밝은 베이지색으로 통일 (#f0e6d6) */
+    background-color: #f0e6d6 !important; 
+    
+    /* 폰트 색상 및 테두리 색상 유지 */
+    border-color: #8d6e63 !important;
+    color: #8d6e63 !important;
+}
+
+/* 참고: HTML에서 btn-dark 클래스를 사용하셨는데, 
+   이 CSS를 사용하면 btn-dark의 검은색 스타일이 오버라이드되어 
+   버튼의 기본 배경색은 투명에 가까운 연한 갈색 테두리가 됩니다.
+   (기존 .login-btn의 스타일을 따랐습니다.) */
+
+
+/* ⭐️ 회원가입/로그인 페이지 공통 스타일 (signup-wrapper, signup-card 재활용) */
+
+.signup-wrapper {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    min-height: 100vh;
+
+    padding: 20px;
+
+    background-color: var(--bg-color); /* 배경색 통일 */
+
+}
+
+.signup-card {
+
+    max-width: 600px; /* 폼 항목이 많아져서 카드 크기 확장 */
+
+    width: 100%;
+
+    padding: 40px;
+
+    text-align: center;
+
+    background-color: var(--card-color);
+
+    border-radius: 15px;
+
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+
+    border: 1px solid var(--border-color);
+
+}
+
+.signup-card h2 {
+
+    color: #6c757d;
+
+    font-weight: 700;
+
+    margin-bottom: 30px;
+
+}
+
+.signup-card .form-control {
+
+    border-radius: 8px;
+
+    padding: 12px;
+
+    border-color: var(--border-color);
+
+}
+
+.form-label-custom {
+
+    font-weight: 500;
+
+    color: #555;
+
+    text-align: left;
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 0.95rem;
+
+}
+
+.form-group-section {
+
+    border-top: 1px dashed var(--border-color);
+
+    padding-top: 20px;
+
+    margin-top: 30px;
+
+}
+
+.form-group-section:first-child {
+
+    border-top: none;
+
+    margin-top: 0;
+
+}
+
+.form-group-section h5 {
+
+    text-align: left;
+
+    font-weight: 700;
+
+    color: #8d6e63;
+
+    margin-bottom: 20px;
+
+}
+
+.validation-info {
+
+    font-size: 0.8rem;
+
+    color: #888;
+
+    margin-top: 5px;
+
+    text-align: left;
+
+    display: block;
+
+}
+
+.required-star {
+
+    color: #d0021b;
+
+    margin-left: 5px;
+
+}
+
+.terms-scroll-area {
+
+    height: 100px;
+
+    overflow-y: scroll;
+
+    border: 1px solid #ddd;
+
+    padding: 10px;
+
+    background-color: #f7f7f7;
+
+    border-radius: 5px;
+
+    font-size: 0.8rem;
+
+    color: #555;
+
+    margin-bottom: 10px;
+
+}
+
+/* 차트 탭 콘텐츠 영역 스타일 */
+
+.atti-chart-tab-content {
+
+    text-align: center;
+
+    padding: 20px;
+
+    background-color: var(--chart-bg); /* style.css의 변수 사용 */
+
+    border: 1px solid var(--border-color); /* style.css의 변수 사용 */
+
+    border-top: none; /* 탭 네비게이션과 겹치지 않도록 상단 경계선 제거 */
+
+    border-radius: 0 0 10px 10px; /* 하단 모서리만 둥글게 */
+
+}
+
+
+
+/* 탭 버튼 커스터마이징 */
+
+.nav-tabs {
+
+    border-bottom: 1px solid var(--border-color); /* 탭 하단 경계선 색상 통일 */
+
+}
+
+
+
+.nav-tabs .nav-link {
+
+    color: var(--text-color); /* 텍스트 색상 */
+
+    background-color: var(--card-color); /* 비활성 탭 배경색 */
+
+    border-color: var(--border-color);
+
+    margin-bottom: -1px; /* 부트스트랩 기본값 유지 */
+
+}
+
+
+
+/* 활성 탭 버튼 스타일 */
+
+.nav-tabs .nav-link.active {
+
+    color: var(--text-color);
+
+    background-color: var(--chart-bg); /* 활성 탭 배경색을 콘텐츠 배경색과 동일하게 */
+
+    border-color: var(--border-color) var(--border-color) var(--chart-bg); /* 하단 선 색상을 콘텐츠 배경색과 동일하게 하여 연결된 느낌 부여 */
+
+    font-weight: bold;
+
+}
+
+
+
+/* 1. 리스트 컨테이너 설정 (위치 기준점) */
+
+.danger-alert-container {
+
+    position: relative !important; 
+
+    z-index: 1000; 
+
+}
+
+
+
+/* 2. 마우스 오버 시 리스트를 보이게 하는 기능 (유지) */
+
+.danger-alert-container:hover #dangerAlertList {
+
+    display: block !important;
+
+    opacity: 1 !important;
+
+    /* 호버 애니메이션 시에도 중앙 정렬 유지 */
+
+    transform: translateY(0) translateX(-50%) !important; 
+
+}
+
+
+
+/* 3. 리스트의 위치 및 스타일 강제 적용 */
+
+#dangerAlertList {
+
+    position: absolute !important; 
+
+    top: 100% !important; /* 아이콘 아래에 빈틈없이 붙임 */
+
+    margin-top: 0 !important; 
+
+    
+
+    /* ★★★ 중앙 정렬 강제 적용: left 50%를 기준으로 본인 너비의 절반만큼 이동 */
+
+    left: 50% !important; 
+
+    transform: translateX(-50%) !important; /* !! 중요 !! 중앙 정렬을 최우선으로 적용 */
+
+    right: auto !important; /* 기존 right 설정 무시 */
+
+    
+
+    /* 너비는 그대로 유지 */
+
+    min-width: 200px; 
+
+    z-index: 1001 !important;
+
+    
+
+    /* 웹페이지 스타일 통일 (유지) */
+
+    background-color: var(--card-color) !important; 
+
+    border: 1px solid var(--border-color) !important; 
+
+    border-radius: 8px !important; 
+
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important; 
+
+    
+
+    list-style: none; 
+
+    padding: 0; 
+
+    
+
+    /* 애니메이션 설정 */
+
+    display: none; 
+
+    opacity: 0;
+
+    /* 초기 위치: 중앙에서 살짝 위 */
+
+    transform: translateY(-5px) translateX(-50%); 
+
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+
+    
+
+    display: flex; 
+
+    align-items: center;
+
+    
+
+    /* ★★★ 핵심 수정: 왼쪽 요소와 오른쪽 요소를 최대한 멀리 떨어뜨립니다. ★★★ */
+
+    justify-content: space-between !important; 
+
+    
+
+    padding: 8px 15px; 
+
+    font-size: 0.95em;
+
+    color: var(--text-color);
+
+    transition: background-color 0.2s;
+
+}
+
+
+
+/* 4. 리스트 항목 스타일 (유지) */
+
+#dangerAlertList .dropdown-header {
+
+    padding: 12px 15px 8px; 
+
+    font-weight: 700; 
+
+    font-size: 0.9em;
+
+    border-bottom: 1px solid var(--border-color); 
+
+    margin-bottom: 5px;
+
+}
+
+
+
+#dangerAlertList .dropdown-item {
+
+    display: flex; 
+
+    justify-content: space-between; 
+
+    align-items: center;
+
+    padding: 8px 15px; 
+
+    font-size: 0.95em;
+
+    color: var(--text-color);
+
+    transition: background-color 0.2s; 
+
+}
+
+
+
+#dangerAlertList .dropdown-item:hover {
+
+    background-color: var(--accent-green) !important; 
+
+    color: var(--text-color); 
+
+    cursor: pointer;
+
+    font-weight: 500; 
+
+}
+
+
+
+#dangerAlertList .dropdown-divider {
+
+    margin: 5px 0;
+
+    border-top: 1px solid var(--border-color);
+
+}

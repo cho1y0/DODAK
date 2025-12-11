@@ -1,0 +1,607 @@
+/* General Body & Container - 최대 너비 1170px 적용 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #F8F4EE;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 1170px; /* 최대 너비 설정 */
+    box-sizing: border-box;
+}
+
+
+/* 제목 스타일 */
+.form-title {
+    text-align: center;
+    color: #4C4C4C;
+    margin-bottom: 30px;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.title-icon {
+    /* ⭐️⭐️ 수정: 1.5em -> 2em 으로 크기 키움 ⭐️⭐️ */
+    width: 2em; 
+    height: 2em; 
+    margin-top: 10px; 
+    vertical-align: middle;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.role-select-section {
+    max-width: 400px; /* 너비를 제한하여 가운데 정렬 가능하게 함 */
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px; /* 아래 섹션과의 간격 유지 */
+}
+
+.form-section:first-of-type { /* '역할 선택' 섹션이 첫 번째 form-section이라고 가정 */
+    max-width: 400px; /* ⭐️⭐️ 적절한 너비 제한 ⭐️⭐️ */
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- 2단 그리드 시스템 --- */
+.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr; 
+    gap: 30px; 
+}
+
+.grid-2 .full-width {
+    grid-column: span 2;
+}
+
+/* Form Sections */
+.form-section {
+    background-color: #FDFDFD;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 1px solid #E0E0E0;
+}
+
+/* Section Title */
+.section-title {
+    color: #6A6A6A;
+    font-size: 1.4em;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px dashed #E0E0E0;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.section-title i {
+    color: #8B4513;
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+/* Form Controls */
+.form-control {
+    width: calc(100% - 20px);
+    padding: 12px 10px;
+    border: 1px solid #DCC5AE;
+    border-radius: 6px;
+    font-size: 1em;
+    box-sizing: border-box;
+    background-color: #FDF9F5;
+    color: #4C4C4C;
+}
+
+#passwordMatchText {
+    /* 1. 줄바꿈 및 전체 너비 확보 */
+    display: block; 
+    
+    /* 2. 텍스트를 왼쪽 끝(입력 필드 시작점)에 정렬 */
+    text-align: left; 
+    
+    /* 3. 입력 필드와의 상단 간격 조정 */
+    margin-top: 5px; 
+    
+    /* 4. 부모 요소나 다른 요소에서 상속된 불필요한 패딩/마진 제거 (안전하게 0으로 설정) */
+    padding-left: 0; 
+    margin-left: 0;
+    
+    /* 화면 설계서와 맞추기 위한 기타 스타일 */
+    font-size: 0.85em;
+    font-weight: normal; 
+}
+
+.form-control:focus {
+    border-color: #8B4513;
+    box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25);
+    outline: none;
+}
+
+/* Input Group (인풋 + 버튼) */
+.input-group {
+    display: flex;
+    align-items: stretch;
+}
+.input-group .form-control {
+    flex-grow: 1;
+    width: auto;
+    border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.input-group .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    white-space: nowrap;
+}
+
+
+/* --- Buttons --- */
+.btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-primary { background-color: #007bff; color: white; }
+.btn-secondary { background-color: #DCC5AE; color: #4C4C4C; }
+.btn-success { background-color: #7BCC7B; color: white; }
+.btn-info { background-color: #D9D9D9; color: #4C4C4C; }
+
+
+/* --- Footer Actions Grid (버튼 2단 레이아웃 - 가운데 정렬, 동일 크기) --- */
+.footer-actions-grid {
+    display: grid;
+    /* 버튼 크기는 동일하게 유지 */
+    grid-template-columns: 1fr 1fr; 
+    gap: 15px;
+    margin-top: 30px;
+    
+    /* ⭐️⭐️ 추가/수정: 가운데 정렬을 위해 margin: 0 auto; 적용 ⭐️⭐️ */
+    max-width: 450px; 
+    width: 100%;
+    margin-left: auto; /* 왼쪽 마진 자동 */
+    margin-right: auto; /* 오른쪽 마진 자동 */
+    
+    /* justify-content: start; 속성은 필요 없습니다. (삭제 또는 주석 처리) */
+}
+
+/* 2단 그리드에 들어가는 제출 버튼 스타일 */
+.btn-submit-small {
+    /* 기존 스타일 유지 (색상, 패딩 등) */
+    padding: 15px;
+    background-color: #8B4513; 
+    color: white;
+    font-size: 1.1em;
+    font-weight: 600;
+    border-radius: 8px;
+    width: 100%;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s;
+}
+
+/* 메인으로 돌아가기 버튼 스타일 */
+.btn-back-main {
+    /* 기존 스타일 유지 (색상, 패딩 등) */
+    padding: 15px;
+    background-color: #E0E0E0; 
+    color: #4C4C4C;
+    font-size: 1em;
+    font-weight: 500;
+    border-radius: 8px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-back-main i {
+    margin-right: 8px;
+}
+
+
+/* --- 헤더 섹션 래퍼 (프로필 + 역할 선택) 2단 구성 및 중앙 정렬 --- */
+
+.header-section-wrapper {
+    /* 1. 래퍼 컨테이너 자체를 중앙 정렬 */
+    display: flex; 
+    flex-direction: row; 
+    
+    /* 2. 래퍼 컨테이너 자체를 페이지 중앙에 정렬 */
+    max-width: 600px; /* 2단 구성을 위한 적절한 너비 제한 */
+    margin-left: auto;
+    margin-right: auto;
+    
+    /* 3. 내부 아이템(프로필, 역할선택)을 수직 중앙에 정렬 */
+    align-items: center; 
+    justify-content: center; /* 내부 아이템들을 가로 중앙으로 모으기 (가운데에 배치) */
+    
+    padding: 20px 0;
+}
+
+/* --- 내부 섹션 너비 및 배치 조정 --- */
+
+.profile-section {
+    flex: 0 0 150px; /* 프로필 섹션 너비 고정 (약 1/3) */
+    display: flex;
+    justify-content: center; /* 프로필 이미지 중앙 정렬 */
+    margin-right: 20px; /* 역할 선택 섹션과의 간격 */
+    /* 수직 중앙 정렬을 위해 margin-bottom 제거 */
+    margin-bottom: 0; 
+}
+
+.form-section.role-select-section {
+    flex: 1; /* 남은 공간을 모두 차지 (약 2/3) */
+    width: auto; 
+    max-width: none;
+    /* ⭐️⭐️ 수정: role-select-section의 불필요한 마진 제거 ⭐️⭐️ */
+    margin: 0; 
+    padding: 20px; /* 패딩을 약간 줄여서 높이를 맞출 수도 있습니다. */
+}
+
+/* ⭐️⭐️ 역할 선택 섹션의 섹션 타이틀 내부 아이콘 색상 조정 (HTML 태그 기준으로 변경) ⭐️⭐️ */
+.section-title i {
+    color: #8B4513; /* 메인 테마 색상 */
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+/* ⭐️⭐️ 역할 선택 Select Box 높이를 다른 인풋 필드와 통일 ⭐️⭐️ */
+.form-section.role-select-section .form-control {
+    padding: 12px 10px;
+    height: 44px; /* 다른 인풋 필드와 동일한 높이로 설정 */
+}
+
+
+
+.profile-image-container {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin: 0 auto 15px;
+    cursor: pointer;
+    position: relative;
+    border: 3px solid #DCC5AE; 
+    overflow: hidden;
+}
+
+/* --- Checkbox Styles (안정화된 최종 버전) --- */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    padding-left: 28px; /* 커스텀 체크박스 공간 확보 */
+    user-select: none;
+}
+
+/* 실제 input은 숨깁니다. */
+.checkbox-label input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+/* 1. 커스텀 체크박스 기본 모양 (label의 ::before 사용) */
+.checkbox-label::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    border: 2px solid #DCC5AE;
+    background-color: #FDF9F5;
+    border-radius: 4px;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+/* ⭐️ input이 체크 상태일 때, label의 ::before 스타일 변경 ⭐️ */
+.checkbox-label input[type="checkbox"]:checked::before {
+    background-color: #8B4513; 
+    border-color: #8B4513;
+}
+
+/* 3. 체크 마크 (label의 ::after 사용) */
+.checkbox-label::after {
+    font-family: "Font Awesome 5 Free"; 
+    font-weight: 900;
+    content: ""; /* 기본 상태에서는 비워둡니다. */
+    position: absolute;
+    left: 4px; 
+    top: 50%;
+    transform: translateY(-50%) scale(0); /* 기본 숨김 */
+    color: white;
+    font-size: 14px;
+    transition: transform 0.2s ease-out;
+}
+
+/* ⭐️ input이 체크 상태일 때, label의 ::after (체크 마크) 표시 ⭐️ */
+.checkbox-label input[type="checkbox"]:checked::after {
+    content: "\f00c"; /* 체크 아이콘 유니코드 */
+    transform: translateY(-50%) scale(1);
+}
+
+.agreement-checkboxes {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+
+
+/* --- Modal Styles (모달 초기 상태 수정) --- */
+.modal {
+    /* ⭐️ 초기 display: none 설정은 JS에서 관리 */
+    position: fixed; 
+    z-index: 1501;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden; 
+    background-color: rgba(0,0,0,0.5); 
+    justify-content: center; 
+    align-items: center; 
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    width: 90%;
+    max-width: 800px;
+    position: relative;
+    box-sizing: border-box;
+    max-height: 90vh; 
+    overflow-y: auto;
+}
+
+/* 모달 제목 스타일 */
+.modal-title {
+    color: #4C4C4C;
+    font-size: 1.6em;
+    font-weight: 600;
+    margin-bottom: 20px;
+    border-bottom: 2px dashed #E0E0E0;
+    padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.modal-title i {
+    color: #8B4513; /* 메인 폼의 섹션 아이콘 색상 통일 */
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+/* 닫기 버튼 스타일 */
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+}
+.close-button:hover,
+.close-button:focus {
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 모달 내부 소제목 스타일 */
+.sub-section-title {
+    color: #6A6A6A;
+    font-size: 1.2em;
+    margin-top: 20px;
+    margin-bottom: 15px;
+    padding-left: 10px;
+    border-left: 5px solid #DCC5AE; /* 베이지 톤 강조선 */
+}
+
+
+/* 모달 내부 요소 스타일 */
+.search-results {
+    margin-top: 20px;
+    border: 1px solid #DCC5AE;
+    border-radius: 8px;
+    max-height: 250px;
+    overflow-y: auto;
+    background-color: #FDF9F5;
+    /* ⭐️⭐️ 추가/수정: 검색 결과를 초기에는 숨깁니다. ⭐️⭐️ */
+    display: none; 
+}
+
+.hospital-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    border-bottom: 1px solid #E0E0E0;
+    background-color: #fff; /* 아이템 배경을 흰색으로 지정 */
+}
+
+.hospital-item:last-child {
+    border-bottom: none;
+}
+
+.hospital-item p {
+    margin: 0;
+    font-size: 0.95em;
+    color: #4C4C4C;
+}
+
+.hospital-name {
+    font-weight: 600;
+    margin-bottom: 5px !important;
+}
+.hospital-address {
+    color: #777;
+    font-size: 0.85em;
+}
+
+.item-actions {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+
+
+/* 새 병원 등록 폼 스타일 */
+.new-hospital-form {
+    background-color: #FDFDFD;
+    border: 1px solid #E0E0E0;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.new-hospital-form h5 {
+    color: #8B4513;
+    margin-top: 0;
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #DCC5AE;
+}
+
+/* --- 새 병원 등록 폼 액션 버튼 중앙 정렬 및 간격 조정 --- */
+.new-hospital-form-actions {
+    /* 1. 위 입력창과의 세로 간격 띄우기 */
+    margin-top: 25px; 
+    margin-bottom: 10px;
+
+    /* 2. 버튼들을 가로 2단으로 중앙 정렬 */
+    display: flex;
+    justify-content: center; /* 버튼들을 가로 중앙에 배치 */
+    gap: 15px; /* 버튼들 사이의 간격 */
+    width: 100%;
+}
+
+/* 3. 버튼 크기 조정 (필요하다면) */
+.new-hospital-form-actions .btn {
+    flex: 1; /* 버튼들이 같은 비율로 공간을 차지하도록 설정 (동일한 크기) */
+    max-width: 150px; /* 버튼의 최대 너비 제한 (너무 커지지 않도록) */
+    padding: 10px 15px;
+    font-size: 0.95em;
+}
+
+/* 팝업 닫기 버튼 배치 (하단 중앙) */
+#closeHospitalModalBtn {
+    display: block;
+    width: 100%;
+    margin-top: 25px;
+    background-color: #D9D9D9; /* btn-info와 유사한 색상으로 통일 */
+    color: #4C4C4C;
+}
+
+
+.agreement-content-scroll {
+    border: 1px solid #E0E0E0;
+    padding: 15px;
+    margin: 10px 0 20px 0;
+    background-color: #FDF9F5;
+    border-radius: 6px;
+    max-height: 150px; /* ⭐️⭐️ 원하는 최대 높이 설정 ⭐️⭐️ */
+    overflow-y: auto; /* ⭐️⭐️ 높이 초과 시 세로 스크롤 생성 ⭐️⭐️ */
+    font-size: 0.9em;
+    color: #6A6A6A;
+}
+
+.agreement-content-scroll h4 {
+    color: #8B4513;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+/* --- 반응형 설정 --- */
+@media (max-width: 768px) {
+    .container { padding: 20px; }
+    .grid-2 { grid-template-columns: 1fr; gap: 0; }
+    .grid-2 .full-width { grid-column: span 1; }
+    .header-section-wrapper { flex-direction: column; align-items: center; gap: 15px; }
+    .role-select-section { max-width: 100%; }
+    .agreement-checkboxes { grid-template-columns: 1fr; gap: 5px; }
+    .footer-actions-grid {
+        grid-template-columns: 1fr; /* 모바일에서는 1단으로 다시 쌓이도록 변경 */
+        max-width: 100%; /* 모바일에서는 다시 너비 100% 사용 */
+        gap: 10px;
+    }
+}
+
+/* --- 반응형 처리 (모바일에서는 다시 1단으로 쌓기) --- */
+
+@media (max-width: 650px) {
+    .header-section-wrapper {
+        flex-direction: column; /* 세로로 다시 쌓기 */
+        max-width: 450px;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    
+    .profile-section {
+        margin-right: 0;
+        margin-bottom: 20px; /* 세로로 쌓였을 때 아래 섹션과의 간격 */
+        flex: auto;
+    }
+    .form-section.role-select-section {
+        width: 100%;
+        margin: 0;
+        max-width: 350px; /* 모바일에서 역할 선택 섹션의 너비를 약간 제한 */
+    }
+}
+
+@media (max-width: 480px) {
+    .form-title { 
+        font-size: 1.6em; /* 작은 화면에서 글씨 크기 조정 */
+    }
+    .title-icon {
+        width: 1.5em; /* 글씨 크기에 맞춰 자동으로 줄어듭니다. */
+        height: 1.5em;
+    }
+    /* Input Group 깨짐 현상 수정 */
+    .input-group { flex-direction: column; }
+    .input-group .form-control {
+        border-radius: 6px;
+        border-bottom: 1px solid #DCC5AE;
+        width: 100%;
+        border-right: 1px solid #DCC5AE; 
+    }
+    .input-group .btn {
+        margin-top: 8px;
+        border-radius: 6px;
+        width: 100%;
+        padding: 8px 10px; 
+    }
+
+    .form-section { padding: 15px; }
+
+    /* 병원 검색 결과 아이템 */
+    .hospital-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+    .hospital-item .item-actions { width: 100%; justify-content: space-between; }
+}

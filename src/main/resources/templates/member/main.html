@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 마음 일기장 (감성 UI/UX)</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/calendar.css">
+<script
+	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+
+	<img src="/img/휴식하는도닥이.png" alt="휴식하는 도닥이"
+		class="dodak-bg-element dodak-float-1">
+	<img src="/img/앉아서독서하는도닥이.png" alt="독서하는 도닥이"
+		class="dodak-bg-element dodak-float-2">
+	<img src="/img/문서보는도닥이.png" alt="문서보는 도닥이"
+		class="dodak-bg-element dodak-float-3">
+	<img src="/img/활짝웃는도닥이.png" alt="웃는 도닥이"
+		class="dodak-bg-element dodak-float-4">
+	<img src="/img/구름도닥이.png" alt="구름 위 도닥이"
+		class="dodak-bg-element dodak-float-5">
+	<img src="/img/생각하는도닥이.png" alt="생각하는 도닥이"
+		class="dodak-bg-element dodak-float-6">
+
+	<nav
+		class="navbar navbar-expand-lg fixed-top custom-navbar shadow-sm show-navbar">
+		<div class="container-fluid app-container" id="menucon"
+			style="display: none;">
+
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false"
+				aria-label="Toggle navigation" style="border: none;">
+				<i class="bi bi-list" style="font-size: 1.8rem; color: #6c757d;"></i>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarNav">
+
+				<ul class="nav nav-pills me-auto" id="mainTab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link custom-nav-link active" id="home-tab"
+							data-bs-toggle="tab" data-bs-target="#home-panel" type="button"
+							role="tab" aria-controls="home-panel" aria-selected="true">
+							<img src="/img/dodak.png" alt="홈" class="nav-tab-icon"> 홈
+						</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link custom-nav-link" id="write-tab"
+							data-bs-toggle="tab" data-bs-target="#write-panel" type="button"
+							role="tab" aria-controls="write-panel" aria-selected="false">
+							<img src="/img/음료먹는도닥.png" alt="작성" class="nav-tab-icon"
+								style="width: 50px;"> 오늘의 일기작성하기
+						</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link custom-nav-link" id="list-tab"
+							data-bs-toggle="tab" data-bs-target="#list-panel" type="button"
+							role="tab" aria-controls="list-panel" aria-selected="false">
+							<img src="/img/앉아서독서하는도닥이.png" alt="리스트" class="nav-tab-icon"
+								style="width: 50px;"> 나의 일기 리스트
+						</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link custom-nav-link" id="mypage-tab"
+							data-bs-toggle="tab" data-bs-target="#mypage-panel" type="button"
+							role="tab" aria-controls="mypage-panel" aria-selected="false">
+							<img src="/img/활짝웃는도닥이.png" alt="도닥이 마이페이지 아이콘"
+								style="height: 24px; width: auto; margin-right: 5px; vertical-align: middle;">
+							마이페이지
+						</button>
+					</li>
+				</ul>
+				<div class="d-flex ms-auto">
+					<a href="/logout"
+						class="btn btn-sm btn-outline-secondary me-2 login-btn"> <i
+						class="bi bi-box-arrow-in-right me-1"></i> 로그아웃
+					</a>
+				</div>
+
+
+			</div>
+
+		</div>
+	</nav>
+
+	<div class="app-container">
+		<div class="tab-content" id="mainTabContent">
+
+			<div class="tab-pane fade show active" id="home-panel"
+				role="tabpanel" aria-labelledby="home-tab">
+				<div class="app-card home-intro-card position-relative">
+					<h2 class="text-center fw-bold mb-5" style="color: #6c757d;">
+						DODAK: 일상을 '도닥'여주는 마음 기록 웹</h2>
+
+					<img src="/img/음료먹는도닥.png" alt="음료 마시는 도닥이"
+						class="dodak-local-element dodak-home-corner-1">
+
+					<ul
+						class="nav nav-tabs nav-tabs-custom justify-content-center mb-4"
+						id="homeTabs" role="tablist">
+
+						<li class="nav-item" role="presentation">
+							<button class="nav-link active" id="mascot-tab"
+								data-bs-toggle="tab" data-bs-target="#mascot-pane" type="button"
+								role="tab" aria-controls="mascot-pane" aria-selected="true">
+								<i class="bi bi-emoji-heart-eyes me-2"></i> 마스코트 소개
+							</button>
+						</li>
+
+						<li class="nav-item" role="presentation">
+							<button class="nav-link" id="project-tab" data-bs-toggle="tab"
+								data-bs-target="#project-pane" type="button" role="tab"
+								aria-controls="project-pane" aria-selected="false">
+								<i class="bi bi-journal-text me-2"></i> 프로젝트 설명
+							</button>
+						</li>
+					</ul>
+
+					<div class="tab-content" id="homeTabContent">
+
+
+
+						<div class="tab-pane fade show active" id="mascot-pane"
+							role="tabpanel" aria-labelledby="mascot-tab">
+							<img src="/img/구름도닥이.png" alt="떠있는 도닥이"
+								class="dodak-local-element"
+								style="position: absolute; top: 10px; left: 50px; width: 150px; opacity: 0.85; z-index: 10;">
+
+							<div class="row justify-content-center align-items-center g-4">
+
+								<div class="col-12 col-md-4 d-flex justify-content-center">
+									<div class="dodak-main-image-card">
+										<img src="/img/활짝웃는도닥이.png" alt="도닥이 마스코트"
+											class="img-fluid rounded-3 shadow-sm p-2"
+											style="max-height: 250px;">
+									</div>
+								</div>
+
+								<div
+									class="col-12 col-md-8 dodak-intro-text text-center text-md-start">
+									<h3 class="fw-bold mb-3" style="color: var(--text-color);">
+										<span style="color: var(--accent-color);">✨ 따뜻한 동행:</span>
+										마스코트 도닥이를 소개합니다!
+									</h3>
+
+									<p class="lead" style="color: #6a6a6a; margin-bottom: 1rem;">
+										DODAK의 다정한 마스코트 **도닥이**가 당신의 **이야기**를 기다립니다.</p>
+
+									<p style="color: var(--text-color);">도닥이는 항상 작은 스카프를 두르고
+										다니며, 사용자님의 **'마음 일기'**를 가장 소중히 여기는 다람쥐입니다. 단순한 기록을 넘어, **감정의
+										변화**와 **숨겨진 마음의 소리**를 귀 기울여 듣는 것이 도닥이의 중요한 역할입니다.</p>
+									<p style="color: var(--text-color);">매일의 기록을 통해 당신의 감정을
+										분석하고, 필요한 순간에 **따뜻한 배경 음악**이나 **맞춤형 힐링 테마**를 추천하여 지친 마음을 어루만져
+										줍니다.</p>
+
+									<p class="fw-bold fs-5 mt-4 p-3 rounded-3"
+										style="color: #ffffff; background-color: var(--highlight-color);">
+										"사용자님의 이야기에 귀 기울여<br class="d-md-none"> 지친 하루를 **따뜻하게
+										도닥여** 드릴게요."
+									</p>
+								</div>
+							</div>
+						</div>
+
+
+						<div class="tab-pane fade" id="project-pane" role="tabpanel"
+							aria-labelledby="project-tab">
+							<div class="project-description-section position-relative pt-3">
+								<h3 class="fw-bold mb-4 text-center" style="color: #444;">[
+									프로젝트 DODAK 설명 ]</h3>
+
+								<img src="/img/생각하는도닥이.png" alt="생각하는 도닥이"
+									class="dodak-local-element"
+									style="position: absolute; top: -170px; left: 50px; width: 100px; opacity: 0.8; z-index: 10;">
+
+								<div class="row g-4">
+									<div class="col-md-4">
+										<div class="feature-box">
+											<i class="bi bi-pencil-square display-5 mb-2"
+												style="color: var(--mood-joy);"></i>
+											<h5 class="fw-bold">1. 감정 맞춤형 기록 환경</h5>
+											<p>작성자의 일기 감정을 분석하여 실시간으로 맞춤 힐링(음악,영상등..)컨텐츠를 제공하여, 일기
+												작성에 대한 몰입감을 높여줍니다.</p>
+										</div>
+									</div>
+
+									<div class="col-md-4">
+										<div class="feature-box">
+											<i class="bi bi-file-earmark-bar-graph display-5 mb-2"
+												style="color: var(--bs-info);"></i>
+											<h5 class="fw-bold">2. 상담을 미리 돕는 AI 기록 분석</h5>
+											<p>일기 내용을 AI가 꼼꼼히 읽고 중요한 감정 키워드를 미리 정리해 둡니다. 진단 리포트는 월별
+												보고서의 기반이 되어, 당신의 마음 상태를 한눈에 파악하고 더 깊이 있는 상담을 준비하는 데 큰 도움이
+												됩니다.</p>
+										</div>
+									</div>
+
+									<div class="col-md-4">
+										<div class="feature-box">
+											<i class="bi bi-bar-chart-line display-5 mb-2"
+												style="color: var(--mood-regret);"></i>
+											<h5 class="fw-bold">3. 월별 감정 보고서 제공</h5>
+											<p>정신과 전문의에게 환자의 월별 감정 변화와 통계를 시각화하여 제공함으로써, 환자의 상태를 빠르게
+												파악하고 상담을 진행할 수 있습니다</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade" id="write-panel" role="tabpanel"
+				aria-labelledby="write-tab">
+				<div class="row">
+					<div class="col-12">
+						<div class="app-card">
+							<h4 class="fw-bold mb-4" style="color: #555;">오늘의 감성을 기록해요
+								✍️</h4>
+							<p class="text-muted">날짜: 2025년 10월 24일 (금)</p>
+							<div class="mb-4">
+								<label for="diaryMood" class="form-label fw-semibold">오늘의
+									기분 선택</label>
+								<div class="mood-select" id="diaryMood">
+									<button class="btn btn-outline-danger me-2" data-mood="분노"
+										value="분노">분노 🔥</button>
+									<button class="btn btn-outline-warning me-2" data-mood="불안"
+										value="불안">불안 😟</button>
+									<button class="btn btn-outline-primary me-2" data-mood="슬픔"
+										value="슬픔">슬픔 😢</button>
+									<button class="btn btn-outline-success me-2" data-mood="기쁨"
+										value="기쁨">기쁨 😊</button>
+									<button class="btn btn-outline-info me-2" data-mood="후회"
+										value="후회">후회 😔</button>
+									<button class="btn btn-outline-info me-2" data-mood="희망"
+										value="후회">희망 ✨</button>
+									<button class="btn btn-outline-info me-2" data-mood="중립"
+										value="후회">중립 😐</button>
+									<button class="btn btn-outline-info me-2" data-mood="피로"
+										value="후회">피로 😴</button>
+									<button class="btn btn-outline-info me-2" data-mood="우울"
+										value="후회">우울 💙</button>
+								</div>
+							</div>
+							<div class="mb-4">
+								<label for="diaryTitle" class="form-label fw-semibold">제목</label>
+								<input type="text" class="form-control" id="diaryTitle"
+									placeholder="오늘의 마음을 담아 제목을 입력하세요"> <input
+									type="hidden" id="memberId" name="memberId"
+									th:value="${session.memberId}"> <input type="hidden"
+									id="currentDiaryIdx" name="currentDiaryIdx">
+
+							</div>
+							<div class="mb-4">
+								<label for="diaryContent" class="form-label fw-semibold">오늘의
+									이야기</label>
+								<textarea class="form-control" id="diaryContent" rows="10"
+									placeholder="오늘 있었던 일이나 느꼈던 감정을 자유롭게 기록해보세요."></textarea>
+							</div>
+							<div class="d-flex justify-content-between gap-2 mt-4">
+								<button class="btn btn-lg btn-dark w-50" id="saveDiaryBtn">일기
+									저장하기</button>
+								<button class="btn btn-lg btn-secondary w-50" type="button"
+									data-bs-toggle="collapse"
+									data-bs-target="#StatsCollapseYoutube" aria-expanded="false"
+									aria-controls="StatsCollapseYoutube">기분에 따른 추천 영상 목록보기</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="collapse" id="StatsCollapseYoutube">
+					<div class="row">
+						<div class="col-12">
+							<div class="today-stats-card position-relative">
+								<div class="atti-character"></div>
+								<div class="today-stats-content">
+									<h5 class="text-center fw-bold mb-4" style="color: #c94f79;">오늘의
+										기분 선택에 맞는 영상 목록</h5>
+									<div class="atti-comment-section">
+										<div class="atti-title">
+											<h5>도닥이가 추천해요!</h5>
+											<img src="/img/dodak.png" alt="도닥이 아이콘"
+												class="atti-dodak-icon">
+										</div>
+										<div class="diary-list" id="youtubeResult"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade" id="list-panel" role="tabpanel"
+				aria-labelledby="list-tab">
+				<div class="row">
+					<div class="col-12">
+						<div class="app-card position-relative">
+							<h4 class="fw-bold mb-4" style="color: #555;">기록된 나의 일기 모음
+								📚</h4>
+							<p class="text-muted mb-4"></p>
+
+							<img src="/img/휴식하는도닥이.png" alt="휴식하는 도닥이"
+								class="dodak-local-element dodak-list-search-1">
+
+							<div class="d-flex align-items-center mb-4 gap-2">
+								<div class="controls">
+									<div class="col">
+										<label for="yearSearch">연도 검색 / 선택</label>
+										<div class="search">
+											<input id="yearSearch" type="search"
+												placeholder="예: 1990 또는 20" aria-label="연도 검색" />
+										</div>
+										<div id="yearList" class="list" role="listbox"
+											aria-label="연도 목록" tabindex="0"></div>
+									</div>
+
+									<div class="col">
+										<label for="monthSearch">월 검색 / 선택</label> <input
+											id="monthSearch" type="search" placeholder="예: 3 또는 03"
+											aria-label="월 검색" />
+										<div id="monthList" class="list" role="listbox"
+											aria-label="월 목록" tabindex="0"></div>
+									</div>
+
+									<div class="col">
+										<label for="daySearch">일 검색 / 선택</label> <input id="daySearch"
+											type="search" placeholder="예: 15 또는 1" aria-label="일 검색" />
+										<div id="dayList" class="list" role="listbox" tabindex="0"
+											aria-label="일 목록"></div>
+									</div>
+								</div>
+
+								<div class="output" aria-live="polite">
+									<strong id="selected">없음</strong>
+								</div>
+								<div class="input-group ms-auto"
+									style="max-width: 290px; height: 60px; padding-top: 20px;">
+									<input type="text" class="form-control form-control-sm"
+										placeholder="제목/내용 검색">
+									<button class="btn btn-secondary btn-sm" type="button">
+										<i class="bi bi-search"></i>
+									</button>
+								</div>
+							</div>
+							<input type="hidden" id="waitChk" value="0">
+							<div class="diary-list"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div class="tab-pane fade" id="mypage-panel">
+				<div class="container">
+					<ul class="nav nav-tabs sub-nav-tabs" id="myPageInnerTab"
+						role="tablist">
+						<li class="nav-item" role="presentation">
+							<button class="nav-link active" id="info-tab"
+								data-bs-toggle="tab" data-bs-target="#info-pane" type="button"
+								role="tab" aria-controls="info-pane" aria-selected="true">
+								기본정보 수정</button>
+						</li>						
+					</ul>
+					<div class="tab-content pt-3" id="myPageInnerTabContent">
+
+						<div class="tab-pane fade show active" id="info-pane"
+							role="tabpanel" aria-labelledby="info-tab" tabindex="0">
+							<form id="registerForm">
+								<input type="hidden" id="agreements" name="agreementYn" value="">
+								<input type="hidden" id="oldImgPath" name="oldImgPath" value="">
+								<div class="header-section-wrapper"></div>
+
+								<div class="form-section">
+									<h3 class="section-title">
+										<i class="fas fa-user"></i> 기본 정보
+									</h3>
+									<div class="grid-2">
+										<div class="form-group">
+											<div class="profile-section">
+												<div class="profile-image-container"
+													id="profileImageContainer" align="center">
+													<img
+														src="https://placehold.co/120/DCC5AE/FFFFFF?text=PROFILE"
+														alt="프로필 이미지" style="width: 100%; height: 100%"
+														class="profile-image"> <input type="file"
+														id="profileImageUpload" name="profileImage"
+														accept="image/*" style="display: none;">
+													<div class="overlay">클릭하여 이미지 변경</div>
+												</div>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="roleSelect" class="required">가입 역할</label> <select
+												id="roleSelect" name="role" class="form-control"
+												disabled="disabled">
+												<option value="USER">일반 회원 (USER)</option>
+												<option value="DOCTOR">의사 회원 (DOCTOR)</option>
+											</select>
+										</div>
+										<div class="form-group">
+											<label for="userId" class="required">아이디</label>
+											<div class="input-group">
+												<input type="text" readonly="readonly" id="inputId"
+													name="userId" class="form-control" placeholder="ID 입력"
+													maxlength="20" autocomplete="off">
+												<button type="button" class="btn btn-secondary"
+													id="buttonIDCheck" disabled="disabled" onclick="checkId()">중복
+													체크</button>
+											</div>
+											<span class="help-text">5~20자, 영문+숫자 조합.</span> <small
+												id="idMessage" class="form-text text-muted"></small>
+										</div>
+										<div class="form-group">
+											<label for="name" class="required">이름 (한글)</label> <input
+												type="text" id="inputName" name="name" class="form-control"
+												placeholder="실명 입력 (한글)" maxlength="10" required="required">
+										</div>
+
+										<div class="form-group">
+											<label for="password" class="required">비밀번호</label> <input
+												type="password" name="password" class="form-control"
+												maxlength="20" id="password" placeholder="비밀번호 입력" required>
+											<small class="help-text">8~20자, 영문+숫자+특수문자 조합.</small>
+										</div>
+										<div class="form-group">
+											<label for="passwordConfirm" class="required">비밀번호 확인</label>
+											<input type="password" name="passwordConfirm"
+												class="form-control" id="passwordConfirm"
+												placeholder="비밀번호 재입력" maxlength="20" required="required">
+											<small class="help-text" id="passwordMatchText"></small>
+										</div>
+									</div>
+								</div>
+
+								<div class="form-section">
+									<h3 class="section-title">
+										<i class="fas fa-mobile-alt"></i> 연락 정보
+									</h3>
+									<div class="grid-2">
+										<div class="form-group">
+											<label for="phone" class="required">휴대 전화</label> <input
+												type="tel" class="form-control" id="inputPhone" name="phone"
+												placeholder="010-XXXX-XXXX" required="required">
+										</div>
+										<div class="form-group">
+											<label for="email" class="required">이메일</label>
+											<div class="input-group">
+												<input type="email" class="form-control" id="inputEmail"
+													name="email" placeholder="example@dodak.com"
+													required="required">
+												<button type="button" class="btn btn-secondary"
+													onclick="validateEmail()" id="buttonEmailCheck">중복
+													체크</button>
+											</div>
+											<small class="help-text">이메일 형식 검증 및 중복 불가.</small> <small
+												class="help-text" id="emailMessage"></small>
+
+										</div>
+									</div>
+								</div>
+
+								<div class="form-section">
+									<h3 class="section-title">
+										<i class="fas fa-home"></i> 주소 정보
+									</h3>
+									<div class="grid-2">
+										<div class="form-group">
+											<label for="zipCode" class="required">우편 번호</label>
+											<div class="input-group">
+												<input type="text" class="form-control" id="zipCode"
+													placeholder="우편번호" name="zipCode" readonly required>
+												<button type="button" class="btn btn-secondary"
+													id="buttonPostcodeSearch">검색</button>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="addr1" class="required">주소</label> <input
+												type="text" class="form-control" id="streetAdr" name="addr1"
+												placeholder="도로명 주소" readonly required>
+										</div>
+									</div>
+									<div class="form-group">
+										<label for="addr2">상세 주소</label> <input type="text"
+											class="form-control" id="inputAddressDetail" name="addr2"
+											placeholder="상세 주소 (선택 입력)">
+									</div>
+								</div>
+
+								<div class="form-section" id="doctorInfoSection"
+									style="display: none;">
+									<h3 class="section-title">
+										<i class="fas fa-hospital-alt"></i> 의사 정보
+									</h3>
+									<div class="grid-2">
+										<div class="form-group">
+											<label for="hospitalName" class="required">소속 병원</label>
+											<div class="input-group">
+												<input type="text" id="hospNameDisplay" class="form-control"
+													placeholder="병원 선택 버튼을 눌러주세요" readonly> <input
+													type="hidden" id="hospIdx" name="hospIdx">
+												<button type="button" class="btn btn-primary"
+													id="openHospitalModalBtn">병원 선택/추가</button>
+											</div>
+										</div>
+										<div class="form-group">
+											<label for="specialty" class="required">전문 분야</label> <input
+												type="text" id="inputSpecialty" name="specialty"
+												class="form-control" placeholder="예: 정신 건강의학과">
+										</div>
+									</div>
+								</div>
+
+								<div class="form-section agreement-section">
+									<h3 class="section-title">
+										<i class="fas fa-file-alt"></i> 마케팅 정보 수신 동의
+									</h3>
+									<div class="grid-2 agreement-checkboxes">
+
+										<div class="form-group">
+											<input type="checkbox" id="checkTerms3"> <span
+												class="checkbox-text">마케팅 정보 수신 동의 (이메일/SMS) (선택)</span>
+										</div>
+									</div>
+								</div>
+
+								<div class="footer-actions" style="width: 100%" align="center">
+									<button class="btn btn-submit-small" id="regBtn">회원 정보
+										수정</button>
+
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="hospitalModal" class="modal">
+		<div class="modal-content">
+			<span class="close-button">&times;</span>
+			<h3 class="modal-title">
+				<i class="fas fa-hospital"></i> 병원 검색 및 추가
+			</h3>
+
+			<div class="search-hospital-section">
+				<h4 class="sub-section-title">병원 검색</h4>
+				<div class="form-group">
+					<label for="hospitalSearchInput" class="required">병원 이름으로
+						검색</label>
+					<div class="input-group">
+						<input type="text" id="hospitalSearchInput" class="form-control"
+							placeholder="의료원">
+						<button type="button" class="btn btn-secondary"
+							id="searchHospitalBtn">검색</button>
+					</div>
+				</div>
+				<div id="hospitalSearchResults" class="search-results"></div>
+			</div>
+
+			<div class="add-hospital-section">
+				<h4 class="sub-section-title">병원 등록/수정</h4>
+				<p>찾는 병원이 없으신가요? 직접 등록해보세요.</p>
+				<button type="button" class="btn btn-primary"
+					id="openAddHospitalFormBtn">병원 정보 입력</button>
+
+				<div id="newHospitalForm" class="new-hospital-form"
+					style="display: none;">
+					<h5>병원 정보 입력</h5>
+					<div class="grid-2">
+						<div class="form-group">
+							<label for="newHospitalName" class="required">병원명</label> <input
+								type="text" id="newHospitalName" name="newHospitalName"
+								class="form-control" placeholder="병원 이름"> <input
+								type="hidden" id="newHospitalId" name="newHospitalId"
+								class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="newHospitalTel" class="required">대표 전화번호</label> <input
+								type="text" id="newHospitalTel" name="newHospitalTel"
+								class="form-control" placeholder="02-XXXX-XXXX 또는 010-XXXX-XXXX"
+								required>
+						</div>
+						<div class="form-group">
+							<label for="newHospitalZipCode" class="required">우편 번호</label>
+							<div class="input-group">
+								<input type="text" id="newHospitalZipCode"
+									name="newHospitalZipCode" class="form-control"
+									placeholder="우편번호" readonly>
+								<button type="button" class="btn btn-secondary"
+									id="searchNewHospitalZipCodeBtn">검색</button>
+							</div>
+						</div>
+						<div class="form-group full-width">
+							<label for="newHospitalAddr1" class="required">주소</label> <input
+								type="text" id="newHospitalAddr1" name="newHospitalAddr1"
+								class="form-control" placeholder="기본 주소" readonly>
+						</div>
+						<div class="form-group full-width">
+							<label for="newHospitalAddr2">상세 주소</label> <input type="text"
+								id="newHospitalAddr2" name="newHospitalAddr2"
+								class="form-control" placeholder="상세 주소 입력">
+						</div>
+					</div>
+
+					<div class="new-hospital-form-actions">
+						<button type="button" class="btn btn-primary"
+							id="saveNewHospitalBtn">저장</button>
+						<button type="button" class="btn btn-secondary"
+							id="cancelAddHospitalBtn">취소</button>
+					</div>
+				</div>
+			</div>
+
+			<button type="button" class="btn btn-secondary"
+				id="closeHospitalModalBtn">팝업 닫기</button>
+		</div>
+	</div>
+	<div class="modal fade" id="diaryDetailModal" tabindex="-1"
+				aria-labelledby="diaryDetailModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="diaryDetailModalLabel"></h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal"
+								aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p class="text-muted mb-3" id="modal-date-info"></p>
+
+							<div id="modal-diary-content"
+								style="max-height: 400px; overflow-y: auto; padding: 10px; border: 1px solid #eee; border-radius: 5px;">
+							</div>
+
+							<h6 class="mt-4 border-bottom pb-1">AI 분석 결과</h6>
+							<div id="modal-analysis-result"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary"
+								data-bs-dismiss="modal">닫기</button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="/js/scriptNew.js"></script>
+	<script src="/js/calendar.js"></script>
+
+	<script>
+		let keyword = "";
+		const buttonContainer = document.getElementById('diaryMood');
+		//2. 부모 div에 클릭 이벤트 리스너를 추가합니다.
+		buttonContainer.addEventListener('click', function(event) {
+			// 3. 실제로 클릭된 요소(event.target)가 버튼(BUTTON)인지 확인합니다.
+			if (event.target.tagName === 'BUTTON') {
+				// 4. 클릭된 버튼의 value 속성 값을 가져옵니다.
+				const selectedValue = event.target.value;
+				
+				const waitChk = document.getElementById('waitChk');
+				
+				
+				if (waitChk.value == 0) {
+					document.getElementById('waitChk').value = 1;
+					
+					keyword = selectedValue;					
+					$.ajax({
+						url : "http://192.168.0.5:8000/youtube/search",
+						method : "POST",
+						contentType : "application/json",
+						data : JSON.stringify({
+							keyword : keyword
+						}),
+						success : function(result) {
+							console.log(result);
+							const tbody = $("#youtubeResult").empty();							
+							const data = result.results;
+							let keywordSet = keyword;
+							if(keyword=='분노') {
+								keywordSet += "🔥";
+							} else if(keyword=='불안') {
+								keywordSet += "😟";
+							} else if(keyword=='기쁨') {
+								keywordSet += "😊";
+							} else if(keyword=='슬픔') {
+								keywordSet += "😢";
+							} else if(keyword=='후회') {
+								keywordSet += "😔";
+							} else if(keyword=='희망') {
+								keywordSet += "✨";
+							} else if(keyword=='중립') {
+								keywordSet += "😐";
+							} else if(keyword=='피로') {
+								keywordSet += "😴";
+							} else if(keyword=='우울') {								
+								keywordSet += "💙";
+							} else {
+								keywordSet += "🔥";
+							}
+							data.forEach((board,idx) => {
+								tbody.append(`<div class="diary-item-card mood-${keyword}" onclick="window.open('${board.link}', '힐링케어', 'width=600,height=320');">
+										<div
+										class="d-flex justify-content-between align-items-start">
+										<h5 class="fw-bold mb-1">${board.name}</h5>
+										<span class="diary-mood-tag mood-${keyword}">${keywordSet}</span>
+									</div>
+									<p class="text-muted mb-2" style="font-size: 0.9em;">${board.videoDate}
+										| ${board.viewCount}</p>
+									<p class="mb-0 text-truncate">${board.videoDescript}</p>
+								</div>`);
+							});
+							document.getElementById('waitChk').value = 0;
+						},
+						
+					});
+				} else {
+					alert("[" + keyword	+ "]의 데이터를 가져오는 중입니다.\n완료가 되면 다시 선택해 주십시오.")
+				}
+
+			}
+		});
+		
+		// 여기에 JavaScript 코드 추가
+		const customNavbar = document.querySelector('.custom-navbar');
+		let menucon = document.getElementById("menucon");
+
+		if (customNavbar) {
+		    // 페이지 로드 시에는 숨김 상태 (CSS가 처리)
+
+		    // mouseover (마우스를 올렸을 때) 이벤트 리스너
+		    customNavbar.addEventListener('mouseover', function() {
+		        // show-navbar 클래스를 추가하여 네비게이션을 보이게 합니다.        
+		        menucon.style.display= "block";
+		    });
+
+		    // mouseout (마우스를 떼었을 때) 이벤트 리스너
+		    customNavbar.addEventListener('mouseout', function() {
+		        // show-navbar 클래스를 제거하여 네비게이션을 숨깁니다.        
+		    	menucon.style.display= "none";
+		    });
+		}
+		
+			
+	</script>
+	<script>
+	// 1. 기분 선택 상태 관리 (Active Mood Tracking)
+    let selectedMood = null;
+
+    
+    
+    // 현재 날짜 표시 업데이트 (예시)
+    const today = new Date();
+    const dateString = `${today.getFullYear()}년 ${today.getMonth() + 1}월 ${today.getDate()}일 (${['일', '월', '화', '수', '목', '금', '토'][today.getDay()]})`;
+    // .app-card p.text-muted 는 <div class="tab-pane fade" id="write-panel"> 내부에 있는 p 태그를 의미합니다.
+    $('#write-panel .app-card p.text-muted').text(`날짜: ${dateString}`);
+
+
+    // 기분 버튼 선택 시 스타일 변경 및 값 저장
+    $('#diaryMood button').on('click', function() {
+        // 모든 버튼에서 active 클래스 제거
+        $('#diaryMood button').removeClass('active btn-mood-selected');
+        // 선택된 버튼에 active 클래스 추가
+        $(this).addClass('active btn-mood-selected');
+        selectedMood = $(this).data('mood'); // data-mood 속성 값 사용
+    });
+
+ 
+    
+    // 2. 일기 저장 버튼 클릭 이벤트
+    $('#saveDiaryBtn').on('click', function() {
+    	if ($currentDiaryIdx.value==='' || $currentDiaryIdx.value===0) {
+    		// POST 요청으로 저장 API 호출
+            console.log('POST');
+            callSaveDiaryApi();
+        } else {
+        	// PUT 요청으로 수정 API 호출
+            console.log('PUT');
+            callUpdateDiaryApi($currentDiaryIdx.value);
+        }
+        
+    });
+    
+    function callSaveDiaryApi(){
+    	const diaryTitle = $('#diaryTitle').val().trim();
+        const diaryContent = $('#diaryContent').val().trim();
+        const memberId = $('#memberId').val();
+        
+        if (!diaryTitle || !diaryContent) {
+            alert("제목과 오늘의 이야기를 모두 입력해주세요.");
+            return;
+        }
+
+        // 전송할 데이터 객체 구성
+        const dataToSend = {
+        	memberId : memberId,
+            diaryTitle: diaryTitle,
+            diaryContent: diaryContent,            
+            // 파일 첨부 필드가 있다면 여기에 추가 (현재는 null)
+            file1: null,
+            file2: null,
+            file3: null
+        };
+        
+        // 로딩 상태 표시
+        $('#saveDiaryBtn').prop('disabled', true).text('일기 저장 및 AI 분석 중...');
+		//console.log(JSON.stringify(dataToSend));
+        $.ajax({
+            url: "/api/diaries",
+            type: "POST", // 일기 생성을 위한 POST 방식 사용
+            contentType: "application/json", // JSON으로 전송
+            data: JSON.stringify(dataToSend),
+            success: function(savedDiary, status, xhr) {
+                // 성공적인 응답 (일반적으로 201 Created)
+                //console.log("새 일기 저장 완료:", savedDiary);
+                
+                // 10초 대기가 있으므로 적절한 메시지를 표시
+                alert("새로운 일기 저장이 완료되었으며, AI 분석을 요청했습니다. 잠시 후 '통계' 탭에서 결과를 확인해주세요.");
+                
+                // 성공 후 입력 필드 초기화
+                $('#diaryTitle').val('');
+                $('#diaryContent').val('');
+                $('#diaryMood button').removeClass('active btn-mood-selected');
+                selectedMood = null;
+
+                // 통계 탭 등으로 전환 유도 (예시)
+                // $('#stats-tab').tab('show'); 
+            },
+            error: function(xhr, status, error) {
+                console.error("에러 발생:", error);
+                // 서버에서 보낸 에러 메시지(JSON)가 있다면 파싱하여 표시
+                const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : "알 수 없는 오류가 발생했습니다.";
+                alert("일기 저장 중 오류가 발생했습니다: " + errorMsg);
+            },
+            complete: function() {
+                // 버튼 상태 복구
+                $('#saveDiaryBtn').prop('disabled', false).text('일기 저장하기');
+            }
+        });
+    }
+	
+	</script>
+	<script>
+    // ⚠️ [필수 설정] 로그인한 사용자 ID (PK)를 서버 템플릿 엔진을 통해 받아와야 합니다.
+    // 예: Thymeleaf/JSP를 사용하여 <input type="hidden" id="loggedInMemberId" value="123"> 와 같이 추가해야 합니다.
+    // 여기서는 ID를 가진 hidden input이 있다고 가정하고 값을 가져오거나, 임시로 1을 사용합니다.
+    const MEMBER_ID = document.getElementById('memberId') ? 
+                      document.getElementById('memberId').value : 
+                      '1'; // 테스트를 위해 임시로 '1' 사용
+    
+    const DIARY_PAGE_SIZE = 4; // 한 페이지당 일기 개수 (Controller 설정과 일치해야 함)
+
+    // DOM 요소 캐시
+    const $listPanel = document.getElementById('list-panel');
+    const $diaryListContainer = $listPanel.querySelector('.diary-list');
+    
+    // 기존 더미 목록 및 페이징 영역을 비웁니다.
+    $diaryListContainer.innerHTML = '';
+    $diaryListContainer.insertAdjacentHTML('afterend', '<nav aria-label="Diary Pagination" class="mt-4"><ul class="pagination justify-content-center"></ul></nav>');
+    
+    const $paginationNav = $listPanel.querySelector('nav[aria-label="Diary Pagination"] ul');
+    
+    // 검색 입력 필드와 버튼에 ID가 없으므로 쿼리 선택자를 사용하고 ID를 할당합니다.
+    const $keywordSearch = $listPanel.querySelector('.input-group input[type="text"]');
+    const $searchButton = $listPanel.querySelector('.input-group button');
+    $keywordSearch.id = 'keywordSearch'; 
+    $searchButton.id = 'searchButton'; 
+
+    const $yearSearch = document.getElementById('yearSearch');
+    const $monthSearch = document.getElementById('monthSearch');
+    const $daySearch = document.getElementById('daySearch');
+    const $totalDiaryCount = $listPanel.querySelector('p.text-muted');
+    
+ 	// 스크립트 상단에 모달 인스턴스 및 DOM 요소 정의 (Bootstrap 5 가정)
+ 	//const $diaryDetailModal = document.getElementById('diaryDetailModal')
+    const diaryDetailModal = new bootstrap.Modal(document.getElementById('diaryDetailModal'));
+    const $modalTitle = document.getElementById('diaryDetailModalLabel');
+    const $modalDateInfo = document.getElementById('modal-date-info');
+    const $modalContent = document.getElementById('modal-diary-content');
+    const $modalAnalysisResult = document.getElementById('modal-analysis-result');
+    
+ 	// 스크립트 상단 (기존 캐시 영역에 추가)
+    const $writePanel = document.getElementById('write-panel');
+    const $diaryMoodContainer = document.getElementById('diaryMood'); // 기분 선택 버튼 컨테이너
+    
+    const $currentDiaryIdx = document.getElementById('currentDiaryIdx');
+    const $diaryTitle = document.getElementById('diaryTitle');
+    const $diaryContent = document.getElementById('diaryContent');
+    const $dateDisplay = $writePanel.querySelector('p.text-muted'); // 날짜 표시 영역 (예: "날짜: 2025년 10월 24일 (금)")
+    
+    
+    
+    /**
+     * 일기 항목에 클릭 이벤트를 바인딩하고 모달을 띄웁니다.
+     * @param {Array<Object>} diaries - 현재 페이지에 표시된 일기 데이터 목록
+     */
+    function bindDiaryClickEvents(diaries) {
+        const cards = document.querySelectorAll('.diary-item-card');
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                const diaryIdx = this.dataset.idx;
+                const diaryData = diaries.find(d => String(d.diaryIdx) === diaryIdx); // 현재 클릭된 일기 데이터 찾기
+                
+                if (diaryData) {
+                    fillModalWithData(diaryData);
+                    diaryDetailModal.show(); // 모달 표시
+                    
+                }
+            });
+        });
+    }
+
+    // --- 1. 데이터 로드 함수 ---
+
+    /**
+     * 일기 목록을 서버에서 AJAX로 가져와 화면에 그립니다.
+     * @param {number} page - 요청할 페이지 번호 (0부터 시작)
+     */
+    async function loadDiaries(page = 0) {
+        if (!MEMBER_ID) return;
+        alert("로드다이어리");
+        $diaryListContainer.innerHTML = '<p class="text-center text-info py-5">일기 목록을 불러오는 중...</p>';
+
+        const keyword = $keywordSearch.value.trim();
+        const year = $yearSearch.value.trim();
+        const month = $monthSearch.value.trim();
+        const day = $daySearch.value.trim();
+
+        // 쿼리 파라미터 구성
+        const params = new URLSearchParams({
+            page: page,
+            size: DIARY_PAGE_SIZE            
+        });
+        
+        
+        const bodyData = {
+                year: year,
+                month: month,
+                day: day,
+                keyword: keyword
+            };
+
+        const url = `/api/diaries/list/${MEMBER_ID}?${params.toString()}`;
+
+        try {
+        	const response = await fetch(url, {
+                method: 'POST', // ⭐️ POST 메서드 사용
+                headers: {
+                    'Content-Type': 'application/json' // ⭐️ JSON 형식 지정
+                },
+                body: JSON.stringify(bodyData) // ⭐️ 검색 조건을 JSON 문자열로 변환하여 본문에 포함
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP Error: ${response.status}`);
+            }
+            const pageData = await response.json();
+            console.log("pageData content : " + JSON.stringify(pageData.content));
+            // UI 업데이트
+            renderDiaryList(pageData.content);
+            renderPagination(pageData.page);
+            
+            $totalDiaryCount.textContent = `총 ${pageData.page.totalElements}개의 일기가 기록되어 있습니다.`;
+         // ⭐️⭐️⭐️ 새로 추가된 부분: 이벤트 리스너 바인딩 ⭐️⭐️⭐️
+			
+            bindDiaryClickEvents(pageData.content);
+        } catch (error) {
+            console.error("일기 목록 로드 실패:", error);
+            $diaryListContainer.innerHTML = `<p class="text-danger text-center py-5">일기 목록을 불러오는 데 실패했습니다.</p>`;
+            $paginationNav.innerHTML = '';
+        }
+    }
+
+    // --- 2. 목록 렌더링 함수 ---
+
+    /**
+     * 일기 목록 데이터를 HTML로 변환하여 출력합니다.
+     */
+    function renderDiaryList(diaries) {
+        if (diaries.length === 0) {
+            $diaryListContainer.innerHTML = '<p class="text-center text-muted mt-5">검색 조건에 맞는 일기가 없습니다.</p>';
+            return;
+        }
+
+        const html = diaries.map(diary => {
+            // ⭐ 서버 엔티티의 필드명과 일치시켜야 합니다.
+            // aiResultMood 필드가 없으면 기본 '기록' 사용 (실제 구현 시 분석 결과 필드 사용)
+             
+            
+            // 날짜 포맷팅 (2025.10.20 형식으로 맞춤)            
+            const diaryDate = new Date(diary.createdAt).toLocaleDateString('ko-KR', {
+                year: 'numeric', month: '2-digit', day: '2-digit', weekday: "long" , hour: "2-digit" , minute: "2-digit" 
+            }).replace(/\. /g, '.').replace(/\.$/, '');
+            // Note: 날씨 정보는 Diary 엔티티에 weather 필드가 있다면 사용 가능합니다.
+            
+            const moods = [];
+            moods.push(diary.anxietyRatio);
+            moods.push(diary.sadnessRatio)
+            moods.push(diary.joyRatio)
+            moods.push(diary.angerRatio)
+            moods.push(diary.regretRatio);
+            moods.push(diary.hopeRatio);            
+            moods.push(diary.tirednessRatio);
+            moods.push(diary.depressionRatio);
+            moods.push(diary.neutralityRatio);
+            
+            const maxValue = Math.max(...moods); // 전개 구문(...)을 사용하여 배열 요소를 인수로 전달
+            //const mood = diary.aiResultMood || '기록';
+            //console.log("moods = " +JSON.stringify(moods));
+            let mood = '기록';
+         	// 2. 해당 최대값의 첫 번째 위치(인덱스) 찾기
+         	const maxIndex = moods.indexOf(maxValue); 
+         	if(maxIndex==0) {
+         		mood = "불안";
+         	} else if(maxIndex==1) {
+         		mood = "슬픔";
+         	} else if(maxIndex==2) {
+         		mood = "기쁨";
+         	} else if(maxIndex==3) {
+         		mood = "분노";
+         	} else if(maxIndex==4) {
+         		mood = "후회";
+         	} else if(maxIndex==5) {
+         		mood = "희망";
+         	} else if(maxIndex==6) {
+         		mood = "피로";
+         	} else if(maxIndex==7) {
+         		mood = "우울";
+         	} else if(maxIndex==8) {         	
+         		mood = "중립";
+         	} else {
+         		mood = "기록";
+         	}
+         	const moodEmoji = getMoodEmoji(mood);         	
+            return `
+                <div class="diary-item-card mood-${mood}" data-idx="${diary.diaryIdx}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="fw-bold mb-1">${diary.diaryTitle}</h5>
+                        <span class="diary-mood-tag mood-${mood}">${mood} ${moodEmoji}</span>
+                    </div>
+                    <p class="text-muted mb-2" style="font-size: 0.9em;">${diaryDate}</p>
+                    <p class="mb-0 text-truncate">${diary.diaryContent}</p>
+                </div>
+            `;
+        }).join('');
+
+        $diaryListContainer.innerHTML = html;
+    }
+
+    // --- 3. 페이징 렌더링 함수 ---
+
+    /**
+     * API에서 받은 페이징 정보를 기반으로 Pagination UI를 생성합니다.
+     */
+    function renderPagination(pageData) {
+    	const { number, totalPages } = pageData; // first와 last는 undefined일 수 있음.
+
+        // ⭐️ first와 last를 number와 totalPages를 기반으로 계산하여 대체합니다.
+        const first = (number === 0);
+        const last = (number === totalPages - 1);        
+        $paginationNav.innerHTML = '';
+        if (totalPages <= 1) return;
+
+        // 페이지 블록 설정 (5개)
+        const displayPageCount = 5;
+        let startPage = Math.max(0, number - Math.floor(displayPageCount / 2));
+        let endPage = Math.min(totalPages - 1, startPage + displayPageCount - 1);
+        
+        if (endPage - startPage < displayPageCount - 1) {
+            startPage = Math.max(0, endPage - displayPageCount + 1);
+        }
+
+        // '이전' 버튼
+        const prevClass = first ? 'page-item disabled' : 'page-item';
+        $paginationNav.innerHTML += `<li class="${prevClass}"><a class="page-link" href="#" data-page="${number - 1}">이전</a></li>`;
+
+        // 페이지 번호
+        for (let i = startPage; i <= endPage; i++) {
+            const activeClass = (i === number) ? 'page-item active' : 'page-item';
+            $paginationNav.innerHTML += `
+                <li class="${activeClass}">
+                    <a class="page-link" href="#" data-page="${i}">${i + 1}</a>
+                </li>
+            `;
+        }
+
+        // '다음' 버튼
+        const nextClass = last ? 'page-item disabled' : 'page-item';
+        $paginationNav.innerHTML += `<li class="${nextClass}"><a class="page-link" href="#" data-page="${number + 1}">다음</a></li>`;
+    }
+
+    /**
+     * 감정 이름에 따른 이모티콘을 반환합니다. (예시)
+     */
+    function getMoodEmoji(mood) {
+        switch (mood) {
+            case '기쁨': return '😊';
+            case '불안': return '😟';
+            case '분노': return '😡';
+            case '슬픔': return '😥';
+            case '후회': return '😔';
+            case '희망': return '✨';
+            case '중립': return '😐';
+            case '피로': return '😴';
+            case '우울': return '💙';
+            
+            default: return '🗒️';
+        }
+    }
+    
+    // --- 4. 이벤트 리스너 ---
+
+    // 1. 페이징 버튼 클릭 시
+    $listPanel.addEventListener('click', (e) => {
+        const target = e.target.closest('.page-link');
+        if (target) {
+            e.preventDefault();
+            const page = target.dataset.page;
+            if (page !== undefined && !target.closest('.page-item').classList.contains('disabled')) {
+                loadDiaries(parseInt(page));
+            }
+        }
+    });
+
+    // 2. 검색 및 날짜 필터 변경/클릭 시 첫 페이지(0) 로드
+    const searchInputs = [$yearSearch, $monthSearch, $daySearch, $keywordSearch];
+    
+    // 날짜/키워드 입력 필드 변경 시
+    searchInputs.forEach(input => {
+        if (input) {
+            input.addEventListener('change', () => loadDiaries(0));
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    loadDiaries(0);
+                }
+            });
+        }
+    });
+
+    // 검색 버튼 클릭 시
+    if ($searchButton) {
+    	alert("검색버튼");
+        $searchButton.addEventListener('click', () => loadDiaries(0));
+    }
+
+
+    // --- 5. 초기 로드 ---
+    document.addEventListener('DOMContentLoaded', () => {
+        if (MEMBER_ID) {
+            // DOMContentLoaded 시점이 아닌, 탭이 활성화되는 시점에 호출하는 것이 더 효율적일 수 있습니다.
+            // 여기서는 DOM 로드 후 바로 호출합니다.
+            //loadDiaries(0); 
+            loadTodayDiary();
+        } else {
+            $diaryListContainer.innerHTML = '<p class="text-danger text-center">로그인한 사용자 정보를 찾을 수 없습니다.</p>';
+        }
+    });
+    
+    function fillModalWithData(diary) {
+        // 1. 날짜 포맷팅 (길게 상세 정보 표시)
+        const dateString = diary.createdAt.replace(/\+00:00$/, 'Z');
+        const dateObject = new Date(dateString); 
+        
+        const detailedDate = dateObject.toLocaleString('ko-KR', {
+            year: 'numeric', month: '2-digit', day: '2-digit', 
+            weekday: "long", hour: "2-digit", minute: "2-digit", second: "2-digit"
+        });
+        
+        // 2. 모달 DOM 요소에 데이터 채우기
+        $modalTitle.textContent = diary.diaryTitle;
+        $modalDateInfo.innerHTML = `
+            <span class="badge bg-primary me-2">작성자: ${diary.memberName || '미확인'}</span>
+            <span class="badge bg-secondary">${detailedDate}</span>
+        `;
+        $modalContent.textContent = diary.diaryContent; // 내용을 텍스트로 삽입
+        
+     	// 3. AI 분석 결과 채우기
+        let analysisHtml = '<p class="text-muted">분석 결과가 없습니다.</p>';
+        if (diary.modelName) { // modelName 필드가 있으면 분석 결과가 있다고 가정
+            analysisHtml = `
+                <p><strong>모델:</strong> ${diary.modelName}</p>                
+                <h6>감정 비율 (%)</h6>
+                <ul class="list-unstyled d-flex flex-wrap">
+                    <li class="me-3">불안: <strong>${diary.anxietyRatio || 0}%</strong></li>
+                    <li class="me-3">슬픔: <strong>${diary.sadnessRatio || 0}%</strong></li>
+                    <li class="me-3">기쁨: <strong>${diary.joyRatio || 0}%</strong></li>
+                    <li class="me-3">분노: <strong>${diary.angerRatio || 0}%</strong></li>
+                    <li class="me-3">후회: <strong>${diary.regretRatio || 0}%</strong></li>
+                    <li class="me-3">희망: <strong>${diary.hopeRatio || 0}%</strong></li>
+                    <li class="me-3">중립: <strong>${diary.neutralityRatio || 0}%</strong></li>
+                    <li class="me-3">피곤: <strong>${diary.tirednessRatio || 0}%</strong></li>
+                    <li class="me-3">우울: <strong>${diary.depressionRatio || 0}%</strong></li>
+                </ul>
+            `;
+        }
+        $modalAnalysisResult.innerHTML = analysisHtml;
+    }
+    
+ // --- 6. 오늘 일기 로드 및 폼 채우기 함수 ---
+
+    let currentDiaryIdx = null; // 수정 시 사용할 기존 일기의 ID (없으면 null)
+
+    /**
+     * 오늘 작성된 일기가 있는지 확인하고 폼을 채웁니다.
+     */
+    async function loadTodayDiary() {
+        if (!MEMBER_ID || MEMBER_ID === '1') return; // 테스트 ID '1'일 경우 요청하지 않음
+
+        try {
+            const url = `/api/diaries/today/${MEMBER_ID}`;
+            const response = await fetch(url, { method: 'GET' });
+
+            if (response.ok) {
+                const diaryData = await response.json();
+                fillWriteForm(diaryData); // 데이터가 있으면 폼 채우기
+                console.log("오늘의 일기 데이터 로드 완료.");
+            } else if (response.status === 404) {
+                // 일기가 없는 경우, 폼 초기화 상태로 유지
+                console.log("오늘 작성된 일기가 없습니다. 새 일기 작성.");
+                resetWriteForm();
+            } else {
+                throw new Error(`HTTP Error: ${response.status}`);
+            }
+        } catch (error) {
+            console.error("오늘 일기 로드 실패:", error);
+        }
+    }
+
+    /**
+     * API에서 받은 데이터로 일기 작성 폼을 채우고 수정 모드로 설정합니다.
+     */
+    function fillWriteForm(diary) {
+        // 1. 일기 ID 저장 (수정/저장 버튼 로직에 사용됨)
+        $currentDiaryIdx.value = diary.diaryIdx;
+        
+        // 2. 제목과 내용 채우기
+        $diaryTitle.value = diary.diaryTitle;
+        $diaryContent.value = diary.diaryContent;
+        
+        // 3. 기분 버튼 선택 (분석된 주요 감정 또는 사용자가 직접 기록한 감정)
+        // 현재 DTO에는 사용자가 선택한 감정 필드(예: selectedMood)가 없다고 가정하고,
+        // *분석된 감정* 중 가장 높은 비율을 가진 감정을 선택하는 로직을 사용하거나,
+        // (더 정확하게는) 서버에서 저장된 `selectedMood` 값을 받아와야 합니다.
+        
+        // **임시: 기분 선택 로직 (필요시 구현)**
+        // const selectedMood = getDominantMood(diary); // 가장 높은 비율 감정 추출 함수 가정
+        // selectMoodButton(selectedMood); // 해당 버튼을 활성화하는 함수 가정
+        
+        // 4. 저장 버튼 텍스트 변경 (수정 모드 알림)
+        const $saveButton = document.getElementById('saveDiaryBtn');
+        if ($saveButton) {
+            $saveButton.textContent = '일기 수정하기';
+            $saveButton.classList.add('btn-warning');
+            $saveButton.classList.remove('btn-dark');
+        }
+    }
+
+    /**
+     * 폼 초기화 함수 (새 일기 작성 모드로 전환)
+     */
+    function resetWriteForm() {
+    	$currentDiaryIdx.value = null;
+        $diaryTitle.value = '';
+        $diaryContent.value = '';
+        
+        // 기분 버튼 초기화 로직 (모든 active 클래스 제거) 필요
+        
+        const $saveButton = document.getElementById('saveDiaryBtn');
+        if ($saveButton) {
+            $saveButton.textContent = '일기 저장하기';
+            $saveButton.classList.remove('btn-warning');
+            $saveButton.classList.add('btn-dark');
+        }
+    }
+    
+ // --------------------------------------------------------------------------
+ // ⭐️ 일기 수정 (PUT)
+ // --------------------------------------------------------------------------
+ async function callUpdateDiaryApi(diaryIdx) {
+     if (!diaryIdx) {
+         console.error("수정할 일기 ID(diaryIdx)가 없습니다.");
+         return;
+     }
+     
+     const diaryTitle = $('#diaryTitle').val().trim();
+     const diaryContent = $('#diaryContent').val().trim();
+     const memberId = $('#memberId').val();
+     
+     if (!diaryTitle || !diaryContent) {
+         alert("제목과 오늘의 이야기를 모두 입력해주세요.");
+         return;
+     }
+
+     // 전송할 데이터 객체 구성
+     const dataToSend = {
+     	memberId : memberId,
+         diaryTitle: diaryTitle,
+         diaryContent: diaryContent,            
+         // 파일 첨부 필드가 있다면 여기에 추가 (현재는 null)
+         file1: null,
+         file2: null,
+         file3: null
+     };
+     
+     // 로딩 상태 표시
+     $('#saveDiaryBtn').prop('disabled', true).text('일기 저장 및 AI 분석 중...');
+		//console.log(JSON.stringify(dataToSend));
+     $.ajax({
+         url: `/api/diaries/${diaryIdx}`,
+         type: "PUT", // 일기 생성을 위한 POST 방식 사용
+         contentType: "application/json", // JSON으로 전송
+         data: JSON.stringify(dataToSend),
+         success: function(savedDiary, status, xhr) {
+             // 성공적인 응답 (일반적으로 201 Created)
+             //console.log("새 일기 저장 완료:", savedDiary);
+             
+             // 10초 대기가 있으므로 적절한 메시지를 표시
+             alert("새로운 일기 저장이 완료되었으며, AI 분석을 요청했습니다. 잠시 후 '통계' 탭에서 결과를 확인해주세요.");
+             
+             // 성공 후 입력 필드 초기화
+             $('#diaryTitle').val('');
+             $('#diaryContent').val('');
+             $('#diaryMood button').removeClass('active btn-mood-selected');
+             selectedMood = null;
+
+             // 통계 탭 등으로 전환 유도 (예시)
+             // $('#stats-tab').tab('show'); 
+         },
+         error: function(xhr, status, error) {
+             console.error("에러 발생:", error);
+             // 서버에서 보낸 에러 메시지(JSON)가 있다면 파싱하여 표시
+             const errorMsg = xhr.responseJSON ? xhr.responseJSON.message : "알 수 없는 오류가 발생했습니다.";
+             alert("일기 저장 중 오류가 발생했습니다: " + errorMsg);
+         },
+         complete: function() {
+        	 
+        	 alert('📝 일기가 성공적으로 수정되었습니다.');
+             
+             // 수정 후, 수정된 내용을 폼에 다시 반영하거나 (loadTodayDiary)
+             // 사용자에게 메시지를 보여주고 폼을 유지합니다.
+             loadTodayDiary(); 
+             // 버튼 상태 복구
+             $('#saveDiaryBtn').prop('disabled', false).text('일기 저장하기');
+         }
+     });
+ }
+</script>
+	<script>
+	
+		// 폼 요소 및 버튼 변수 정의 (기존 코드를 따름)
+		const $form = document.getElementById('registerForm');
+		const $inputId = document.getElementById('inputId');
+		const $inputName = document.getElementById('inputName');
+		const $inputPhone = document.getElementById('inputPhone');
+		const $inputEmail = document.getElementById('inputEmail');
+		const $zipCode = document.getElementById('zipCode');
+		const $streetAdr = document.getElementById('streetAdr');
+		const $inputAddressDetail = document.getElementById('inputAddressDetail');
+		const $roleSelect = document.getElementById('roleSelect');
+		const $doctorInfoSection = document.getElementById('doctorInfoSection');
+		
+		// 의사 정보 관련 필드 (수정 시 필요)
+		const $hospNameDisplay = document.getElementById('hospNameDisplay');
+		const $hospIdx = document.getElementById('hospIdx');
+		const $inputSpecialty = document.getElementById('inputSpecialty');
+
+		// 비밀번호 필드 (수정 시에는 보통 비어있고, 입력 시에만 업데이트됨)
+		const $password = document.getElementById('password');
+		const $passwordConfirm = document.getElementById('passwordConfirm');
+		
+		
+		const roleSelect = document.getElementById('roleSelect');
+		const doctorInfoSection = document.getElementById('doctorInfoSection');
+		const passwordInput = document.getElementById('password');
+		const passwordConfirmInput = document.getElementById('passwordConfirm');
+		const passwordMatchText = document.getElementById('passwordMatchText');
+		const newHospitalId = document.getElementById('newHospitalId');
+		const newHospitalName = document.getElementById('newHospitalName');
+		const newHospitalTel = document.getElementById('newHospitalTel');
+		const newHospitalZipCode = document.getElementById('newHospitalZipCode');
+		const newHospitalAddr1 = document.getElementById('newHospitalAddr1');
+		const newHospitalAddr2 = document.getElementById('newHospitalAddr2');
+		// 약관 동의 관련 요소
+		const agreeAllCheckbox = document.getElementById('agreeAll');
+		const allAgreementCheckboxes = document.querySelectorAll('.agreement-checkboxes input[type="checkbox"]');
+		// 모달 관련 요소
+		const openHospitalModalBtn = document.getElementById('openHospitalModalBtn');
+		const hospitalModal = document.getElementById('hospitalModal');
+		const closeHospitalModalBtns = document.querySelectorAll('#hospitalModal .close-button, #closeHospitalModalBtn');
+		const openAddHospitalFormBtn = document.getElementById('openAddHospitalFormBtn');
+		const newHospitalForm = document.getElementById('newHospitalForm');
+		const cancelAddHospitalBtn = document.getElementById('cancelAddHospitalBtn');
+		
+		// ⭐️⭐️ 새로 추가된 병원 검색/적용 관련 요소 ⭐️⭐️
+		const searchHospitalBtn = document.getElementById('searchHospitalBtn');
+		const hospitalSearchResults = document.getElementById('hospitalSearchResults');
+		const hospitalNameInput = document.getElementById('hospNameDisplay');
+		const hospitalIdInput = document.getElementById('hospIdx');
+	
+		// ⭐️ 초기 로드 시 모달을 명시적으로 숨김 (유지)
+	  	hospitalModal.style.display = 'none';	  	
+	
+	  	// --- 프로필 이미지 업로드 (유지) ---
+	  	const profileImageContainer = document.getElementById('profileImageContainer');
+	  	const profileImageUpload = document.getElementById('profileImageUpload');
+
+	   profileImageContainer.addEventListener('click', () => {
+	       profileImageUpload.click();
+	   });
+
+	   profileImageUpload.addEventListener('change', (event) => {
+	       const file = event.target.files[0];
+	       if (file) {
+	           const reader = new FileReader();
+	           reader.onload = function(e) {
+	               profileImageContainer.querySelector('.profile-image').src = e.target.result;
+	           };
+	           reader.readAsDataURL(file);
+	       }
+	   });
+
+	   // --- 역할 선택에 따른 '의사 정보' 섹션 토글 (유지) ---
+	   function toggleDoctorInfo() {
+	       if (roleSelect.value === 'DOCTOR') {
+	           doctorInfoSection.style.display = 'block';
+	       } else {
+	           doctorInfoSection.style.display = 'none';
+	       }
+	   }
+	   roleSelect.addEventListener('change', toggleDoctorInfo);
+	   toggleDoctorInfo();
+
+	   function checkPasswordMatch() {
+	       const password = passwordInput.value;
+	       const confirmPassword = passwordConfirmInput.value;
+
+	       if (confirmPassword === '') {
+	           passwordMatchText.textContent = '';
+	           // 초기 메시지는 회색 도움말 텍스트와 구별되므로 색상 초기화는 불필요
+	           return;
+	       }
+
+	       if (password === confirmPassword) {
+	           passwordMatchText.textContent = '비밀번호가 일치합니다.';
+	           // ⭐️ 화면 설계서에 가깝게 파란색 계열로 변경 ⭐️
+	           passwordMatchText.style.color = '#007bff'; 
+	       } else {
+	           passwordMatchText.textContent = '비밀번호가 일치하지 않습니다.';
+	           // ⭐️ 빨간색으로 변경 ⭐️
+	           passwordMatchText.style.color = '#dc3545'; 
+	       }
+	   }
+	   passwordInput.addEventListener('keyup', checkPasswordMatch);
+	   passwordConfirmInput.addEventListener('keyup', checkPasswordMatch);
+
+	   closeHospitalModalBtns.forEach(btn => {
+	       btn.addEventListener('click', () => {
+	           hospitalModal.style.display = 'none';
+	           newHospitalForm.style.display = 'none';
+	       });
+	   });
+
+	   window.addEventListener('click', (event) => {
+	       if (event.target == hospitalModal) {
+	           hospitalModal.style.display = 'none';
+	           newHospitalForm.style.display = 'none';
+	       }
+	   });
+
+	   // '새 병원 정보 등록' 버튼 클릭 시 폼 표시 (유지)
+	   openAddHospitalFormBtn.addEventListener('click', () => {
+		   newHospitalId.value = ''
+           newHospitalName.value = ''
+           newHospitalZipCode.value= ''
+           newHospitalAddr1.value= ''
+           newHospitalAddr2.value= ''
+           newHospitalTel.value = ''
+	       newHospitalForm.style.display = 'block';
+	   });
+
+	   cancelAddHospitalBtn.addEventListener('click', () => {
+	       newHospitalForm.style.display = 'none';
+	   });
+
+	</script>
+	<script>
+	// script.js
+	$.fn.serializeObject = function() {
+		var obj = new Object();
+		var arr = this.serializeArray();
+		arr.forEach(function(data, index) {
+			obj[data.name] = data.value;
+		})
+		return obj;
+	}
+	
+	
+	
+		let isIdAvailable = false;
+		let isEmailAvailable = true;
+        
+        // **새로 추가된 변수**
+    	let isDoctor = false;
+        
+        // 아이디 중복 체크 함수
+       	let checkId = () => {
+       		const id = $('#inputId').val();       		
+       		$.ajax({
+       			url    : "/api/members/checkId",
+       			method : "get",      
+       			data   : {userId : id},
+       			success: function(response){
+       				if(!response){
+       					// 아이디가 중복 됨
+       					$("#idMessage").text("아이디가 중복되었습니다.").css({'color':'blue', 'font-weight':'normal'});
+       					isIdAvailable = false;
+       				} else {
+       					// 아이디가 중복되지 않음
+       					$("#idMessage").text("사용 가능한 아이디입니다.").css({'color':'red', 'font-weight':'normal'});
+       					isIdAvailable = true;
+       					
+       				}
+       			},
+       			error  : function(error){
+       				// 통신 실패
+       				$("#idMessage").text("통신에러");
+       			}       			
+       		});
+        }
+       	
+       	let checkEmail = () => {
+       		const email = $('#inputEmail').val();       		
+       		
+       		$.ajax({
+       			url    : "/api/members/checkEmail",
+       			method : "get",
+       			data   : {email : email},
+       			success: function(response){
+       				if(!response){
+       					// 이메일이 중복 됨
+       					$("#emailMessage").text("이메일이 중복되었습니다.").css({'color':'blue', 'font-weight':'normal'});
+       					isEmailAvailable = false;
+       				} else {
+       					// 이메일이 중복되지 않음
+       					$("#emailMessage").text("사용 가능한 이메일입니다.").css({'color':'red', 'font-weight':'normal'});
+       					isEmailAvailable = true;
+       					
+       				}
+       			},
+       			error  : function(error){
+       				// 통신 실패
+       				$("#emailMessage").text("통신에러");
+       			}       			
+       		});
+        }
+        // 폼 태그 제출 검토
+        $('#regBtn').on('click', function(e){        	
+        	e.preventDefault();
+        	// 2. 비밀번호 일치 확인
+        	const pw = $('#password').val();
+        	const pwConfirm = $('#passwordConfirm').val();
+        	if(pw.length>0 && pwConfirm.length>0 ){
+	        	if(pw !== pwConfirm) { 
+	        		e.preventDefault();
+		        	alert("비밀번호가 서로 일치하지 않습니다.");	     
+		        	return;
+		        }
+        	}
+        	
+        	// 3. 전화번호 형식 확인 (기존 함수는 반환값만 있고 호출이 없었음)
+        	if (!isHyphenPhoneNumber($('#inputPhone').val())) {
+                e.preventDefault();
+                alert("휴대전화번호 형식을 확인해 주세요. (010-XXXX-XXXX)");
+                return;
+            }
+        	
+        	
+        	
+        	if(!isEmailAvailable){ // 중복 체크 결과 확인
+        		e.preventDefault();
+        		// 4. 이메일 유효성 및 중복 확인
+            	if(!validateEmail()){ // validateEmail()이 false 반환하면 형식 오류
+            		e.preventDefault();
+    	        	alert("유효한 이메일 주소를 입력해 주세요.");
+    	        	return;
+    	        }
+	        }
+            
+            // 5. DOCTOR 필드 필수 검사 추가
+            if (isDoctor) {
+                if ($('#hospIdx').val() === '' || $('#inputSpecialty').val() === '') {
+                    e.preventDefault();
+                    alert("의사 회원은 병원 선택과 전문 분야 입력이 필수입니다.");
+                    return;
+                }
+            }
+        	// 6. 마케팅 정보 동의 처리
+        	if($('#checkTerms3').is(':checked')) {
+        		document.getElementById('agreements').value = "Y";
+        	} else {
+        		document.getElementById('agreements').value = "N";
+        	}
+        	
+        	const form = document.getElementById('registerForm');
+        	
+        	// 1. FormData 객체를 폼 요소로부터 직접 생성합니다.
+        	// 이렇게 하면 일반 필드와 파일 필드가 모두 포함됩니다.
+        	const formData = new FormData(form);
+        	formData.append('id',MEMBER_ID);
+        	formData.append('role',"USER");
+        	       
+        	 $.ajax({
+        		  url: "/api/members/update",
+        		  type: "PUT",
+        		  processData: false,
+        		  contentType: false,
+        		  data: formData,
+        		  success: function(savedMember, status, xhr) {
+        		    if (xhr.status === 201) {
+        		    	alert(`회원 정보 수정 완료! 회원 이름: ${savedMember.name}`);
+        		    	loadMemberData(`${savedMember.id}`);
+        		    } else {
+						alert("회원 수정 실패: " + xhr.status);
+        		    }
+        		  },
+        		  error: function(xhr, status, error) {
+        		    console.error("에러 발생:", error);
+        		    alert("정보 수정 중 오류가 발생했습니다.");
+        		  }
+        		}); 
+        });        
+        // 주소 검색
+        $("#buttonPostcodeSearch").on("click",function (e) {
+        	e.preventDefault();
+        	new daum.Postcode({
+                oncomplete: function(data) {
+                	// 우편번호
+                    $("#zipCode").val(data.zonecode);
+                    // 도로명 주소
+                    $("#streetAdr").val(data.roadAddress);
+                }
+            }).open();      	
+        });
+        
+        // 전화번호 형식 검사
+        function isHyphenPhoneNumber(phone) {  
+        	const regex = /^0\d{1,2}-\d{3,4}-\d{4}$/;  
+        	return regex.test(phone);
+        }
+        
+        // 이메일 형식 검사
+        function emailCheck(email_address){     
+        	email_regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+        	if(!email_regex.test(email_address)){ 
+        		return false; 
+        	}else{
+        		return true;
+        	}
+        }
+        
+        // 이메일 유효성 검사 및 중복 체크 함수 호출
+        function validateEmail() {
+        	var emailInput = document.getElementById('inputEmail');
+        	var resultDiv = document.getElementById('emailMessage');
+
+        	var email = emailInput.value;
+
+        	if (emailCheck(email)) {
+        		resultDiv.innerHTML = '유효한 이메일 주소입니다.';
+        		checkEmail(); // 유효하면 중복 체크 호출
+        		return true;
+        	} else {
+        		resultDiv.innerHTML = '유효하지 않은 이메일 주소입니다.';
+        		isEmailAvailable = false; // 형식 오류 시 중복 가능성도 false로
+        		return false;
+        	}
+        }
+        
+        // =======================================================
+        // ** [병원 선택/추가 팝업] 및 [역할 선택] 로직 추가 **
+        // =======================================================
+        
+        // 역할 변경 시 필드 표시/숨김
+        $('#roleSelect').on('change', function() {
+            const role = $(this).val();
+            const $doctorFields = $('#doctorInfoSection');
+            const $hospIdx = $('#hospIdx');
+            const $inputSpecialty = $('#inputSpecialty');
+
+            if (role === 'DOCTOR') {
+                $doctorFields.slideDown(200); // 의사 필드 표시
+                isDoctor = true;
+                // 필수 속성은 폼 제출 시 자바스크립트로 검증
+
+            } else {
+                $doctorFields.slideUp(200); // 의사 필드 숨김
+                isDoctor = false;
+                
+                // USER로 변경 시 불필요한 값 제출 방지를 위해 비워줍니다.
+                $hospIdx.val(''); 
+                $('#hospNameDisplay').val('');
+                $inputSpecialty.val('');
+            }
+        }).trigger('change'); // 페이지 로드 시 초기 상태 적용
+
+        // [병원 검색 버튼] 클릭 이벤트
+        $('#buttonHospitalSearch').on('click', function(e) {
+            e.preventDefault();
+            const url = '/hospital/searchPopup'; // HospitalPageController의 URL
+            const name = 'hospitalSearchPopup';
+            const features = 'width=650,height=750,scrollbars=yes';
+            window.open(url, name, features);
+        });
+
+        // [콜백 함수] 팝업에서 선택된 병원 정보를 받기 위한 함수
+        // 팝업 창에서 window.opener.setHospitalSelection(id, name)을 호출합니다.
+        window.setHospitalSelection = function(hospIdx, hospName) {
+            $('#hospNameDisplay').val(hospName); // 사용자에게 표시되는 병원 이름
+            $('#hospIdx').val(hospIdx); // 실제로 서버에 전송될 병원 PK
+        };
+        
+     // 1. 병원 검색 (REST API 호출)
+        function searchHospitals() {
+            const name = $('#hospitalSearchInput').val();
+            if (!name.trim()) {
+                $('#hospitalSearchResults').html('<p class="text-danger text-center">검색할 병원 이름을 입력해주세요.</p>');
+                return;
+            }
+
+            fetch('/api/hospitals/search?name=' + encodeURIComponent(name))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 올바르지 않습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => displayResults(data))
+                .catch(error => {
+                    console.error('Error fetching hospitals:', error);
+                    $('#hospitalSearchResults').html('<p class="text-danger text-center">병원 검색 중 오류가 발생했습니다.</p>');
+                });
+        }
+     // 2. 검색 결과 표시
+        function displayResults(hospitals) {
+            const resultsDiv = $('#hospitalSearchResults');
+            resultsDiv.empty(); // 기존 결과 비우기
+            
+            if (hospitals.length === 0) {
+                resultsDiv.append('<p class="text-danger text-center">검색할 병원 이름을 입력해주세요.</p>');
+                return;
+            }
+
+            hospitals.forEach(hospital => {
+                const item = `
+                	<div class="hospital-item">                        
+                		<p class="hospital-name">${hospital.hospName}</p>
+                		<p class="hospital-address">${hospital.addr1 ? hospital.addr1 : '주소 정보 없음'}</p>
+                		<div class="item-actions">
+							<button class="btn btn-success select-hospital-btn"	data-hospital-id="${hospital.hospIdx}" data-hospital-name="${hospital.hospName.replace(/'/g, "\\'")}">선택</button>
+							<button class="btn btn-info edit-hospital-btn" data-hospital-id="${hospital.hospIdx}">수정</button>
+                       	</div>                        
+                    </div>
+                `;
+                resultsDiv.append(item);
+            });
+        }
+	</script>
+	<script>
+        // 주소 검색 함수
+        $("#searchNewHospitalZipCodeBtn").on("click", function(e) {
+            e.preventDefault();
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    $("#newHospitalZipCode").val(data.zonecode);
+                    $("#newHospitalAddr1").val(data.roadAddress);
+                    $("#newHospitalAddr2").focus(); // 상세 주소 입력으로 포커스
+                }
+            }).open();
+        });
+
+        // 폼 제출 이벤트 처리
+        $('#saveNewHospitalBtn').on('click', function(e) {
+            e.preventDefault();          
+            
+            const hospitalData = {
+            	hostIdx: newHospitalId.value,
+                hospName: newHospitalName.value,
+                zipCode: newHospitalZipCode.value,
+                addr1: newHospitalAddr1.value,
+                addr2: newHospitalAddr2.value,
+                tel: newHospitalTel.value
+            };
+            //console.log("saveNewHospitalBtn hospitalData : " + JSON.stringify(hospitalData));
+            // 필드 유효성 검사 (간단하게)
+            if (!hospitalData.hospName || !hospitalData.tel || !hospitalData.zipCode || !hospitalData.addr1) {
+                alert('필수 정보를 모두 입력해주세요.');
+                return;
+            }            
+            
+            if(!hospitalData.hostIdx || hospitalData.hostIdx==0 ){
+            	fetch('/api/hospitals/save', { // HospitalController의 POST 엔드포인트
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(hospitalData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // 서버에서 발생한 오류 메시지를 받을 수 있다면 더 상세하게 처리
+                        return response.json().then(err => { throw new Error(err.message || '병원 등록 실패'); });
+                    }
+                    return response.json();
+                })
+                .then(newHospital => {
+    	            alert(`'${newHospital.hospName}' 병원이 성공적으로 등록되었습니다.`);
+    	            searchHospitals();
+    	            newHospitalForm.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('병원 등록 중 오류 발생:', error);
+                    alert('병원 등록 중 오류가 발생했습니다: ' + error.message);
+                });
+            } else {
+            	let hospitalIdToEdit = hospitalData.hostIdx;
+            	fetch(`/api/hospitals/${hospitalIdToEdit}`, { // HospitalController의 POST 엔드포인트
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(hospitalData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // 서버에서 발생한 오류 메시지를 받을 수 있다면 더 상세하게 처리
+                        return response.json().then(err => { throw new Error(err.message || '병원 수정 실패'); });
+                    }
+                    return response.json();
+                })
+                .then(newHospital => {
+    	            alert(`'${newHospital.hospName}' 병원이 성공적으로 수정되었습니다.`);
+    	            searchHospitals();
+    	            newHospitalForm.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('병원 수정 중 오류 발생:', error);
+                    alert('병원 수정 중 오류가 발생했습니다: ' + error.message);
+                });
+            }
+        });
+        
+     	// ⭐️⭐️ 병원 검색 버튼 클릭 시 검색 결과 표시 ⭐️⭐️
+		searchHospitalBtn.addEventListener('click', function() {
+            // CSS에서 display: none; 되어 있던 요소를 보이게 합니다.
+    		searchHospitals();
+            hospitalSearchResults.style.display = 'block'; 
+        });
+     	
+		 // --- 병원 검색 및 추가 모달 제어 (유지) ---
+	    openHospitalModalBtn.addEventListener('click', () => {
+			//alert("병원 검색 모달");
+			$("#newHospitalId").val(0);
+	        hospitalModal.style.display = 'flex';
+	    });
+		 
+	 	// ⭐️⭐️ 병원 선택 버튼 클릭 시 메인 폼에 적용 ⭐️⭐️
+	    hospitalSearchResults.addEventListener('click', function(event) {	    	
+	        if (event.target.classList.contains('select-hospital-btn')) {
+	            const hospitalItem = event.target.closest('.hospital-item');
+	            
+	            // 병원 이름과 ID (data- 속성 사용) 가져오기
+	            const selectedHospitalName = hospitalItem.querySelector('.hospital-name').textContent;
+	            const selectedHospitalId = event.target.dataset.hospitalId;
+	            // 메인 폼에 적용
+	            hospitalNameInput.value = selectedHospitalName;
+	            hospitalIdInput.value = selectedHospitalId;
+	            
+	            // 모달 닫기
+	            hospitalModal.style.display = 'none';
+	            newHospitalForm.style.display = 'none';
+	            
+	            //alert(`"${selectedHospitalName}" 병원을 선택했습니다.`);
+	        } else if (event.target.classList.contains('edit-hospital-btn')) {
+	            const hospitalIdToEdit = event.target.dataset.hospitalId;
+	            
+	            
+	            //alert(`병원 ID ${hospitalIdToEdit} 수정 폼을 띄웁니다.`);
+	            newHospitalForm.style.display = 'block'; 
+	            
+	            $.ajax({
+	                url: `/api/hospitals/${hospitalIdToEdit}`, // URL 수정
+	                method: 'GET',
+	                contentType: 'application/json', // GET 요청에서는 보통 생략하지만 명확히 지정
+	                dataType: 'json', // 서버로부터 받을 데이터 형식
+	                
+	                success: function(hospitalData) {
+	                    // HTTP 상태 코드가 200 (OK)일 때 실행됩니다.
+	                    
+	                    // ⭐️⭐️ 객체의 속성값을 직접 할당합니다. ⭐️⭐️
+	                    if (typeof newHospitalId !== 'undefined') {
+	                        newHospitalId.value = hospitalData.hospIdx || '';
+	                    }
+	                    newHospitalName.value = hospitalData.hospName || '';
+	                    newHospitalTel.value = hospitalData.tel || '';
+	                    newHospitalZipCode.value = hospitalData.zipCode || '';
+	                    newHospitalAddr1.value = hospitalData.addr1 || '';
+	                    newHospitalAddr2.value = hospitalData.addr2 || '';
+
+	                    // 폼과 모달을 보이게 합니다.
+	                    // 병원 수정 시에는 newHospitalForm을 먼저 보여야 합니다.
+	                    if (typeof newHospitalForm !== 'undefined') {
+	                         newHospitalForm.style.display = 'block'; 
+	                    }
+	                    hospitalModal.style.display = 'flex';
+	                },
+	                
+	                error: function(xhr, status, error) {
+	                    // 서버 응답이 4xx, 5xx 에러이거나 네트워크 오류 시 실행됩니다.
+	                    console.error('병원 조회 중 오류 발생: ', status, error);
+	                    
+	                    let errorMessage = '병원 조회 중 오류가 발생했습니다.';
+	                    if (xhr.responseJSON && xhr.responseJSON.message) {
+	                         errorMessage = xhr.responseJSON.message;
+	                    }
+	                    alert(errorMessage);
+	                }
+	            });
+	        }
+	    });
+    </script>
+	<script>
+    /**
+     * 1. 회원 정보 로드 및 폼에 설정하는 함수
+     * @param {number} memberId - 조회할 회원의 ID (세션 등에서 가져와야 함)
+     */
+    async function loadMemberData(memberId) {
+        // 실제 API 엔드포인트로 변경해야 합니다.
+        console.log("memberId : " + memberId);
+        const apiUrl = `/api/members/info/${memberId}`; 
+
+        try {
+            const response = await fetch(apiUrl);
+            
+            if (!response.ok) {
+                throw new Error('회원 정보를 불러오는 데 실패했습니다.');
+            }
+            
+            const member = await response.json();
+            
+            // ⭐️ 폼 필드에 데이터 설정 ⭐️
+            // ID와 역할은 수정 불가능하도록 설정 (일반적인 경우)
+            $inputId.value = member.userId;
+            $inputId.readOnly = true; // ID 수정 불가
+            
+            $inputName.value = member.name || '';
+            $inputPhone.value = member.phone || '';
+            $inputEmail.value = member.email || '';
+
+            // 주소 정보 설정
+            $zipCode.value = member.zipCode || '';
+            $streetAdr.value = member.addr1 || '';
+            $inputAddressDetail.value = member.addr2 || '';
+
+            // 역할 설정 및 의사 섹션 표시
+            $roleSelect.value = member.role || 'USER';
+            $roleSelect.disabled = true; // 역할 수정 불가 (일반적인 경우)
+
+            if (member.role === 'DOCTOR') {
+                $doctorInfoSection.style.display = 'block';
+                
+                // 의사 정보 설정
+                $inputSpecialty.value = member.specialty || '';
+                
+                // 병원 정보 설정
+                if (member.hospIdx) {
+                    $hospIdx.value = member.hospIdx;
+                    $hospNameDisplay.value = member.hospName;
+                }
+            }
+            if(member.agreementYn==='Y'){
+            	$('#checkTerms3').prop('checked',true);
+            	$('#agreements').val('Y');            	
+            } else {
+            	$('#checkTerms3').prop('checked',false);
+            	$('#agreements').val('N');
+            }
+            // 프로필 이미지 설정 (만약 URL이 있다면)
+             if (member.profileImg) {
+                 document.querySelector('.profile-image').src = member.profileImg;
+                 $('#oldImgPath').val(member.profileImg);
+             }
+
+        } catch (error) {
+            console.error("회원 정보 로드 오류:", error);
+            alert("회원 정보를 가져오는 중 오류가 발생했습니다: " + error.message);
+        }
+    }
+
+    // 💡 페이지 로드 시 현재 로그인된 사용자 정보 로드 (예시: memberId=1)
+    // 실제 환경에서는 세션 또는 토큰에서 memberId를 가져와야 합니다.
+    window.addEventListener('load', () => {
+        const loggedInMemberId = MEMBER_ID; // ⭐️ 실제 로그인된 사용자 ID로 변경 필요 ⭐️
+        loadMemberData(loggedInMemberId);
+    });
+
+
+    
+</script>
+</body>
+</html>

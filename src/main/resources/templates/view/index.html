@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나의 마음 일기장 (감성 UI/UX)</title>
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+
+	<img src="/view/img/휴식하는도닥이.png" alt="휴식하는 도닥이"
+		class="dodak-bg-element dodak-float-1">
+	<img src="/view/img/앉아서독서하는도닥이.png" alt="독서하는 도닥이"
+		class="dodak-bg-element dodak-float-2">
+	<img src="/view/img/문서보는도닥이.png" alt="문서보는 도닥이"
+		class="dodak-bg-element dodak-float-3">
+	<img src="/view/img/활짝웃는도닥이.png" alt="웃는 도닥이"
+		class="dodak-bg-element dodak-float-4">
+	<img src="/view/img/구름도닥이.png" alt="구름 위 도닥이"
+		class="dodak-bg-element dodak-float-5">
+	<img src="/view/img/생각하는도닥이.png" alt="생각하는 도닥이"
+		class="dodak-bg-element dodak-float-6">
+
+	<nav
+		class="navbar navbar-expand-lg fixed-top custom-navbar shadow-sm show-navbar">
+		<div class="container-fluid app-container" id="menucon"
+			style="display: none;">
+
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarNav"
+				aria-controls="navbarNav" aria-expanded="false"
+				aria-label="Toggle navigation" style="border: none;">
+				<i class="bi bi-list" style="font-size: 1.8rem; color: #6c757d;"></i>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarNav">
+
+				<ul class="nav nav-pills me-auto" id="mainTab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link custom-nav-link active" id="home-tab"
+							data-bs-toggle="tab" data-bs-target="#home-panel" type="button"
+							role="tab" aria-controls="home-panel" aria-selected="true">
+							<img src="/view/img/dodak.png" alt="홈" class="nav-tab-icon"> 홈
+						</button>
+					</li>
+					<li class="nav-item" role="presentation" style="display: none;">
+						<button class="nav-link custom-nav-link" id="stats-tab"
+							data-bs-toggle="tab" data-bs-target="#stats-panel" type="button"
+							role="tab" aria-controls="stats-panel" aria-selected="false">
+							<img src="/view/img/문서보는도닥이.png" alt="통계" class="nav-tab-icon"
+								style="width: 50px;"> 이달의 마음통계
+						</button>
+					</li>
+					<li class="nav-item" role="presentation" style="display: none;">
+						<button class="nav-link custom-nav-link" id="write-tab"
+							data-bs-toggle="tab" data-bs-target="#write-panel" type="button"
+							role="tab" aria-controls="write-panel" aria-selected="false">
+							<img src="/view/img/음료먹는도닥.png" alt="작성" class="nav-tab-icon"
+								style="width: 50px;"> 오늘의 일기작성하기
+						</button>
+					</li>
+					<li class="nav-item" role="presentation" style="display: none;">
+						<button class="nav-link custom-nav-link" id="list-tab"
+							data-bs-toggle="tab" data-bs-target="#list-panel" type="button"
+							role="tab" aria-controls="list-panel" aria-selected="false">
+							<img src="/view/img/앉아서독서하는도닥이.png" alt="리스트" class="nav-tab-icon"
+								style="width: 50px;"> 나의 일기 리스트
+						</button>
+					</li>
+				</ul>
+
+				<div class="d-flex flex-column flex-lg-row mt-3 mt-lg-0 p-2 p-lg-0">
+					<a href="/login"
+						class="btn btn-sm btn-outline-secondary mb-2 mb-lg-0 me-lg-2 login-btn">
+						<i class="bi bi-box-arrow-in-right me-1"></i> 로그인
+					</a> <a href="/join" class="btn btn-sm btn-dark signup-btn">
+						<i class="bi bi-person-plus-fill me-1"></i> 회원가입
+					</a>
+				</div>
+
+			</div>
+
+		</div>
+	</nav>
+
+	<div class="app-container">
+		<div class="tab-content" id="mainTabContent">
+
+			<div class="tab-pane fade show active" id="home-panel"
+				role="tabpanel" aria-labelledby="home-tab">
+				<div class="app-card home-intro-card position-relative">
+					<h2 class="text-center fw-bold mb-5" style="color: #6c757d;">
+						DODAK: 일상을 '도닥'여주는 마음 기록 웹</h2>
+
+					<img src="/view/img/음료먹는도닥.png" alt="음료 마시는 도닥이"
+						class="dodak-local-element dodak-home-corner-1">
+
+					<ul
+						class="nav nav-tabs nav-tabs-custom justify-content-center mb-4"
+						id="homeTabs" role="tablist">
+
+						<li class="nav-item" role="presentation">
+							<button class="nav-link active" id="start-tab"
+								data-bs-toggle="tab" data-bs-target="#start-pane" type="button"
+								role="tab" aria-controls="start-pane" aria-selected="true">
+								<i class="bi bi-arrow-right-circle me-2"></i> 시작하기
+							</button>
+						</li>
+
+						<li class="nav-item" role="presentation">
+							<button class="nav-link" id="mascot-tab" data-bs-toggle="tab"
+								data-bs-target="#mascot-pane" type="button" role="tab"
+								aria-controls="mascot-pane" aria-selected="false">
+								<i class="bi bi-emoji-heart-eyes me-2"></i> 마스코트 소개
+							</button>
+						</li>
+
+						<li class="nav-item" role="presentation">
+							<button class="nav-link" id="project-tab" data-bs-toggle="tab"
+								data-bs-target="#project-pane" type="button" role="tab"
+								aria-controls="project-pane" aria-selected="false">
+								<i class="bi bi-journal-text me-2"></i> 프로젝트 설명
+							</button>
+						</li>
+					</ul>
+
+					<div class="tab-content" id="homeTabContent">
+
+						<div class="tab-pane fade show active" id="start-pane"
+							role="tabpanel" aria-labelledby="start-tab">
+							<div class="text-center p-5">
+								<h3 class="fw-bold mb-4" style="color: #444;">
+									<i class="bi bi-check-circle me-2"></i> DODAK 여정, 지금 바로 시작하세요!
+								</h3>
+								<p class="lead mb-4">따뜻한 마음 기록 습관을 통해 내면의 나와 대화하는 시간을 가져보세요.
+								</p>
+								<div class="d-grid gap-3 col-md-6 mx-auto">
+									<a href="/join"
+										class="btn btn-lg btn-dark signup-btn shadow-sm"> <i
+										class="bi bi-person-plus-fill me-2"></i> DODAK 회원가입하기
+									</a> <a href="/login" class="btn btn-lg btn-outline-secondary">
+										<i class="bi bi-box-arrow-in-right me-2"></i> 로그인
+									</a>
+								</div>
+								<img src="/view/img/앉아서독서하는도닥이.png" alt="시작하기 도닥이"
+									class="dodak-local-element dodak-start-img">
+							</div>
+						</div>
+
+						<div class="tab-pane fade" id="mascot-pane" role="tabpanel"
+							aria-labelledby="mascot-tab">
+							<img src="/view/img/구름도닥이.png" alt="떠있는 도닥이"
+								class="dodak-local-element"
+								style="position: absolute; top: 10px; left: 50px; width: 150px; opacity: 0.85; z-index: 10;">
+
+							<div class="row justify-content-center align-items-center g-4">
+
+								<div class="col-12 col-md-4 d-flex justify-content-center">
+									<div class="dodak-main-image-card">
+										<img src="/view/img/활짝웃는도닥이.png" alt="도닥이 마스코트"
+											class="img-fluid rounded-3 shadow-sm p-2"
+											style="max-height: 250px;">
+									</div>
+								</div>
+
+								<div
+									class="col-12 col-md-8 dodak-intro-text text-center text-md-start">
+									<h3 class="fw-bold mb-3" style="color: var(--text-color);">
+										<span style="color: var(--accent-color);">✨ 따뜻한 동행:</span>
+										마스코트 도닥이를 소개합니다!
+									</h3>
+
+									<p class="lead" style="color: #6a6a6a; margin-bottom: 1rem;">
+										DODAK의 다정한 마스코트 **도닥이**가 당신의 **이야기**를 기다립니다.</p>
+
+									<p style="color: var(--text-color);">도닥이는 항상 작은 스카프를 두르고
+										다니며, 사용자님의 **'마음 일기'**를 가장 소중히 여기는 다람쥐입니다. 단순한 기록을 넘어, **감정의
+										변화**와 **숨겨진 마음의 소리**를 귀 기울여 듣는 것이 도닥이의 중요한 역할입니다.</p>
+									<p style="color: var(--text-color);">매일의 기록을 통해 당신의 감정을
+										분석하고, 필요한 순간에 **따뜻한 배경 음악**이나 **맞춤형 힐링 테마**를 추천하여 지친 마음을 어루만져
+										줍니다.</p>
+
+									<p class="fw-bold fs-5 mt-4 p-3 rounded-3"
+										style="color: #ffffff; background-color: var(--highlight-color);">
+										"사용자님의 이야기에 귀 기울여<br class="d-md-none"> 지친 하루를 **따뜻하게
+										도닥여** 드릴게요."
+									</p>
+								</div>
+							</div>
+						</div>
+
+
+						<div class="tab-pane fade" id="project-pane" role="tabpanel"
+							aria-labelledby="project-tab">
+							<div class="project-description-section position-relative pt-3">
+								<h3 class="fw-bold mb-4 text-center" style="color: #444;">[
+									프로젝트 DODAK 설명 ]</h3>
+
+								<img src="/view/img/생각하는도닥이.png" alt="생각하는 도닥이"
+									class="dodak-local-element"
+									style="position: absolute; top: -170px; left: 50px; width: 100px; opacity: 0.8; z-index: 10;">
+
+								<div class="row g-4">
+									<div class="col-md-4">
+										<div class="feature-box">
+											<i class="bi bi-pencil-square display-5 mb-2"
+												style="color: var(--mood-joy);"></i>
+											<h5 class="fw-bold">1. 감정 맞춤형 기록 환경</h5>
+											<p>작성자의 일기 감정을 분석하여 실시간으로 맞춤 힐링(음악,영상등..)컨텐츠를 제공하여, 일기
+												작성에 대한 몰입감을 높여줍니다.</p>
+										</div>
+									</div>
+
+									<div class="col-md-4">
+										<div class="feature-box">
+											<i class="bi bi-file-earmark-bar-graph display-5 mb-2"
+												style="color: var(--bs-info);"></i>
+											<h5 class="fw-bold">2. 상담을 미리 돕는 AI 기록 분석</h5>
+											<p>일기 내용을 AI가 꼼꼼히 읽고 중요한 감정 키워드를 미리 정리해 둡니다. 진단 리포트는 월별
+												보고서의 기반이 되어, 당신의 마음 상태를 한눈에 파악하고 더 깊이 있는 상담을 준비하는 데 큰 도움이
+												됩니다.</p>
+										</div>
+									</div>
+
+									<div class="col-md-4">
+										<div class="feature-box">
+											<i class="bi bi-bar-chart-line display-5 mb-2"
+												style="color: var(--mood-regret);"></i>
+											<h5 class="fw-bold">3. 월별 감정 보고서 제공</h5>
+											<p>정신과 전문의에게 환자의 월별 감정 변화와 통계를 시각화하여 제공함으로써, 환자의 상태를 빠르게
+												파악하고 상담을 진행할 수 있습니다</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade " id="stats-panel" role="tabpanel"
+				aria-labelledby="stats-tab">
+				<div class="stats-header position-relative">
+					5월의 마음 속 이야기 <img src="/view/img/문서보는도닥이.png" alt="통계 도닥이"
+						class="dodak-local-element dodak-stats-title-1">
+				</div>
+
+				<div class="row gx-4">
+					<div class="col-12 col-lg-4 d-flex">
+						<div class="app-card calendar-card flex-grow-1 position-relative">
+							<div
+								class="d-flex justify-content-between align-items-center mb-4">
+								<select class="form-select form-select-sm fw-bold me-auto"
+									style="width: 120px; color: #6c757d;" id="yearSelect">
+									<option value="2024">2024년</option>
+									<option value="2025" selected>2025년</option>
+									<option value="2026">2026년</option>
+								</select>
+
+								<div class="d-flex align-items-center">
+									<h5 class="fw-bold m-0 me-3"
+										style="color: #333; font-size: 1.15rem;"
+										id="currentMonthDisplay" data-initial-month="5"></h5>
+
+									<div class="btn-group" role="group"
+										aria-label="Month Navigation">
+										<button type="button"
+											class="btn btn-sm btn-outline-secondary month-prev-btn"
+											style="border-right: none;">
+											<i class="bi bi-chevron-left"></i>
+										</button>
+										<button type="button"
+											class="btn btn-sm btn-outline-secondary month-next-btn">
+											<i class="bi bi-chevron-right"></i>
+										</button>
+									</div>
+								</div>
+							</div>
+
+							<img src="/view/img/앉아서독서하는도닥이.png" alt="달력 도닥이"
+								class="dodak-local-element dodak-stats-calendar-2"
+								style="top: 620px; width: 200px; right: 23%;">
+
+							<div class="calendar-grid mb-4">
+								<div class="calendar-header">월</div>
+								<div class="calendar-header">화</div>
+								<div class="calendar-header">수</div>
+								<div class="calendar-header">목</div>
+								<div class="calendar-header">금</div>
+								<div class="calendar-header">토</div>
+								<div class="calendar-header">일</div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div></div>
+								<div class="calendar-day today"
+									style="background-color: var(--mood-anger); color: white;">1</div>
+								<div class="calendar-day date">2</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-anxiety);">3</div>
+								<div class="calendar-day date">4</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-anxiety);">5</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-regret);">6</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-regret);">7</div>
+								<div class="calendar-day date">8</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-joy);">9</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-joy);">10</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-joy);">11</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-regret);">12</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-regret);">13</div>
+								<div class="calendar-day date">14</div>
+								<div class="calendar-day date">15</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-joy);">16</div>
+								<div class="calendar-day"
+									style="background-color: var(--mood-joy);">17</div>
+								<div class="calendar-day date">18</div>
+								<div class="calendar-day date">19</div>
+								<div class="calendar-day date">20</div>
+								<div class="calendar-day date">21</div>
+								<div class="calendar-day date">22</div>
+								<div class="calendar-day date">23</div>
+								<div class="calendar-day date">24</div>
+								<div class="calendar-day date">25</div>
+								<div class="calendar-day date">26</div>
+								<div class="calendar-day date">27</div>
+								<div class="calendar-day date">28</div>
+								<div class="calendar-day date">29</div>
+								<div class="calendar-day date">30</div>
+								<div class="calendar-day date">31</div>
+							</div>
+							<hr class="my-4">
+
+							<h5 class="fw-bold mb-3" style="color: #444;">이 달의 마음 상태</h5>
+							<p
+								class="mb-1 fw-semibold d-flex justify-content-between align-items-center">
+								종합 우울지수 <span style="font-size: 0.9em; color: #d0021b;">높음
+									😢</span>
+							</p>
+							<div class="indicator-bar mb-3">
+								<div class="indicator-fill"
+									style="width: 70%; background-color: var(--mood-sad);"></div>
+								<div class="indicator-level">2단계</div>
+							</div>
+							<p
+								class="mb-1 fw-semibold d-flex justify-content-between align-items-center">
+								종합 행복지수 <span style="font-size: 0.9em; color: #69a74e;">보통
+									😊</span>
+							</p>
+							<div class="indicator-bar mb-3">
+								<div class="indicator-fill"
+									style="width: 30%; background-color: var(--mood-joy);"></div>
+								<div class="indicator-level">2단계</div>
+							</div>
+							<p class="text-center mt-4"
+								style="font-size: 0.9em; color: #888;">행복의 힘으로 이겨내세요! ☕</p>
+						</div>
+					</div>
+
+					<div class="col-12 col-lg-8">
+						<div class="app-card">
+							<div class="d-flex align-items-center mt-2 mb-3">
+								<img src="/view/img/dodak.png" alt="도닥이 아이콘"
+									style="width: 2em; height: 2em; margin-right: 10px;">
+								<div class="chat-bubble flex-grow-1">이번 달의 감정 패턴과 비율을
+									분석해봤어.</div>
+							</div>
+							<div class="chart-grid">
+								<div class="p-2">
+									<h6 class="text-center">이 달의 감정 분포</h6>
+									<div
+										class="chart-area d-flex flex-row justify-content-around align-items-center">
+										<div class="pie-chart-mock"></div>
+										<div class="text-start"
+											style="font-size: 0.8em; line-height: 1.8;">
+											<span class="d-block" style="color: var(--mood-anxiety);">불안
+												15%</span> <span class="d-block" style="color: var(--mood-sad);">슬픔
+												25%</span> <span class="d-block" style="color: var(--mood-joy);">기쁨
+												25%</span> <span class="d-block" style="color: var(--mood-anger);">분노
+												15%</span> <span class="d-block" style="color: var(--mood-regret);">후회
+												20%</span>
+										</div>
+									</div>
+								</div>
+								<div class="p-2">
+									<h6 class="text-center">종합적인 마음 추이</h6>
+									<div class="chart-area">
+										<div class="chart-mock-wrapper">
+											<div class="line-chart-mock"></div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="app-card mt-2 position-relative">
+							<h5 class="fw-bold mb-3" style="color: #444;">이번 달 당신의 기록</h5>
+							<div class="chart-grid">
+								<div class="p-2">
+									<h6 class="text-center">행복/우울 지수 변화</h6>
+									<div class="chart-area">
+										<div class="chart-mock-wrapper">
+											<div class="line-chart-mock"></div>
+										</div>
+									</div>
+								</div>
+								<div class="p-2">
+									<h6 class="text-center">가장 긍정적이었던 날 ✨</h6>
+									<div class="d-flex align-items-center mb-3">
+										<span style="font-size: 1.5em;">🎉</span>
+										<div class="chat-bubble flex-grow-1 m-0">긍정 에너지를 준 TOP 3
+											일기</div>
+									</div>
+									<button class="top-diary-btn">TOP 1 일기: 팀 프로젝트 성공!
+										(5/10)</button>
+									<button class="top-diary-btn">TOP 2 일기: 친구들과의 여행
+										(5/17)</button>
+									<button class="top-diary-btn">TOP 3 일기: 늦잠 잔 행복한 주말
+										(5/9)</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade" id="write-panel" role="tabpanel"
+				aria-labelledby="write-tab">
+				<div class="row">
+					<div class="col-12">
+						<div class="app-card">
+							<h4 class="fw-bold mb-4" style="color: #555;">오늘의 감성을 기록해요
+								✍️</h4>
+							<p class="text-muted">날짜: 2025년 10월 24일 (금)</p>
+							<div class="mb-4">
+								<label for="diaryMood" class="form-label fw-semibold">오늘의
+									기분 선택</label>
+								<div class="mood-select">
+									<button class="btn btn-outline-danger me-2" data-mood="분노">분노
+										🔥</button>
+									<button class="btn btn-outline-warning me-2" data-mood="불안">불안
+										😟</button>
+									<button class="btn btn-outline-primary me-2" data-mood="슬픔">슬픔
+										😢</button>
+									<button class="btn btn-outline-success me-2 selected"
+										data-mood="기쁨">기쁨 😊</button>
+									<button class="btn btn-outline-info me-2" data-mood="후회">후회
+										😔</button>
+								</div>
+							</div>
+							<div class="mb-4">
+								<label for="diaryTitle" class="form-label fw-semibold">제목</label>
+								<input type="text" class="form-control" id="diaryTitle"
+									placeholder="오늘의 마음을 담아 제목을 입력하세요">
+							</div>
+							<div class="mb-4">
+								<label for="diaryContent" class="form-label fw-semibold">오늘의
+									이야기</label>
+								<textarea class="form-control" id="diaryContent" rows="10"
+									placeholder="오늘 있었던 일이나 느꼈던 감정을 자유롭게 기록해보세요."></textarea>
+							</div>
+							<div class="d-flex justify-content-between gap-2 mt-4">
+								<button class="btn btn-lg btn-dark w-50" id="saveDiaryBtn">일기
+									저장하기</button>
+								<button class="btn btn-lg btn-secondary w-50" type="button"
+									data-bs-toggle="collapse" data-bs-target="#todayStatsCollapse"
+									aria-expanded="false" aria-controls="todayStatsCollapse">
+									오늘의 마음통계 미리보기</button>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="collapse" id="todayStatsCollapse">
+					<div class="row">
+						<div class="col-12">
+							<div class="today-stats-card position-relative">
+								<div class="atti-character"></div>
+								<div class="today-stats-content">
+									<h5 class="text-center fw-bold mb-4" style="color: #c94f79;">오늘의
+										기분 분석 결과</h5>
+
+									<div class="today-mood-analysis-result"></div>
+									<div class="atti-comment-section">
+										<div class="atti-title">
+											<h5>도닥이가 하고 싶은 말이 있대요!</h5>
+											<img src="/view/img/dodak.png" alt="도닥이 아이콘"
+												class="atti-dodak-icon">
+										</div>
+										<p class="fw-bold mb-2" id="attiComment">**축하해요!** 희망이 많이
+											보여요!</p>
+										<p class="mb-2">긍정적인 사고를 하는 건 매우 중요하죠 ㅎㅎ</p>
+										<p class="mb-0">도닥이가 곁에 있다면 맛있는 식사라도 대접하고 싶어요.</p>
+									</div>
+									<div class="preview-image-container text-center mb-4">
+										<img src="/view/img/활짝웃는도닥이.png" alt="오늘의 기분 미리보기"
+											class="dodak-preview-img" id="previewMoodDodak">
+									</div>
+									<div class="today-mood-analysis-result"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="tab-pane fade" id="list-panel" role="tabpanel"
+				aria-labelledby="list-tab">
+				<div class="row">
+					<div class="col-12">
+						<div class="app-card position-relative">
+							<h4 class="fw-bold mb-4" style="color: #555;">기록된 나의 일기 모음
+								📚</h4>
+							<p class="text-muted mb-4">총 15개의 일기가 기록되어 있습니다.</p>
+
+							<img src="/view/img/휴식하는도닥이.png" alt="휴식하는 도닥이"
+								class="dodak-local-element dodak-list-search-1">
+
+							<div class="d-flex align-items-center mb-4 gap-2">
+								<select class="form-select w-auto form-select-sm"><option>2025년</option></select>
+								<select class="form-select w-auto form-select-sm"><option>10월</option></select>
+								<button class="btn btn-outline-secondary btn-sm">날짜 적용</button>
+								<div class="input-group ms-auto" style="max-width: 250px;">
+									<input type="text" class="form-control form-control-sm"
+										placeholder="제목/내용 검색">
+									<button class="btn btn-outline-secondary btn-sm" type="button">
+										<i class="bi bi-search"></i>
+									</button>
+								</div>
+							</div>
+
+							<div class="diary-list">
+								<div class="diary-item-card mood-기쁨">
+									<div class="d-flex justify-content-between align-items-start">
+										<h5 class="fw-bold mb-1">팀 프로젝트 마무리!🎉</h5>
+										<span class="diary-mood-tag mood-기쁨">기쁨 😊</span>
+									</div>
+									<p class="text-muted mb-2" style="font-size: 0.9em;">2025.10.20
+										| 날씨: 맑음</p>
+									<p class="mb-0 text-truncate">모두가 열심히 해줘서 프로젝트를 성공적으로 끝마칠 수
+										있었다. 뿌듯한 하루!</p>
+								</div>
+
+								<div class="diary-item-card mood-불안">
+									<div class="d-flex justify-content-between align-items-start">
+										<h5 class="fw-bold mb-1">발표 D-1, 너무 떨려</h5>
+										<span class="diary-mood-tag mood-불안">불안 😟</span>
+									</div>
+									<p class="text-muted mb-2" style="font-size: 0.9em;">2025.10.22
+										| 날씨: 흐림</p>
+									<p class="mb-0 text-truncate">내일 발표인데 준비가 덜 된 것 같아서 밤새 연습해야
+										할 것 같다. 제발 실수하지 않기를...</p>
+								</div>
+								<div class="diary-item-card mood-불안">
+									<div class="d-flex justify-content-between align-items-start">
+										<h5 class="fw-bold mb-1">발표 D-2, 너무 떨려</h5>
+										<span class="diary-mood-tag mood-불안">불안 😟</span>
+									</div>
+									<p class="text-muted mb-2" style="font-size: 0.9em;">2025.10.22
+										| 날씨: 흐림</p>
+									<p class="mb-0 text-truncate">내일 발표인데 준비가 덜 된 것 같아서 밤새 연습해야
+										할 것 같다. 제발 실수하지 않기를...</p>
+								</div>
+								<div class="diary-item-card mood-불안">
+									<div class="d-flex justify-content-between align-items-start">
+										<h5 class="fw-bold mb-1">발표 D-3, 너무 떨려</h5>
+										<span class="diary-mood-tag mood-불안">불안 😟</span>
+									</div>
+									<p class="text-muted mb-2" style="font-size: 0.9em;">2025.10.22
+										| 날씨: 흐림</p>
+									<p class="mb-0 text-truncate">내일 발표인데 준비가 덜 된 것 같아서 밤새 연습해야
+										할 것 같다. 제발 실수하지 않기를...</p>
+								</div>
+
+								<div class="diary-item-card mood-분노">
+									<div class="d-flex justify-content-between align-items-start">
+										<h5 class="fw-bold mb-1">상사와의 의견 충돌</h5>
+										<span class="diary-mood-tag mood-분노">분노 🔥</span>
+									</div>
+									<p class="text-muted mb-2" style="font-size: 0.9em;">2025.10.24
+										| 날씨: 비</p>
+									<p class="mb-0 text-truncate">내가 옳다고 생각하는 부분이 있었는데, 결국
+										관철시키지 못했다. 너무 화가 나는 하루다.</p>
+								</div>
+
+								<nav aria-label="Diary Pagination" class="mt-4">
+									<ul class="pagination justify-content-center">
+										<li class="page-item disabled"><a class="page-link"
+											href="#">이전</a></li>
+										<li class="page-item active"><a class="page-link"
+											href="#">1</a></li>
+										<li class="page-item"><a class="page-link" href="#">2</a></li>
+										<li class="page-item"><a class="page-link" href="#">3</a></li>
+										<li class="page-item"><a class="page-link" href="#">다음</a></li>
+									</ul>
+								</nav>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="/js/script.js"></script>
+	<script>
+		// 여기에 JavaScript 코드 추가
+		const customNavbar = document.querySelector('.custom-navbar');
+		let menucon = document.getElementById("menucon");
+
+		if (customNavbar) {
+			// 페이지 로드 시에는 숨김 상태 (CSS가 처리)
+
+			// mouseover (마우스를 올렸을 때) 이벤트 리스너
+			customNavbar.addEventListener('mouseover', function() {
+				// show-navbar 클래스를 추가하여 네비게이션을 보이게 합니다.        
+				menucon.style.display = "block";
+			});
+
+			// mouseout (마우스를 떼었을 때) 이벤트 리스너
+			customNavbar.addEventListener('mouseout', function() {
+				// show-navbar 클래스를 제거하여 네비게이션을 숨깁니다.        
+				menucon.style.display = "none";
+			});
+		}
+	</script>
+</body>
+</html>

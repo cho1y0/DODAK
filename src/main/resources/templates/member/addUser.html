@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DODAK 회원가입</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script
+	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<link rel="stylesheet" href="/css/addUser.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+	<div class="container">
+		<h2 class="form-title">
+			DODAK 회원가입<br> <img src="/img/dodak.png" alt="캐릭터 아이콘"
+				class="title-icon">
+		</h2>
+		<form id="registerForm">
+			<input type="hidden" id="agreements" name="agreementYn" value="0">
+			<div class="header-section-wrapper"></div>
+
+			<div class="form-section">
+				<h3 class="section-title">
+					<i class="fas fa-user"></i> 기본 정보
+				</h3>
+				<div class="grid-2">
+					<div class="form-group">
+						<div class="profile-section">
+							<div class="profile-image-container" id="profileImageContainer">
+								<img src="https://placehold.co/120/DCC5AE/FFFFFF?text=PROFILE"
+									alt="프로필 이미지" style="width: 100%; height: 100%"
+									class="profile-image"> <input type="file"
+									id="profileImageUpload" name="profileImage" accept="image/*"
+									style="display: none;">
+								<div class="overlay">클릭하여 이미지 변경</div>
+							</div>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="roleSelect" class="required">가입 역할</label> <select
+							id="roleSelect" name="role" class="form-control">
+							<option value="USER">일반 회원 (USER)</option>
+							<option value="DOCTOR">의사 회원 (DOCTOR)</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="userId" class="required">아이디</label>
+						<div class="input-group">
+							<input type="text" id="inputId" name="userId"
+								class="form-control" placeholder="ID 입력" maxlength="20"
+								autocomplete="off">
+							<button type="button" class="btn btn-secondary"
+								id="buttonIDCheck" onclick="checkId()">중복 체크</button>
+						</div>
+						<span class="help-text">5~20자, 영문+숫자 조합.</span> <small
+							id="idMessage" class="form-text text-muted"></small>
+					</div>
+					<div class="form-group">
+						<label for="name" class="required">이름 (한글)</label> <input
+							type="text" id="inputName" name="name" class="form-control"
+							placeholder="실명 입력 (한글)" maxlength="10" required="required">
+					</div>
+
+					<div class="form-group">
+						<label for="password" class="required">비밀번호</label> <input
+							type="password" name="password" class="form-control"
+							maxlength="20" id="password" placeholder="비밀번호 입력" required>
+						<small class="help-text">8~20자, 영문+숫자+특수문자 조합.</small>
+					</div>
+					<div class="form-group">
+						<label for="passwordConfirm" class="required">비밀번호 확인</label> <input
+							type="password" name="passwordConfirm" class="form-control"
+							id="passwordConfirm" placeholder="비밀번호 재입력" maxlength="20"
+							required="required"> <small class="help-text"
+							id="passwordMatchText"></small>
+					</div>
+				</div>
+			</div>
+
+			<div class="form-section">
+				<h3 class="section-title">
+					<i class="fas fa-mobile-alt"></i> 연락 정보
+				</h3>
+				<div class="grid-2">
+					<div class="form-group">
+						<label for="phone" class="required">휴대 전화</label> <input
+							type="tel" class="form-control" id="inputPhone" name="phone"
+							placeholder="010-XXXX-XXXX" required="required">
+					</div>
+					<div class="form-group">
+						<label for="email" class="required">이메일</label>
+						<div class="input-group">
+							<input type="email" class="form-control" id="inputEmail"
+								name="email" placeholder="example@dodak.com" required="required">
+							<button type="button" class="btn btn-secondary"
+								onclick="validateEmail()" id="buttonEmailCheck">중복 체크</button>
+						</div>
+						<small class="help-text">이메일 형식 검증 및 중복 불가.</small> <small
+							class="help-text" id="emailMessage"></small>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="form-section">
+				<h3 class="section-title">
+					<i class="fas fa-home"></i> 주소 정보
+				</h3>
+				<div class="grid-2">
+					<div class="form-group">
+						<label for="zipCode" class="required">우편 번호</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="zipCode"
+								placeholder="우편번호" name="zipCode" readonly required>
+							<button type="button" class="btn btn-secondary"
+								id="buttonPostcodeSearch">검색</button>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="addr1" class="required">주소</label> <input type="text"
+							class="form-control" id="streetAdr" name="addr1"
+							placeholder="도로명 주소" readonly required>
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="addr2">상세 주소</label> <input type="text"
+						class="form-control" id="inputAddressDetail" name="addr2"
+						placeholder="상세 주소 (선택 입력)">
+				</div>
+			</div>
+
+			<div class="form-section" id="doctorInfoSection"
+				style="display: none;">
+				<h3 class="section-title">
+					<i class="fas fa-hospital-alt"></i> 의사 정보
+				</h3>
+				<div class="grid-2">
+					<div class="form-group">
+						<label for="hospitalName" class="required">소속 병원</label>
+						<div class="input-group">
+							<input type="text" id="hospNameDisplay" class="form-control"
+								placeholder="병원 선택 버튼을 눌러주세요" readonly> <input
+								type="hidden" id="hospIdx" name="hospIdx">
+							<button type="button" class="btn btn-primary"
+								id="openHospitalModalBtn">병원 선택/추가</button>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="specialty" class="required">전문 분야</label> <input
+							type="text" id="inputSpecialty" name="specialty"
+							class="form-control" placeholder="예: 정신 건강의학과">
+					</div>
+				</div>
+			</div>
+
+
+
+
+			<div class="form-section agreement-section">
+				<h3 class="section-title">
+					<i class="fas fa-file-alt"></i> 약관 동의
+				</h3>
+
+				<div class="form-group agreement-all-checkbox-row">
+
+					<input type="checkbox" id="agreeAll"> <span
+						class="checkbox-text">모든 약관 동의 (선택 포함)</span>
+
+				</div>
+
+				<div class="agreement-content-scroll">
+					<h4>[ DODAK 이용 약관 ]</h4>
+					<p>
+						<strong>제1조 (목적)</strong><br> 이 약관은 DODAK(이하 '서비스')의 이용 조건 및
+						절차에 관한 사항을 규정함을 목적으로 한다. 본 서비스는 사용자님의 마음을 도닥여주기 위한 목적으로 제공된다.<br>
+						<br> <strong>제5조 (회원 탈퇴 및 이용 제한)</strong><br> ① 회원은 언제든지
+						서비스 이용을 철회할 수 있으며, 이 경우 회원의 모든 정보는 제3조에 따라 처리된다.<br> (이하 약관
+						생략...)
+					</p>
+
+					<h4>[ 개인 정보 처리 방침 ]</h4>
+					<p>
+						<strong>제2조 (개인정보 수집 및 이용 동의)</strong><br> ① 서비스는 회원 가입 및 서비스
+						이용을 위해 필요한 최소한의 개인정보를 수집한다.<br> ② 수집된 개인정보는 다음의 목적을 위해 활용된다.<br>
+						1. 회원 관리 및 서비스 이용에 따른 본인 식별/인증.<br> 2. 일기 작성 내용 분석 및 감정 통계 자료
+						생성 및 제공.<br> 3. 서비스 개선 및 신규 기능 개발.
+					</p>
+
+					<p>
+						<strong>제3조 (정보의 보존 기간 및 파기)</strong><br> ① 회원이 서비스에 작성한 일기
+						내용 및 분석된 감정 통계 자료는 서비스 이용 기간 중 보존되며, 최대 1년이 경과할 경우 지체 없이 파기된다.<br>
+						② 1년의 보존 기간이 도래하기 전 회원이 탈퇴할 경우, 관련 법령에 따라 필요한 경우를 제외하고는 해당 정보는 즉시
+						파기된다.
+					</p>
+
+					<p>
+						<strong>제4조 (정보의 제3자 제공 및 공유 동의)</strong><br> ① 서비스는 사용자님의 정신
+						건강 관리를 위해 회원이 작성한 일기 내용 및 감정 통계 분석 결과를 회원이 등록한 담당 의사(의료기관)에게 제공할 수
+						있다.<br> ② 회원은 서비스에 가입함으로써 제1항의 정보 제공에 동의하는 것으로 간주하며, 이는 원활한
+						의료 서비스 연계를 위함이다.<br> ③ 회원이 정보 제공에 동의하지 않는 경우, 담당 의사에게 정보가
+						전달되지 않을 수 있으며, 이 경우 서비스 이용에 제한이 있을 수 있다.
+					</p>
+				</div>
+
+				<div class="grid-2 agreement-checkboxes">
+					<div class="form-group">
+
+						<input type="checkbox" id="agreeTerms" class="required-agreement">
+						<span class="checkbox-text">이용 약관 동의 (필수)</span>
+
+					</div>
+					<div class="form-group">
+
+						<input type="checkbox" id="agreePrivacy"
+							class="required-agreement"> <span class="checkbox-text">개인
+							정보 처리 방침 동의 (필수)</span>
+
+					</div>
+					<div class="form-group">
+
+						<input type="checkbox" id="checkTerms3"> <span
+							class="checkbox-text">마케팅 정보 수신 동의 (이메일/SMS) (선택)</span>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="footer-actions-grid" style="width: 100%" align="center">
+				<button class="btn btn-submit-small" id="regBtn">DODAK 회원가입
+					완료</button>
+				<button type="button" class="btn btn-back-main"
+					onclick="window.location.href='/'">
+					<i class="fas fa-arrow-left"></i> 메인으로 돌아가기
+				</button>
+
+			</div>
+		</form>
+	</div>
+
+	<div id="hospitalModal" class="modal">
+		<div class="modal-content">
+			<span class="close-button">&times;</span>
+			<h3 class="modal-title">
+				<i class="fas fa-hospital"></i> 병원 검색 및 추가
+			</h3>
+
+			<div class="search-hospital-section">
+				<h4 class="sub-section-title">병원 검색</h4>
+				<div class="form-group">
+					<label for="hospitalSearchInput" class="required">병원 이름으로
+						검색</label>
+					<div class="input-group">
+						<input type="text" id="hospitalSearchInput" class="form-control"
+							placeholder="의료원">
+						<button type="button" class="btn btn-secondary"
+							id="searchHospitalBtn">검색</button>
+					</div>
+				</div>
+				<div id="hospitalSearchResults" class="search-results"></div>
+			</div>
+
+			<div class="add-hospital-section">
+				<h4 class="sub-section-title">병원 등록/수정</h4>
+				<p>찾는 병원이 없으신가요? 직접 등록해보세요.</p>
+				<button type="button" class="btn btn-primary"
+					id="openAddHospitalFormBtn">병원 정보 입력</button>
+
+				<div id="newHospitalForm" class="new-hospital-form"
+					style="display: none;">
+					<h5>병원 정보 입력</h5>
+					<div class="grid-2">
+						<div class="form-group">
+							<label for="newHospitalName" class="required">병원명</label> <input
+								type="text" id="newHospitalName" name="newHospitalName"
+								class="form-control" placeholder="병원 이름"> <input
+								type="hidden" id="newHospitalId" name="newHospitalId"
+								class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="newHospitalTel" class="required">대표 전화번호</label> <input
+								type="text" id="newHospitalTel" name="newHospitalTel"
+								class="form-control" placeholder="02-XXXX-XXXX 또는 010-XXXX-XXXX"
+								required>
+						</div>
+						<div class="form-group">
+							<label for="newHospitalZipCode" class="required">우편 번호</label>
+							<div class="input-group">
+								<input type="text" id="newHospitalZipCode"
+									name="newHospitalZipCode" class="form-control"
+									placeholder="우편번호" readonly>
+								<button type="button" class="btn btn-secondary"
+									id="searchNewHospitalZipCodeBtn">검색</button>
+							</div>
+						</div>
+						<div class="form-group full-width">
+							<label for="newHospitalAddr1" class="required">주소</label> <input
+								type="text" id="newHospitalAddr1" name="newHospitalAddr1"
+								class="form-control" placeholder="기본 주소" readonly>
+						</div>
+						<div class="form-group full-width">
+							<label for="newHospitalAddr2">상세 주소</label> <input type="text"
+								id="newHospitalAddr2" name="newHospitalAddr2"
+								class="form-control" placeholder="상세 주소 입력">
+						</div>
+					</div>
+
+					<div class="new-hospital-form-actions">
+						<button type="button" class="btn btn-primary"
+							id="saveNewHospitalBtn">저장</button>
+						<button type="button" class="btn btn-secondary"
+							id="cancelAddHospitalBtn">취소</button>
+					</div>
+				</div>
+			</div>
+
+			<button type="button" class="btn btn-secondary"
+				id="closeHospitalModalBtn">팝업 닫기</button>
+		</div>
+	</div>
+
+
+	<script>
+	   const roleSelect = document.getElementById('roleSelect');
+	   const doctorInfoSection = document.getElementById('doctorInfoSection');
+	   const passwordInput = document.getElementById('password');
+	   const passwordConfirmInput = document.getElementById('passwordConfirm');
+	   const passwordMatchText = document.getElementById('passwordMatchText');
+	   const newHospitalId = document.getElementById('newHospitalId');
+	   const newHospitalName = document.getElementById('newHospitalName');
+	   const newHospitalTel = document.getElementById('newHospitalTel');
+	   const newHospitalZipCode = document.getElementById('newHospitalZipCode');
+	   const newHospitalAddr1 = document.getElementById('newHospitalAddr1');
+	   const newHospitalAddr2 = document.getElementById('newHospitalAddr2');
+	   // 약관 동의 관련 요소
+	   const agreeAllCheckbox = document.getElementById('agreeAll');
+	   const allAgreementCheckboxes = document.querySelectorAll('.agreement-checkboxes input[type="checkbox"]');
+	   // 모달 관련 요소
+	   const openHospitalModalBtn = document.getElementById('openHospitalModalBtn');
+	   const hospitalModal = document.getElementById('hospitalModal');
+	   const closeHospitalModalBtns = document.querySelectorAll('#hospitalModal .close-button, #closeHospitalModalBtn');
+	   const openAddHospitalFormBtn = document.getElementById('openAddHospitalFormBtn');
+	   const newHospitalForm = document.getElementById('newHospitalForm');
+	   const cancelAddHospitalBtn = document.getElementById('cancelAddHospitalBtn');
+	   
+	   // ⭐️⭐️ 새로 추가된 병원 검색/적용 관련 요소 ⭐️⭐️
+	   const searchHospitalBtn = document.getElementById('searchHospitalBtn');
+	   const hospitalSearchResults = document.getElementById('hospitalSearchResults');
+	   const hospitalNameInput = document.getElementById('hospNameDisplay');
+	   const hospitalIdInput = document.getElementById('hospIdx');
+
+	// ⭐️ 초기 로드 시 모달을 명시적으로 숨김 (유지)
+	   hospitalModal.style.display = 'none';
+
+	   // --- 프로필 이미지 업로드 (유지) ---
+	   const profileImageContainer = document.getElementById('profileImageContainer');
+	   const profileImageUpload = document.getElementById('profileImageUpload');
+
+	   profileImageContainer.addEventListener('click', () => {
+	       profileImageUpload.click();
+	   });
+
+	   profileImageUpload.addEventListener('change', (event) => {
+	       const file = event.target.files[0];
+	       if (file) {
+	           const reader = new FileReader();
+	           reader.onload = function(e) {
+	               profileImageContainer.querySelector('.profile-image').src = e.target.result;
+	           };
+	           reader.readAsDataURL(file);
+	       }
+	   });
+
+	   // --- 역할 선택에 따른 '의사 정보' 섹션 토글 (유지) ---
+	   function toggleDoctorInfo() {
+	       if (roleSelect.value === 'DOCTOR') {
+	           doctorInfoSection.style.display = 'block';
+	       } else {
+	           doctorInfoSection.style.display = 'none';
+	       }
+	   }
+	   roleSelect.addEventListener('change', toggleDoctorInfo);
+	   toggleDoctorInfo();
+
+	   function checkPasswordMatch() {
+	       const password = passwordInput.value;
+	       const confirmPassword = passwordConfirmInput.value;
+
+	       if (confirmPassword === '') {
+	           passwordMatchText.textContent = '';
+	           // 초기 메시지는 회색 도움말 텍스트와 구별되므로 색상 초기화는 불필요
+	           return;
+	       }
+
+	       if (password === confirmPassword) {
+	           passwordMatchText.textContent = '비밀번호가 일치합니다.';
+	           // ⭐️ 화면 설계서에 가깝게 파란색 계열로 변경 ⭐️
+	           passwordMatchText.style.color = '#007bff'; 
+	       } else {
+	           passwordMatchText.textContent = '비밀번호가 일치하지 않습니다.';
+	           // ⭐️ 빨간색으로 변경 ⭐️
+	           passwordMatchText.style.color = '#dc3545'; 
+	       }
+	   }
+	   passwordInput.addEventListener('keyup', checkPasswordMatch);
+	   passwordConfirmInput.addEventListener('keyup', checkPasswordMatch);
+
+	   // --- ⭐️ 약관 전체 동의 / 개별 동의 로직 (보강) ⭐️ ---
+	   function updateAgreeAllCheckbox() {
+	       // 모든 개별 체크박스 상태 확인
+	       const allChecked = Array.from(allAgreementCheckboxes).every(cb => cb.checked);
+		
+	       agreeAllCheckbox.checked = allChecked;
+	   }
+
+	   agreeAllCheckbox.addEventListener('change', function() {
+	       // 전체 동의 체크 시 모든 개별 체크박스 상태를 동기화
+	       allAgreementCheckboxes.forEach(checkbox => {
+	           checkbox.checked = this.checked;
+	       });
+	       // 체크박스 상태가 변경될 때마다 전체 동의 상태 업데이트
+	       updateAgreeAllCheckbox(); 
+	   });
+
+	   allAgreementCheckboxes.forEach(checkbox => {
+	       // 개별 체크박스 상태 변경 시 '전체 동의' 체크박스 업데이트
+	       checkbox.addEventListener('change', updateAgreeAllCheckbox);
+	   });
+	   // --- 약관 동의 로직 끝 ---
+	   
+	   closeHospitalModalBtns.forEach(btn => {
+	       btn.addEventListener('click', () => {
+	           hospitalModal.style.display = 'none';
+	           newHospitalForm.style.display = 'none';
+	       });
+	   });
+
+	   window.addEventListener('click', (event) => {
+	       if (event.target == hospitalModal) {
+	           hospitalModal.style.display = 'none';
+	           newHospitalForm.style.display = 'none';
+	       }
+	   });
+
+	   // '새 병원 정보 등록' 버튼 클릭 시 폼 표시 (유지)
+	   openAddHospitalFormBtn.addEventListener('click', () => {
+		   newHospitalId.value = ''
+           newHospitalName.value = ''
+           newHospitalZipCode.value= ''
+           newHospitalAddr1.value= ''
+           newHospitalAddr2.value= ''
+           newHospitalTel.value = ''
+	       newHospitalForm.style.display = 'block';
+	   });
+
+	   cancelAddHospitalBtn.addEventListener('click', () => {
+	       newHospitalForm.style.display = 'none';
+	   });
+
+	</script>
+	<script>
+	// script.js
+	$.fn.serializeObject = function() {
+		var obj = new Object();
+		var arr = this.serializeArray();
+		arr.forEach(function(data, index) {
+			obj[data.name] = data.value;
+		})
+		return obj;
+	}
+	
+	
+	
+	let isIdAvailable = false;
+	let isEmailAvailable = false;
+        
+        // **새로 추가된 변수**
+    let isDoctor = false;
+        
+        // 아이디 중복 체크 함수
+       	let checkId = () => {
+       		const id = $('#inputId').val();       		
+       		$.ajax({
+       			url    : "/api/members/checkId",
+       			method : "get",      
+       			data   : {userId : id},
+       			success: function(response){
+       				if(!response){
+       					// 아이디가 중복 됨
+       					$("#idMessage").text("아이디가 중복되었습니다.").css({'color':'blue', 'font-weight':'normal'});
+       					isIdAvailable = false;
+       				} else {
+       					// 아이디가 중복되지 않음
+       					$("#idMessage").text("사용 가능한 아이디입니다.").css({'color':'red', 'font-weight':'normal'});
+       					isIdAvailable = true;
+       					
+       				}
+       			},
+       			error  : function(error){
+       				// 통신 실패
+       				$("#idMessage").text("통신에러");
+       			}       			
+       		});
+        }
+       	
+       	let checkEmail = () => {
+       		const email = $('#inputEmail').val();       		
+       		
+       		$.ajax({
+       			url    : "/api/members/checkEmail",
+       			method : "get",
+       			data   : {email : email},
+       			success: function(response){
+       				if(!response){
+       					// 이메일이 중복 됨
+       					$("#emailMessage").text("이메일이 중복되었습니다.").css({'color':'blue', 'font-weight':'normal'});
+       					isEmailAvailable = false;
+       				} else {
+       					// 이메일이 중복되지 않음
+       					$("#emailMessage").text("사용 가능한 이메일입니다.").css({'color':'red', 'font-weight':'normal'});
+       					isEmailAvailable = true;
+       					
+       				}
+       			},
+       			error  : function(error){
+       				// 통신 실패
+       				$("#emailMessage").text("통신에러");
+       			}       			
+       		});
+        }
+        // 폼 태그 제출 검토
+        $('#regBtn').on('click', function(e){        	
+        	e.preventDefault();
+        	// 1. 아이디 중복 체크
+        	checkId();        	
+        	if(!isIdAvailable){
+        		e.preventDefault();
+	        	alert("아이디 중복체크를 완료해 주세요.");
+	        	return;
+	        }
+        	
+        	// 2. 비밀번호 일치 확인
+        	const pw = $('#password').val();
+        	const pwConfirm = $('#passwordConfirm').val();
+        	
+        	if(pw !== pwConfirm) { 
+        		e.preventDefault();
+	        	alert("비밀번호가 서로 일치하지 않습니다.");	     
+	        	return;
+	        }
+        	
+        	// 3. 전화번호 형식 확인 (기존 함수는 반환값만 있고 호출이 없었음)
+        	if (!isHyphenPhoneNumber($('#inputPhone').val())) {
+                e.preventDefault();
+                alert("휴대전화번호 형식을 확인해 주세요. (010-XXXX-XXXX)");
+                return;
+            }
+        	
+        	// 4. 이메일 유효성 및 중복 확인
+        	if(!validateEmail()){ // validateEmail()이 false 반환하면 형식 오류
+        		e.preventDefault();
+	        	alert("유효한 이메일 주소를 입력해 주세요.");
+	        	return;
+	        }
+        	
+        	if(!isEmailAvailable){ // 중복 체크 결과 확인
+        		e.preventDefault();
+	        	alert("이메일 중복체크를 완료해 주세요.");
+	        	return;
+	        }
+            
+            // 5. DOCTOR 필드 필수 검사 추가
+            if (isDoctor) {
+                if ($('#hospIdx').val() === '' || $('#inputSpecialty').val() === '') {
+                    e.preventDefault();
+                    alert("의사 회원은 병원 선택과 전문 분야 입력이 필수입니다.");
+                    return;
+                }
+            }
+        	// 6. 마케팅 정보 동의 처리
+        	if($('#checkTerms3').is(':checked')) {
+        		document.getElementById('agreements').value = "Y";
+        	} else {
+        		document.getElementById('agreements').value = "N";
+        	}
+        	
+        	const form = document.getElementById('registerForm');        	
+        	const formData = new FormData(form);
+        	
+        	$.ajax({
+        		  url: "/api/members/join",
+        		  type: "POST",
+        		  processData: false,
+        		  contentType: false,
+        		  data: formData,
+        		  success: function(savedMember, status, xhr) {
+        		    if (xhr.status === 201) {
+        		      console.log("생성된 회원:", savedMember);
+        		      alert(`회원가입 완료! 회원 이름: ${savedMember.name}`);
+        		      location.href = "/login";
+        		    } else {
+        		      alert("회원 생성 실패: " + xhr.status);
+        		    }
+        		  },
+        		  error: function(xhr, status, error) {
+        		    console.error("에러 발생:", error);
+        		    alert("회원가입 중 오류가 발생했습니다.");
+        		  }
+        		});
+        });        
+        // 주소 검색
+        $("#buttonPostcodeSearch").on("click",function (e) {
+        	e.preventDefault();
+        	new daum.Postcode({
+                oncomplete: function(data) {
+                	// 우편번호
+                    $("#zipCode").val(data.zonecode);
+                    // 도로명 주소
+                    $("#streetAdr").val(data.roadAddress);
+                }
+            }).open();      	
+        });
+        
+        // 전화번호 형식 검사
+        function isHyphenPhoneNumber(phone) {  
+        	const regex = /^0\d{1,2}-\d{3,4}-\d{4}$/;  
+        	return regex.test(phone);
+        }
+        
+        // 이메일 형식 검사
+        function emailCheck(email_address){     
+        	email_regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+        	if(!email_regex.test(email_address)){ 
+        		return false; 
+        	}else{
+        		return true;
+        	}
+        }
+        
+        // 이메일 유효성 검사 및 중복 체크 함수 호출
+        function validateEmail() {
+        	var emailInput = document.getElementById('inputEmail');
+        	var resultDiv = document.getElementById('emailMessage');
+
+        	var email = emailInput.value;
+
+        	if (emailCheck(email)) {
+        		resultDiv.innerHTML = '유효한 이메일 주소입니다.';
+        		checkEmail(); // 유효하면 중복 체크 호출
+        		return true;
+        	} else {
+        		resultDiv.innerHTML = '유효하지 않은 이메일 주소입니다.';
+        		isEmailAvailable = false; // 형식 오류 시 중복 가능성도 false로
+        		return false;
+        	}
+        }
+        
+        // =======================================================
+        // ** [병원 선택/추가 팝업] 및 [역할 선택] 로직 추가 **
+        // =======================================================
+        
+        // 역할 변경 시 필드 표시/숨김
+        $('#roleSelect').on('change', function() {
+            const role = $(this).val();
+            const $doctorFields = $('#doctorInfoSection');
+            const $hospIdx = $('#hospIdx');
+            const $inputSpecialty = $('#inputSpecialty');
+
+            if (role === 'DOCTOR') {
+                $doctorFields.slideDown(200); // 의사 필드 표시
+                isDoctor = true;
+                // 필수 속성은 폼 제출 시 자바스크립트로 검증
+
+            } else {
+                $doctorFields.slideUp(200); // 의사 필드 숨김
+                isDoctor = false;
+                
+                // USER로 변경 시 불필요한 값 제출 방지를 위해 비워줍니다.
+                $hospIdx.val(''); 
+                $('#hospNameDisplay').val('');
+                $inputSpecialty.val('');
+            }
+        }).trigger('change'); // 페이지 로드 시 초기 상태 적용
+
+        // [병원 검색 버튼] 클릭 이벤트
+        $('#buttonHospitalSearch').on('click', function(e) {
+            e.preventDefault();
+            const url = '/hospital/searchPopup'; // HospitalPageController의 URL
+            const name = 'hospitalSearchPopup';
+            const features = 'width=650,height=750,scrollbars=yes';
+            window.open(url, name, features);
+        });
+
+        // [콜백 함수] 팝업에서 선택된 병원 정보를 받기 위한 함수
+        // 팝업 창에서 window.opener.setHospitalSelection(id, name)을 호출합니다.
+        window.setHospitalSelection = function(hospIdx, hospName) {
+            $('#hospNameDisplay').val(hospName); // 사용자에게 표시되는 병원 이름
+            $('#hospIdx').val(hospIdx); // 실제로 서버에 전송될 병원 PK
+        };
+        
+     // 1. 병원 검색 (REST API 호출)
+        function searchHospitals() {
+            const name = $('#hospitalSearchInput').val();
+            if (!name.trim()) {
+                $('#hospitalSearchResults').html('<p class="text-danger text-center">검색할 병원 이름을 입력해주세요.</p>');
+                return;
+            }
+
+            fetch('/api/hospitals/search?name=' + encodeURIComponent(name))
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('네트워크 응답이 올바르지 않습니다.');
+                    }
+                    return response.json();
+                })
+                .then(data => displayResults(data))
+                .catch(error => {
+                    console.error('Error fetching hospitals:', error);
+                    $('#hospitalSearchResults').html('<p class="text-danger text-center">병원 검색 중 오류가 발생했습니다.</p>');
+                });
+        }
+     // 2. 검색 결과 표시
+        function displayResults(hospitals) {
+            const resultsDiv = $('#hospitalSearchResults');
+            resultsDiv.empty(); // 기존 결과 비우기
+            
+            if (hospitals.length === 0) {
+                resultsDiv.append('<p class="text-danger text-center">검색할 병원 이름을 입력해주세요.</p>');
+                return;
+            }
+
+            hospitals.forEach(hospital => {
+                const item = `
+                	<div class="hospital-item">                        
+                		<p class="hospital-name">${hospital.hospName}</p>
+                		<p class="hospital-address">${hospital.addr1 ? hospital.addr1 : '주소 정보 없음'}</p>
+                		<div class="item-actions">
+							<button class="btn btn-success select-hospital-btn"	data-hospital-id="${hospital.hospIdx}" data-hospital-name="${hospital.hospName.replace(/'/g, "\\'")}">선택</button>
+							<button class="btn btn-info edit-hospital-btn" data-hospital-id="${hospital.hospIdx}">수정</button>
+                       	</div>                        
+                    </div>
+                `;
+                resultsDiv.append(item);
+            });
+        }
+	</script>
+	<script>
+        // 주소 검색 함수
+        $("#searchNewHospitalZipCodeBtn").on("click", function(e) {
+            e.preventDefault();
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    $("#newHospitalZipCode").val(data.zonecode);
+                    $("#newHospitalAddr1").val(data.roadAddress);
+                    $("#newHospitalAddr2").focus(); // 상세 주소 입력으로 포커스
+                }
+            }).open();
+        });
+
+        // 폼 제출 이벤트 처리
+        $('#saveNewHospitalBtn').on('click', function(e) {
+            e.preventDefault();          
+            
+            const hospitalData = {
+            	hostIdx: newHospitalId.value,
+                hospName: newHospitalName.value,
+                zipCode: newHospitalZipCode.value,
+                addr1: newHospitalAddr1.value,
+                addr2: newHospitalAddr2.value,
+                tel: newHospitalTel.value
+            };
+            //console.log("saveNewHospitalBtn hospitalData : " + JSON.stringify(hospitalData));
+            // 필드 유효성 검사 (간단하게)
+            if (!hospitalData.hospName || !hospitalData.tel || !hospitalData.zipCode || !hospitalData.addr1) {
+                alert('필수 정보를 모두 입력해주세요.');
+                return;
+            }            
+            
+            if(!hospitalData.hostIdx || hospitalData.hostIdx==0 ){
+            	fetch('/api/hospitals/save', { // HospitalController의 POST 엔드포인트
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(hospitalData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // 서버에서 발생한 오류 메시지를 받을 수 있다면 더 상세하게 처리
+                        return response.json().then(err => { throw new Error(err.message || '병원 등록 실패'); });
+                    }
+                    return response.json();
+                })
+                .then(newHospital => {
+    	            alert(`'${newHospital.hospName}' 병원이 성공적으로 등록되었습니다.`);
+    	            searchHospitals();
+    	            newHospitalForm.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('병원 등록 중 오류 발생:', error);
+                    alert('병원 등록 중 오류가 발생했습니다: ' + error.message);
+                });
+            } else {
+            	let hospitalIdToEdit = hospitalData.hostIdx;
+            	fetch(`/api/hospitals/${hospitalIdToEdit}`, { // HospitalController의 POST 엔드포인트
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(hospitalData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        // 서버에서 발생한 오류 메시지를 받을 수 있다면 더 상세하게 처리
+                        return response.json().then(err => { throw new Error(err.message || '병원 수정 실패'); });
+                    }
+                    return response.json();
+                })
+                .then(newHospital => {
+    	            alert(`'${newHospital.hospName}' 병원이 성공적으로 수정되었습니다.`);
+    	            searchHospitals();
+    	            newHospitalForm.style.display = 'none';
+                })
+                .catch(error => {
+                    console.error('병원 수정 중 오류 발생:', error);
+                    alert('병원 수정 중 오류가 발생했습니다: ' + error.message);
+                });
+            }
+        });
+        
+     	// ⭐️⭐️ 병원 검색 버튼 클릭 시 검색 결과 표시 ⭐️⭐️
+		searchHospitalBtn.addEventListener('click', function() {
+            // CSS에서 display: none; 되어 있던 요소를 보이게 합니다.
+    		searchHospitals();
+            hospitalSearchResults.style.display = 'block'; 
+        });
+     	
+		 // --- 병원 검색 및 추가 모달 제어 (유지) ---
+	    openHospitalModalBtn.addEventListener('click', () => {
+			//alert("병원 검색 모달");
+			$("#newHospitalId").val(0);
+	        hospitalModal.style.display = 'flex';
+	    });
+		 
+	 	// ⭐️⭐️ 병원 선택 버튼 클릭 시 메인 폼에 적용 ⭐️⭐️
+	    hospitalSearchResults.addEventListener('click', function(event) {	    	
+	        if (event.target.classList.contains('select-hospital-btn')) {
+	            const hospitalItem = event.target.closest('.hospital-item');
+	            
+	            // 병원 이름과 ID (data- 속성 사용) 가져오기
+	            const selectedHospitalName = hospitalItem.querySelector('.hospital-name').textContent;
+	            const selectedHospitalId = event.target.dataset.hospitalId;
+	            // 메인 폼에 적용
+	            hospitalNameInput.value = selectedHospitalName;
+	            hospitalIdInput.value = selectedHospitalId;
+	            
+	            // 모달 닫기
+	            hospitalModal.style.display = 'none';
+	            newHospitalForm.style.display = 'none';
+	            
+	            //alert(`"${selectedHospitalName}" 병원을 선택했습니다.`);
+	        } else if (event.target.classList.contains('edit-hospital-btn')) {
+	            const hospitalIdToEdit = event.target.dataset.hospitalId;
+	            
+	            
+	            //alert(`병원 ID ${hospitalIdToEdit} 수정 폼을 띄웁니다.`);
+	            newHospitalForm.style.display = 'block'; 
+	            
+	            $.ajax({
+	                url: `/api/hospitals/${hospitalIdToEdit}`, // URL 수정
+	                method: 'GET',
+	                contentType: 'application/json', // GET 요청에서는 보통 생략하지만 명확히 지정
+	                dataType: 'json', // 서버로부터 받을 데이터 형식
+	                
+	                success: function(hospitalData) {
+	                    // HTTP 상태 코드가 200 (OK)일 때 실행됩니다.
+	                    
+	                    // ⭐️⭐️ 객체의 속성값을 직접 할당합니다. ⭐️⭐️
+	                    if (typeof newHospitalId !== 'undefined') {
+	                        newHospitalId.value = hospitalData.hospIdx || '';
+	                    }
+	                    newHospitalName.value = hospitalData.hospName || '';
+	                    newHospitalTel.value = hospitalData.tel || '';
+	                    newHospitalZipCode.value = hospitalData.zipCode || '';
+	                    newHospitalAddr1.value = hospitalData.addr1 || '';
+	                    newHospitalAddr2.value = hospitalData.addr2 || '';
+
+	                    // 폼과 모달을 보이게 합니다.
+	                    // 병원 수정 시에는 newHospitalForm을 먼저 보여야 합니다.
+	                    if (typeof newHospitalForm !== 'undefined') {
+	                         newHospitalForm.style.display = 'block'; 
+	                    }
+	                    hospitalModal.style.display = 'flex';
+	                },
+	                
+	                error: function(xhr, status, error) {
+	                    // 서버 응답이 4xx, 5xx 에러이거나 네트워크 오류 시 실행됩니다.
+	                    console.error('병원 조회 중 오류 발생: ', status, error);
+	                    
+	                    let errorMessage = '병원 조회 중 오류가 발생했습니다.';
+	                    if (xhr.responseJSON && xhr.responseJSON.message) {
+	                         errorMessage = xhr.responseJSON.message;
+	                    }
+	                    alert(errorMessage);
+	                }
+	            });
+	        }
+	    });
+    </script>
+</body>
+</html>

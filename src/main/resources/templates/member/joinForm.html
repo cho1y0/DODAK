@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>회원가입 - DODAK</title>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script
+	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap"
+	rel="stylesheet">
+<link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+	rel="stylesheet">
+<link rel="stylesheet"
+	href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body style="padding-top: 0;">
+
+	<div class="signup-wrapper">
+		<div class="signup-card">
+			<h2>DODAK 회원가입</h2>
+
+			<img src="/img/dodak.png" alt="도닥이 마스코트"
+				style="width: 80px; margin-bottom: 20px;">
+
+			<form id="registerForm">
+				<input type="hidden" id="agreements" name="agreementYn" value="0">
+
+				<div class="form-group-section">
+					<h5>
+						<i class="bi bi-person-fill-gear me-2"></i> 역할 선택
+					</h5>
+					<div class="mb-4">
+						<label for="selectRole" class="form-label-custom">가입 역할 <span
+							class="required-star">*</span></label> <select class="form-select"
+							id="selectRole" name="role" required>
+							<option value="USER" selected>일반 회원 (USER)</option>
+							<option value="DOCTOR">의사 회원 (DOCTOR)</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group-section">
+					<h5>
+						<i class="bi bi-person-badge me-2"></i> 기본 정보
+					</h5>
+
+					<div class="mb-3">
+						<label for="inputId" class="form-label-custom">아이디 <span
+							class="required-star">*</span></label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="inputId"
+								name="userId" placeholder="ID 입력" maxlength="20"
+								required="required">
+							<button class="btn btn-outline-secondary" type="button"
+								id="buttonIDCheck" onclick="checkId()">중복체크</button>
+						</div>
+						<span class="validation-info">5~20자, 영문+숫자 조합만 허용. (중복 불가)</span>
+						<small id="idMessage" class="form-text text-muted"></small>
+					</div>
+
+					<div class="mb-3">
+						<label for="inputPassword" class="form-label-custom">비밀번호
+							<span class="required-star">*</span>
+						</label> <input type="password" class="form-control" maxlength="20"
+							id="inputPassword" name="password" placeholder="비밀번호 입력" required>
+						<span class="validation-info">8~20자, 영문+숫자+특수문자 조합을 사용하세요.</span>
+					</div>
+
+					<div class="mb-4">
+						<label for="inputPasswordConfirm" class="form-label-custom">비밀번호
+							확인 <span class="required-star">*</span>
+						</label> <input type="password" class="form-control"
+							id="inputPasswordConfirm" placeholder="비밀번호 재입력" maxlength="20"
+							required="required"> <span class="validation-info">위의
+							비밀번호와 동일하게 입력해주세요.</span> <small id="pwMessage"></small>
+					</div>
+
+					<div class="mb-3">
+						<label for="inputName" class="form-label-custom">이름(한글) <span
+							class="required-star">*</span></label> <input type="text"
+							class="form-control" id="inputName" placeholder="실명 입력 (한글)"
+							name="name" maxlength="10" required="required"> <span
+							class="validation-info">한글만 허용 (2~10자).</span>
+					</div>
+				</div>
+
+				<div class="form-group-section" id="doctorFields"
+					style="display: none;">
+					<h5>
+						<i class="bi bi-hospital me-2"></i> 의사 정보
+					</h5>
+					<div class="mb-3">
+						<label for="hospNameDisplay" class="form-label-custom">소속
+							병원 <span class="required-star">*</span>
+						</label>
+						<div class="input-group">
+							<input type="text" class="form-control" id="hospNameDisplay"
+								placeholder="병원 선택 버튼을 눌러주세요" readonly>
+							<button class="btn btn-primary" type="button"
+								id="buttonHospitalSearch">병원 선택/추가</button>
+						</div>
+						<input type="hidden" id="hospIdx" name="hospIdx"> <span
+							class="validation-info">소속 병원을 검색하거나 새로 등록하세요.</span>
+					</div>
+
+					<div class="mb-4">
+						<label for="inputSpecialty" class="form-label-custom">전문
+							분야 <span class="required-star">*</span>
+						</label> <input type="text" class="form-control" id="inputSpecialty"
+							name="specialty" placeholder="예: 정신 건강의학과" maxlength="50">
+						<span class="validation-info">의료 면허에 등록된 전문 분야를 입력하세요.</span>
+					</div>
+				</div>
+
+
+				<div class="form-group-section">
+					<h5>
+						<i class="bi bi-phone me-2"></i> 연락 정보
+					</h5>
+
+					<div class="mb-3">
+						<label for="inputPhone" class="form-label-custom">휴대전화 <span
+							class="required-star">*</span></label> <input type="tel"
+							class="form-control" id="inputPhone" name="phone"
+							placeholder="010-XXXX-XXXX" required="required"> <span
+							class="validation-info">하이픈(-)을 포함하여 010-XXXX-XXXX 형식으로
+							입력하세요.</span>
+					</div>
+
+					<div class="mb-3">
+						<label for="inputEmail" class="form-label-custom">이메일 <span
+							class="required-star">*</span></label>
+						<div class="input-group">
+
+							<input type="email" class="form-control" id="inputEmail"
+								name="email" placeholder="example@dodak.com" required="required">
+							<button class="btn btn-outline-secondary" type="button"
+								id="buttonEmailCheck" onclick="validateEmail()">중복체크</button>
+						</div>
+						<span class="validation-info">이메일 형식 검증 및 중복 불가.</span> <small
+							id="emailMessage" class="form-text text-muted"></small>
+					</div>
+					<small id="emailMessage" class="form-text text-muted"></small>
+				</div>
+
+				<div class="form-group-section">
+					<h5>
+						<i class="bi bi-house-door-fill me-2"></i> 주소 정보 <span
+							class="required-star">*</span>
+					</h5>
+
+					<div class="mb-3">
+						<div class="input-group">
+							<input type="text" class="form-control" id="zipCode"
+								placeholder="우편번호" name="zipCode" readonly required>
+							<button class="btn btn-outline-secondary" type="button"
+								id="buttonPostcodeSearch">우편번호 검색</button>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<input type="text" class="form-control" id="streetAdr"
+							name="addr1" placeholder="도로명 주소" readonly required>
+					</div>
+					<div class="mb-4">
+						<input type="text" class="form-control" id="inputAddressDetail"
+							name="addr2" placeholder="상세 주소 (선택 입력)">
+					</div>
+				</div>
+
+				<div class="form-group-section">
+					<h5>
+						<i class="bi bi-file-earmark-text me-2"></i> 약관 동의
+					</h5>
+
+					<div class="form-check mb-3">
+						<input class="form-check-input" type="checkbox" id="checkAllTerms">
+						<label class="form-check-label fw-bold" for="checkAllTerms">
+							<i class="bi bi-check-circle-fill me-1" style="color: #a5d6a7;"></i>
+							모든 약관 동의 (선택 포함)
+						</label>
+					</div>
+
+					<hr style="border-style: dashed; margin: 15px 0;">
+
+					<div class="mb-3 text-start">
+						<div class="terms-scroll-area">
+							[이용약관] 본 서비스는 사용자님의 마음을 도닥여주기 위한 목적으로... (약관 내용 스크롤) <br> <br>
+							제1조 (목적) 이 약관은 DODAK 서비스 이용 조건 및 절차에 관한 사항을 규정함을 목적으로 한다. <br>
+							<br> 제2조 (회원가입) ... (이하 생략) <br> <br> ... (스크롤 후
+							체크 가능 로직 필요)
+						</div>
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="checkTerms1"
+								required> <label class="form-check-label"
+								for="checkTerms1"> 이용약관 동의 <span class="required-star">(필수)</span>
+							</label>
+						</div>
+					</div>
+
+					<div class="mb-3 text-start">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="checkTerms2"
+								required> <label class="form-check-label"
+								for="checkTerms2"> 개인정보 처리방침 동의 <span
+								class="required-star">(필수)</span>
+							</label>
+						</div>
+					</div>
+
+					<div class="mb-4 text-start">
+						<div class="form-check">
+							<input class="form-check-input" type="checkbox" id="checkTerms3">
+							<label class="form-check-label" for="checkTerms3"> 마케팅 정보
+								수신 동의 (이메일/SMS) (선택) </label>
+						</div>
+					</div>
+				</div>
+
+				<button id="regBtn" class="btn btn-success w-100 signup-btn">
+					DODAK 회원가입 완료</button>
+				<p class="mt-4">
+					<a href="/" class="btn btn-sm btn-outline-secondary"> <i
+						class="bi bi-arrow-left me-1"></i> 메인으로 돌아가기
+					</a>
+				</p>
+			</form>
+		</div>
+	</div>
+
+	<script
+		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="/js/scriptNew.js"></script>
+	<script>
+		//
+		let isIdAvailable = false;
+		let isEmailAvailable = false;
+        
+        // **새로 추가된 변수**
+        let isDoctor = false;
+        
+        // 아이디 중복 체크 함수
+       	let checkId = () => {
+       		const id = $('#inputId').val();       		
+       		$.ajax({
+       			url    : "/api/members/checkId",
+       			method : "get",      
+       			data   : {userId : id},
+       			success: function(response){
+       				if(!response){
+       					// 아이디가 중복 됨
+       					$("#idMessage").text("아이디가 중복되었습니다.").css({'color':'blue', 'font-weight':'normal'});
+       					isIdAvailable = false;
+       				} else {
+       					// 아이디가 중복되지 않음
+       					$("#idMessage").text("사용 가능한 아이디입니다.").css({'color':'red', 'font-weight':'normal'});
+       					isIdAvailable = true;
+       					
+       				}
+       			},
+       			error  : function(error){
+       				// 통신 실패
+       				$("#idMessage").text("통신에러");
+       			}       			
+       		});
+        }
+       	
+       	let checkEmail = () => {
+       		const email = $('#inputEmail').val();       		
+       		
+       		$.ajax({
+       			url    : "/api/members/checkEmail",
+       			method : "get",
+       			data   : {email : email},
+       			success: function(response){
+       				if(!response){
+       					// 이메일이 중복 됨
+       					$("#emailMessage").text("이메일이 중복되었습니다.").css({'color':'blue', 'font-weight':'normal'});
+       					isEmailAvailable = false;
+       				} else {
+       					// 이메일이 중복되지 않음
+       					$("#emailMessage").text("사용 가능한 이메일입니다.").css({'color':'red', 'font-weight':'normal'});
+       					isEmailAvailable = true;
+       					
+       				}
+       			},
+       			error  : function(error){
+       				// 통신 실패
+       				$("#emailMessage").text("통신에러");
+       			}       			
+       		});
+        }
+       	
+     // 비밀번호 확인
+      	$('#inputPasswordConfirm').on("input", function(){
+      		const pw = $('#inputPassword').val();
+	        const pwConfirm = $('#inputPasswordConfirm').val();
+	        const pwMessage = $('#pwMessage');
+	        
+	        if(pw === pwConfirm) { 
+	        	pwMessage.text("일치합니다.").css({'color':'blue', 'font-weight':'normal'});
+	        	// pwAvailable = true; // 이 변수는 기존 코드에 없었으므로 주석 처리
+	        } else {
+	        	pwMessage.text("비밀번호가 서로 다릅니다.").css({'color':'red', 'font-weight':'normal'});
+	        	// pwAvailable = false;
+	        }
+      	});
+     
+     
+      	
+        // 폼 태그 제출 검토
+        $('#regBtn').on('click', function(e){        	
+        	e.preventDefault();
+        	// 1. 아이디 중복 체크
+        	checkId();        	
+        	if(!isIdAvailable){
+        		e.preventDefault();
+	        	alert("아이디 중복체크를 완료해 주세요.");
+	        	return;
+	        }
+        	
+        	// 2. 비밀번호 일치 확인
+        	const pw = $('#inputPassword').val();
+        	const pwConfirm = $('#inputPasswordConfirm').val();
+        	
+        	if(pw !== pwConfirm) { 
+        		e.preventDefault();
+	        	alert("비밀번호가 서로 일치하지 않습니다.");	     
+	        	return;
+	        }
+        	
+        	// 3. 전화번호 형식 확인 (기존 함수는 반환값만 있고 호출이 없었음)
+        	if (!isHyphenPhoneNumber($('#inputPhone').val())) {
+                e.preventDefault();
+                alert("휴대전화번호 형식을 확인해 주세요. (010-XXXX-XXXX)");
+                return;
+            }
+        	
+        	// 4. 이메일 유효성 및 중복 확인
+        	if(!validateEmail()){ // validateEmail()이 false 반환하면 형식 오류
+        		e.preventDefault();
+	        	alert("유효한 이메일 주소를 입력해 주세요.");
+	        	return;
+	        }
+        	
+        	if(!isEmailAvailable){ // 중복 체크 결과 확인
+        		e.preventDefault();
+	        	alert("이메일 중복체크를 완료해 주세요.");
+	        	return;
+	        }
+            
+            // 5. DOCTOR 필드 필수 검사 추가
+            if (isDoctor) {
+                if ($('#hospIdx').val() === '' || $('#inputSpecialty').val() === '') {
+                    e.preventDefault();
+                    alert("의사 회원은 병원 선택과 전문 분야 입력이 필수입니다.");
+                    return;
+                }
+            }
+        	
+        	// 6. 마케팅 정보 동의 처리
+        	if($('#checkTerms3').is(':checked')) {
+        		document.getElementById('agreements').value = "Y";
+        	} else {
+        		document.getElementById('agreements').value = "N";
+        	}
+        	
+        	const form = document.getElementById('registerForm');
+        	const formData = $("#registerForm").serializeObject();        	        	
+        	console.log("data : " + JSON.stringify(formData));            
+        	$.ajax({
+        		  url: "/api/members/join",
+        		  type: "POST",
+        		  contentType: "application/json",
+        		  data: JSON.stringify(formData),
+        		  success: function(savedMember, status, xhr) {
+        		    if (xhr.status === 201) {
+        		      console.log("생성된 회원:", savedMember);
+        		      alert(`회원가입 완료! 회원 ID: ${savedMember.id}`);
+        		      location.href = "/";
+        		    } else {
+        		      alert("회원 생성 실패: " + xhr.status);
+        		    }
+        		  },
+        		  error: function(xhr, status, error) {
+        		    console.error("에러 발생:", error);
+        		    alert("회원가입 중 오류가 발생했습니다.");
+        		  }
+        		});
+        });
+        
+        // 주소 검색
+        $("#buttonPostcodeSearch").on("click",function (e) {
+        	e.preventDefault();
+        	new daum.Postcode({
+                oncomplete: function(data) {
+                	// 우편번호
+                    $("#zipCode").val(data.zonecode);
+                    // 도로명 주소
+                    $("#streetAdr").val(data.roadAddress);
+                }
+            }).open();      	
+        });
+        
+        // 전화번호 형식 검사
+        function isHyphenPhoneNumber(phone) {  
+        	const regex = /^0\d{1,2}-\d{3,4}-\d{4}$/;  
+        	return regex.test(phone);
+        }
+        
+        // 이메일 형식 검사
+        function emailCheck(email_address){     
+        	email_regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+        	if(!email_regex.test(email_address)){ 
+        		return false; 
+        	}else{
+        		return true;
+        	}
+        }
+        
+        // 이메일 유효성 검사 및 중복 체크 함수 호출
+        function validateEmail() {
+        	var emailInput = document.getElementById('inputEmail');
+        	var resultDiv = document.getElementById('emailMessage');
+
+        	var email = emailInput.value;
+
+        	if (emailCheck(email)) {
+        		resultDiv.innerHTML = '유효한 이메일 주소입니다.';
+        		checkEmail(); // 유효하면 중복 체크 호출
+        		return true;
+        	} else {
+        		resultDiv.innerHTML = '유효하지 않은 이메일 주소입니다.';
+        		isEmailAvailable = false; // 형식 오류 시 중복 가능성도 false로
+        		return false;
+        	}
+        }
+        
+        
+        // 약관 전체 동의
+        $('#checkAllTerms').on("click",function (e) {        	
+            $('.form-check-input').prop('checked', this.checked);
+        });
+
+        // 개별 약관 변경 시 전체 동의 체크박스 상태 변경
+        $('.form-check-input').on("change",function (e) {
+            // 모든 체크박스 수를 세서 비교 (전체 동의 체크박스 제외)
+            const totalCheckboxes = $('.form-check-input:not(#checkAllTerms)').length;
+            const checkedCount = $('.form-check-input:not(#checkAllTerms):checked').length;
+
+            if (checkedCount === totalCheckboxes) {
+                $('#checkAllTerms').prop('checked', true);
+            } else {            	
+                $('#checkAllTerms').prop('checked', false);
+            }
+        });
+        
+        
+        // =======================================================
+        // ** [병원 선택/추가 팝업] 및 [역할 선택] 로직 추가 **
+        // =======================================================
+        
+        // 역할 변경 시 필드 표시/숨김
+        $('#selectRole').on('change', function() {
+            const role = $(this).val();
+            const $doctorFields = $('#doctorFields');
+            const $hospIdx = $('#hospIdx');
+            const $inputSpecialty = $('#inputSpecialty');
+
+            if (role === 'DOCTOR') {
+                $doctorFields.slideDown(200); // 의사 필드 표시
+                isDoctor = true;
+                // 필수 속성은 폼 제출 시 자바스크립트로 검증
+
+            } else {
+                $doctorFields.slideUp(200); // 의사 필드 숨김
+                isDoctor = false;
+                
+                // USER로 변경 시 불필요한 값 제출 방지를 위해 비워줍니다.
+                $hospIdx.val(''); 
+                $('#hospNameDisplay').val('');
+                $inputSpecialty.val('');
+            }
+        }).trigger('change'); // 페이지 로드 시 초기 상태 적용
+
+        // [병원 검색 버튼] 클릭 이벤트
+        $('#buttonHospitalSearch').on('click', function(e) {
+            e.preventDefault();
+            const url = '/hospital/searchPopup'; // HospitalPageController의 URL
+            const name = 'hospitalSearchPopup';
+            const features = 'width=650,height=750,scrollbars=yes';
+            window.open(url, name, features);
+        });
+
+        // [콜백 함수] 팝업에서 선택된 병원 정보를 받기 위한 함수
+        // 팝업 창에서 window.opener.setHospitalSelection(id, name)을 호출합니다.
+        window.setHospitalSelection = function(hospIdx, hospName) {
+            $('#hospNameDisplay').val(hospName); // 사용자에게 표시되는 병원 이름
+            $('#hospIdx').val(hospIdx); // 실제로 서버에 전송될 병원 PK
+        };
+	</script>
+</body>
+</html>
