@@ -395,8 +395,21 @@ Response:
 
 ---
 
-## 8. 변경 이력
+## 8. 관련 문서
+
+| 문서 | 설명 |
+|------|------|
+| [REQUIREMENTS.md](./REQUIREMENTS.md) | 요구사항 정의서 |
+| [API_SPECIFICATION.md](./API_SPECIFICATION.md) | API 명세서 |
+| [USE_CASES.md](./USE_CASES.md) | 유스케이스 명세서 |
+| [SCREEN_DESIGN.md](./SCREEN_DESIGN.md) | 화면 설계서 |
+| [TEST_CASES.md](./TEST_CASES.md) | 테스트 케이스 |
+
+---
+
+## 9. 변경 이력
 
 | 버전 | 날짜 | 변경 내용 | 작성자 |
 |------|------|-----------|--------|
 | 1.0 | 2026-02-03 | 최초 작성 | 박제연 |
+| 1.1 | 2026-02-09 | 관련 문서 링크 추가, 최신화 | 박제연 |

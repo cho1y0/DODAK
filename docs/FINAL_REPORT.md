@@ -8,8 +8,8 @@
 |------|------|
 | 프로젝트명 | DODAK - 일상을 '도닥'여주는 마음 기록 웹 |
 | 문서 유형 | 최종 결과 보고서 |
-| 작성일 | 2026-02-07 |
-| 버전 | 1.0 |
+| 작성일 | 2026-02-09 |
+| 버전 | 1.1 |
 | 개발 인원 | 6명 (최대영 PM/기획·프론트엔드, 박제연 기획·백엔드, 주현준 프론트엔드, 지태민 데이터베이스·테스트, 서유나 문서작성, 조민솔 문서작성) |
 
 ---
@@ -172,6 +172,10 @@ DODAK은 3-Tier 아키텍처로 구성되며, Spring Boot 웹 서버, FastAPI AI
 | AI API | 5개 | 상태확인, 감정분석, Simple 챗봇, Complex 챗봇, 음악검색 |
 | DB 테이블 | 6개 | member, diary, analysis, hospital, doctor, arrange |
 | 감정 분류 | 8가지 | 기쁨, 희망, 중립, 분노, 슬픔, 불안, 피로, 후회 + 우울증 위험도 |
+| REST 엔드포인트 | 30+ | 회원, 일기, 분석, 병원, 의사, 배정 API |
+| 화면 수 | 15개 | 공개 3 + 회원 4 + 의사 5 + 병원 2 + 공통 1 |
+| 테스트 케이스 | 177개 | 기능 테스트 + 비기능 테스트 |
+| 통합 테스트 | 40개 | E2E, DB, AI, Security, 동시성, 회귀 |
 
 ---
 
@@ -726,6 +730,26 @@ DODAK 프로젝트는 계획된 모든 핵심 기능을 성공적으로 구현�
 | 10 | doctor_03_patient_stats.png | 환자 통계 페이지 |
 | 11 | doctor_04_patient_diary_list.png | 환자 일기 목록 |
 | 12 | doctor_05_mypage.png | 의사 마이페이지 |
+
+---
+
+## 부록 C: 프로젝트 문서 목록
+
+| # | 문서 | 설명 |
+|---|------|------|
+| 1 | [REQUIREMENTS.md](./REQUIREMENTS.md) | 시스템 요구사항 정의서 |
+| 2 | [FUNCTIONAL_SPECIFICATION.md](./FUNCTIONAL_SPECIFICATION.md) | 기능 명세서 |
+| 3 | [API_SPECIFICATION.md](./API_SPECIFICATION.md) | API 명세서 |
+| 4 | [TECH_STACK.md](./TECH_STACK.md) | 기술 스택 |
+| 5 | [USE_CASES.md](./USE_CASES.md) | 유스케이스 명세서 |
+| 6 | [SCREEN_DESIGN.md](./SCREEN_DESIGN.md) | 화면 설계서 |
+| 7 | [TEST_CASES.md](./TEST_CASES.md) | 테스트 케이스 (177개) |
+| 8 | [INTEGRATION_TEST_CASES.md](./INTEGRATION_TEST_CASES.md) | 통합 테스트 (40개) |
+| 9 | [PERFORMANCE_TEST_REPORT.md](./PERFORMANCE_TEST_REPORT.md) | 성능 테스트 보고서 |
+| 10 | [DEMO_SCRIPT.md](./DEMO_SCRIPT.md) | 시연 대본 |
+| 11 | [PRESENTATION.md](./PRESENTATION.md) | 발표 자료 |
+| 12 | [FINAL_REPORT.md](./FINAL_REPORT.md) | 최종 결과 보고서 (본 문서) |
+| 13 | [presentation.html](./presentation.html) | HTML 프레젠테이션 |
 
 ---
 
