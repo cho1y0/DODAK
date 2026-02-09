@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head('DODAK - 의사 마이페이지')}"></head>
+<link rel="stylesheet" href="/css/addUser.css">
+<style>
+/* addUser.css body 스타일 override */
+body {
+    display: block !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+}
+/* container 스타일 override - Bootstrap container 유지 */
+.app-container .container {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    max-width: 100%;
+}
+/* 탭 내부 form-section 스타일 */
+#info-pane .form-section:first-of-type {
+    max-width: 100%;
+}
+</style>
+<body>
+
+<div th:replace="~{fragments/background :: dodak-background}"></div>
+<nav th:replace="~{fragments/doctor-navbar :: doctor-navbar('mypage')}"></nav>
+
+<div class="app-container">
+    <div class="container">
+        <ul class="nav nav-tabs sub-nav-tabs" id="myPageInnerTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="info-tab" data-bs-toggle="tab"
+                        data-bs-target="#info-pane" type="button" role="tab"
+                        aria-controls="info-pane" aria-selected="true">기본정보 수정</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="assign-tab" data-bs-toggle="tab"
+                        data-bs-target="#assign-pane" type="button" role="tab"
+                        aria-controls="assign-pane" aria-selected="false">환자 배정</button>
+            </li>
+        </ul>
+
+        <div class="tab-content pt-3" id="myPageInnerTabContent">
+            <!-- 기본정보 수정 탭 -->
+            <div class="tab-pane fade show active" id="info-pane" role="tabpanel"
+                 aria-labelledby="info-tab" tabindex="0">
+                <form id="registerForm">
+                    <input type="hidden" id="agreements" name="agreementYn" value="">
+                    <input type="hidden" id="oldImgPath" name="oldImgPath" value="">
+
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-user"></i> 기본 정보
+                        </h3>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <div class="profile-section">
+                                    <div class="profile-image-container" id="profileImageContainer" align="center">
+                                        <img src="https://placehold.co/120/DCC5AE/FFFFFF?text=PROFILE"
+                                             alt="프로필 이미지" style="width: 100%; height: 100%"
+                                             class="profile-image">
+                                        <input type="file" id="profileImageUpload" name="profileImage"
+                                               accept="image/*" style="display: none;">
+                                        <div class="overlay">클릭하여 이미지 변경</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="roleSelect" class="required">가입 역할</label>
+                                <select id="roleSelect" name="role" class="form-control" disabled="disabled">
+                                    <option value="USER">일반 회원 (USER)</option>
+                                    <option value="DOCTOR">의사 회원 (DOCTOR)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputId" class="required">아이디</label>
+                                <div class="input-group">
+                                    <input type="text" readonly="readonly" id="inputId"
+                                           name="userId" class="form-control" placeholder="ID 입력"
+                                           maxlength="20" autocomplete="off">
+                                    <button type="button" class="btn btn-secondary"
+                                            id="buttonIDCheck" disabled="disabled">중복 체크</button>
+                                </div>
+                                <span class="help-text">5~20자, 영문+숫자 조합.</span>
+                                <small id="idMessage" class="form-text text-muted"></small>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputName" class="required">이름 (한글)</label>
+                                <input type="text" id="inputName" name="name" class="form-control"
+                                       placeholder="실명 입력 (한글)" maxlength="10" required="required">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password" class="required">비밀번호</label>
+                                <input type="password" name="password" class="form-control"
+                                       maxlength="20" id="password" placeholder="비밀번호 입력" required>
+                                <small class="help-text">8~20자, 영문+숫자+특수문자 조합.</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="passwordConfirm" class="required">비밀번호 확인</label>
+                                <input type="password" name="passwordConfirm"
+                                       class="form-control" id="passwordConfirm"
+                                       placeholder="비밀번호 재입력" maxlength="20" required="required">
+                                <small class="help-text" id="passwordMatchText"></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-mobile-alt"></i> 연락 정보
+                        </h3>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="inputPhone" class="required">휴대 전화</label>
+                                <input type="tel" class="form-control" id="inputPhone" name="phone"
+                                       placeholder="010-XXXX-XXXX" required="required">
+                            </div>
+                            <div class="form-group">
+                                <label for="inputEmail" class="required">이메일</label>
+                                <div class="input-group">
+                                    <input type="email" class="form-control" id="inputEmail"
+                                           name="email" placeholder="example@dodak.com" required="required">
+                                    <input type="hidden" class="form-control" id="inputEmailCheck" name="emailCheck">
+                                    <button type="button" class="btn btn-secondary" id="buttonEmailCheck">중복 체크</button>
+                                </div>
+                                <small class="help-text">이메일 형식 검증 및 중복 불가.</small>
+                                <small class="help-text" id="emailMessage"></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-home"></i> 주소 정보
+                        </h3>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="zipCode" class="required">우편 번호</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="zipCode"
+                                           placeholder="우편번호" name="zipCode" readonly required>
+                                    <button type="button" class="btn btn-secondary" id="buttonPostcodeSearch">검색</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="streetAdr" class="required">주소</label>
+                                <input type="text" class="form-control" id="streetAdr" name="addr1"
+                                       placeholder="도로명 주소" readonly required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputAddressDetail">상세 주소</label>
+                            <input type="text" class="form-control" id="inputAddressDetail" name="addr2"
+                                   placeholder="상세 주소 (선택 입력)">
+                        </div>
+                    </div>
+
+                    <div class="form-section" id="doctorInfoSection">
+                        <h3 class="section-title">
+                            <i class="fas fa-hospital-alt"></i> 의사 정보
+                        </h3>
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="hospNameDisplay" class="required">소속 병원</label>
+                                <div class="input-group">
+                                    <input type="text" id="hospNameDisplay" class="form-control"
+                                           placeholder="병원 선택 버튼을 눌러주세요" readonly>
+                                    <input type="hidden" id="hospIdx" name="hospIdx">
+                                    <button type="button" class="btn btn-primary" id="openHospitalModalBtn">병원 선택/추가</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="inputSpecialty" class="required">전문 분야</label>
+                                <input type="text" id="inputSpecialty" name="specialty"
+                                       class="form-control" placeholder="예: 정신 건강의학과">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section agreement-section">
+                        <h3 class="section-title">
+                            <i class="fas fa-file-alt"></i> 마케팅 정보 수신 동의
+                        </h3>
+                        <div class="grid-2 agreement-checkboxes">
+                            <div class="form-group">
+                                <input type="checkbox" id="checkTerms3">
+                                <span class="checkbox-text">마케팅 정보 수신 동의 (이메일/SMS) (선택)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="footer-actions" style="width: 100%" align="center">
+                        <button class="btn btn-submit-small" id="regBtn">회원 정보 수정</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- 환자 배정 탭 -->
+            <div class="tab-pane fade" id="assign-pane" role="tabpanel"
+                 aria-labelledby="assign-tab" tabindex="0">
+                <div class="assignment-wrapper">
+                    <div class="mb-4">
+                        <h3 class="section-title">
+                            <i class="fas fa-user-friends me-2" style="color: #A36B3C;"></i>
+                            환자 배정 관리
+                        </h3>
+                    </div>
+
+                    <!-- 검색 영역 -->
+                    <div class="row mb-3">
+                        <div class="col-md-5">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="환자 이름 검색..." id="patientSearchInput">
+                                <button class="btn btn-secondary" type="button" id="patientSearchButton">
+                                    <i class="fas fa-search"></i> 검색
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 배정 리스트 영역 -->
+                    <div class="row align-items-stretch mb-5">
+                        <!-- 미배정 환자 리스트 -->
+                        <div class="col-md-5">
+                            <div class="form-section p-3">
+                                <h5 class="sub-section-title text-center" style="margin-bottom: 15px;">배정될 환자 리스트</h5>
+                                <div class="list-group" id="unassignedPatientList"
+                                     style="min-height: 300px; max-height: 450px; overflow-y: auto; border: 1px solid #DCC5AE;">
+                                    <p class="text-muted text-center p-3">로딩 중...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 화살표 버튼 -->
+                        <div class="col-md-2 d-flex align-items-center justify-content-center">
+                            <div class="d-flex flex-column gap-3">
+                                <button class="btn btn-submit-small" style="width: 50px; height: 50px;"
+                                        id="assignSelectedBtn" title="선택 환자 배정">
+                                    <i class="fas fa-angle-double-right"></i>
+                                </button>
+                                <button class="btn btn-secondary" style="width: 50px; height: 50px;"
+                                        id="unassignSelectedBtn" title="선택 환자 배정 해제">
+                                    <i class="fas fa-angle-double-left"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 배정된 환자 리스트 -->
+                        <div class="col-md-5">
+                            <div class="form-section p-3">
+                                <h5 class="sub-section-title text-center" style="margin-bottom: 15px;">배정된 환자 리스트</h5>
+                                <div class="list-group" id="assignedPatientList"
+                                     style="min-height: 300px; max-height: 450px; overflow-y: auto; border: 1px solid #DCC5AE;">
+                                    <p class="text-muted text-center p-3">로딩 중...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 현재 배정된 환자 테이블 -->
+                    <div class="form-section p-4">
+                        <h3 class="section-title">
+                            <i class="fas fa-user-friends me-2" style="color: #A36B3C;"></i>
+                            현재 배정된 환자 목록
+                        </h3>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead>
+                                    <tr class="table-light">
+                                        <th>No.</th>
+                                        <th>환자 아이디</th>
+                                        <th>환자 이름</th>
+                                        <th>연락처</th>
+                                        <th>상태</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="assignedPatientTableBody">
+                                    <tr id="noAssignedPatientsRow">
+                                        <td colspan="5" class="text-center text-muted p-3">
+                                            <i class="fas fa-info-circle me-2"></i> 현재 배정된 환자가 없습니다.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 저장 버튼 -->
+                    <div class="footer-actions" style="width: 100%" align="center">
+                        <button class="btn btn-submit-small" id="saveAssignmentBtn">
+                            <i class="fas fa-check-circle me-2"></i> 최종 배정 정보 저장
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="memberId" name="memberId" th:value="${session.memberId}">
+
+<div th:replace="~{fragments/hospital-modal :: hospital-modal}"></div>
+
+<div th:replace="~{fragments/scripts :: doctor-scripts}"></div>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="/js/doctor/mypage.js"></script>
+
+</body>
+</html>

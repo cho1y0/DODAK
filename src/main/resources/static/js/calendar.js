@@ -14,6 +14,11 @@
 	const dayList = document.getElementById('dayList');
 	const selectedEl = document.getElementById('selected');
 
+	// 필수 요소가 없으면 스크립트 실행 중단
+	if (!yearList || !monthList || !dayList || !yearSearch || !monthSearch || !daySearch) {
+		return;
+	}
+
 	let state = { year: null, month: null, day: null };
 
 	const years = [];

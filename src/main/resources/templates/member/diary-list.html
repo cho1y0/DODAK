@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head('DODAK - 일기 목록')}"></head>
+<link rel="stylesheet" href="/css/calendar.css">
+<body>
+
+<div th:replace="~{fragments/background :: dodak-background}"></div>
+<nav th:replace="~{fragments/member-navbar :: member-navbar('diary-list')}"></nav>
+
+<div class="app-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="app-card position-relative">
+                <h4 class="fw-bold mb-4" style="color: #555;">기록된 나의 일기 모음</h4>
+                <p class="text-muted mb-4" id="totalDiaryCount"></p>
+
+                <img src="/img/휴식하는도닥이.png" alt="휴식하는 도닥이"
+                     class="dodak-local-element dodak-list-search-1">
+
+                <div class="d-flex align-items-center mb-4 gap-2">
+                    <div class="controls">
+                        <div class="col">
+                            <label for="yearSearch">연도 검색 / 선택</label>
+                            <div class="search">
+                                <input id="yearSearch" type="search"
+                                       placeholder="예: 1990 또는 20" aria-label="연도 검색"/>
+                            </div>
+                            <div id="yearList" class="list" role="listbox"
+                                 aria-label="연도 목록" tabindex="0"></div>
+                        </div>
+
+                        <div class="col">
+                            <label for="monthSearch">월 검색 / 선택</label>
+                            <input id="monthSearch" type="search" placeholder="예: 3 또는 03"
+                                   aria-label="월 검색"/>
+                            <div id="monthList" class="list" role="listbox"
+                                 aria-label="월 목록" tabindex="0"></div>
+                        </div>
+
+                        <div class="col">
+                            <label for="daySearch">일 검색 / 선택</label>
+                            <input id="daySearch" type="search" placeholder="예: 15 또는 1" aria-label="일 검색"/>
+                            <div id="dayList" class="list" role="listbox" tabindex="0"
+                                 aria-label="일 목록"></div>
+                        </div>
+                    </div>
+
+                    <div class="output" aria-live="polite">
+                        <strong id="selected">없음</strong>
+                    </div>
+                    <div class="input-group ms-auto" style="max-width: 290px; height: 60px; padding-top: 20px;">
+                        <input type="text" class="form-control form-control-sm" id="keywordSearch"
+                               placeholder="제목/내용 검색">
+                        <button class="btn btn-secondary btn-sm" type="button" id="searchButton">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="diary-list" id="diaryListContainer"></div>
+
+                <nav aria-label="Diary Pagination" class="mt-4">
+                    <ul class="pagination justify-content-center" id="paginationNav"></ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="memberId" name="memberId" th:value="${session.memberId}">
+
+<div th:replace="~{fragments/diary-detail-modal :: diary-detail-modal}"></div>
+
+<div th:replace="~{fragments/scripts :: member-scripts}"></div>
+<script src="/js/calendar.js"></script>
+<script src="/js/member/diary-list.js"></script>
+
+</body>
+</html>

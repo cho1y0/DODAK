@@ -41,4 +41,39 @@ public interface DiaryRepository extends JpaRepository<Diary, Integer>, DiaryRep
      */
     @Query("SELECT d FROM Diary d JOIN FETCH d.analysis a JOIN FETCH d.member m WHERE d.diaryIdx = :diaryIdx")
     Optional<Diary> findByIdWithAnalysisAndMember(@Param("diaryIdx") Integer diaryIdx);
+
+    /**
+     * 여러 환자의 최근 일기를 Analysis와 함께 조회합니다.
+     * @param memberIds 환자 ID 리스트
+     * @param limit 최대 조회 개수
+     * @return 최근 일기 리스트 (작성일 내림차순)
+     */
+    @Query("SELECT d FROM Diary d LEFT JOIN FETCH d.analysis a JOIN FETCH d.member m " +
+           "WHERE d.member.id IN :memberIds ORDER BY d.createdAt DESC")
+    List<Diary> findRecentDiariesByMemberIds(@Param("memberIds") List<Integer> memberIds);
+
+    /**
+     * 특정 날짜 범위의 일기를 조회합니다.
+     * @param memberIds 환자 ID 리스트
+     * @param startDate 시작 날짜
+     * @param endDate 종료 날짜
+     * @return 일기 리스트
+     */
+    @Query("SELECT d FROM Diary d WHERE d.member.id IN :memberIds " +
+           "AND d.createdAt >= :startDate AND d.createdAt < :endDate")
+    List<Diary> findByMemberIdsAndDateRange(@Param("memberIds") List<Integer> memberIds,
+                                            @Param("startDate") Timestamp startDate,
+                                            @Param("endDate") Timestamp endDate);
+
+    /**
+     * 특정 회원의 최근 일기 1개 조회
+     */
+    Optional<Diary> findTop1ByMember_IdOrderByCreatedAtDesc(Integer memberId);
+
+    /**
+     * 특정 회원의 특정 월 일기 수 조회
+     */
+    @Query("SELECT COUNT(d) FROM Diary d WHERE d.member.id = :memberId " +
+           "AND FUNCTION('DATE_FORMAT', d.createdAt, '%Y-%m') = :yearMonth")
+    Integer countByMemberAndMonth(@Param("memberId") Integer memberId, @Param("yearMonth") String yearMonth);
 }

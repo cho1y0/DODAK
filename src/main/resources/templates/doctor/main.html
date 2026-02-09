@@ -23,6 +23,82 @@
 
 <script
 	src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+<link rel="icon" type="image/x-icon" href="/img/휴식하는도닥이.png">
+<style>
+/* 대시보드 스타일 */
+.dashboard-card {
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.dashboard-section {
+    background: #fff;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    height: 100%;
+}
+.dashboard-section .section-title {
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #eee;
+}
+.chart-container {
+    position: relative;
+    width: 100%;
+}
+.activity-log .activity-item {
+    padding: 0.75rem;
+    border-left: 3px solid #ddd;
+    margin-bottom: 0.5rem;
+    background: #f9f9f9;
+    border-radius: 0 8px 8px 0;
+    transition: background 0.2s;
+}
+.activity-log .activity-item:hover {
+    background: #f0f0f0;
+}
+.activity-log .activity-item.mood-joy { border-left-color: #FFD700; }
+.activity-log .activity-item.mood-sad { border-left-color: #4169E1; }
+.activity-log .activity-item.mood-anger { border-left-color: #DC143C; }
+.activity-log .activity-item.mood-anxiety { border-left-color: #FFA500; }
+.activity-log .activity-item.mood-depression { border-left-color: #483D8B; }
+.activity-log .activity-time {
+    font-size: 0.75rem;
+    color: #888;
+}
+.activity-log .activity-name {
+    font-weight: 600;
+    color: #333;
+}
+.activity-log .activity-title {
+    font-size: 0.9rem;
+    color: #666;
+}
+#dashSevereTable tbody tr {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#dashSevereTable tbody tr:hover {
+    background: #fff5f5;
+}
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.status-badge.severe { background: #ffebee; color: #c62828; }
+.status-badge.warning { background: #fff3e0; color: #e65100; }
+.status-badge.normal { background: #e8f5e9; color: #2e7d32; }
+</style>
 </head>
 <body>
 
@@ -62,6 +138,14 @@
 						</button>
 					</li>
 					<li class="nav-item" role="presentation">
+						<button class="nav-link custom-nav-link" id="dashboard-tab"
+							data-bs-toggle="tab" data-bs-target="#dashboard-panel" type="button"
+							role="tab" aria-controls="dashboard-panel" aria-selected="false">
+							<img src="/img/생각하는도닥이.png" alt="대시보드" class="nav-tab-icon"
+								style="width: 50px;"> 대시보드
+						</button>
+					</li>
+					<li class="nav-item" role="presentation">
 						<button class="nav-link custom-nav-link" id="stats-tab"
 							data-bs-toggle="tab" data-bs-target="#stats-panel" type="button"
 							role="tab" aria-controls="stats-panel" aria-selected="false">
@@ -89,27 +173,16 @@
 					</li>
 
 				</ul>
-				<li class="nav-item ms-auto danger-alert-container"><a
-					class="nav-link text-danger" href="#" id="dangerAlertIcon"> <i
-						class="bi bi-exclamation-triangle-fill" style="font-size: 1.2em"
-						title="주의: 심각한 부정적 기록 알림"></i>
-				</a>
+				<li class="nav-item ms-auto danger-alert-container">
+					<a class="nav-link text-danger" href="#" id="dangerAlertIcon">
+						<i class="bi bi-exclamation-triangle-fill" style="font-size: 1.2em"	title="주의: 심각한 부정적 기록 알림"></i>
+					</a>
 
 					<ul class="danger-list-content" id="dangerAlertList">
 						<h6 class="dropdown-header text-danger">🚨 심층 면담 필요 환자</h6>
-						<li><a class="dropdown-item" href="#"> <span>김*독
-									(우울 95%)</span> <span class="fire-icon-right">🔥</span>
-						</a></li>
-						<li><a class="dropdown-item" href="#"> <span>이*자
-									(우울 88%)</span> <span class="fire-icon-right">🔥</span>
-						</a></li>
-						<li><a class="dropdown-item" href="#"> <span>박*수
-									(불안 92%)</span> <span class="fire-icon-right">🔥</span>
-						</a></li>
-						<li><hr class="dropdown-divider"></li>
-						<li><a class="dropdown-item text-muted" href="#">전체 위험군
-								보기...</a></li>
-					</ul></li>
+						<li><span class="dropdown-item text-muted">로딩 중...</span></li>
+					</ul>
+				</li>
 				<div class="d-flex ms-auto">
 					<a href="/logout"
 						class="btn btn-sm btn-outline-secondary me-2 login-btn"> <i
@@ -124,7 +197,7 @@
 	</nav>
 
 	<div class="app-container">
-		<div class="tab-content" id="mainTabContent">
+		<div class="tab-content" id="mainTabContent" >
 
 			<div class="tab-pane fade show active" id="home-panel"
 				role="tabpanel" aria-labelledby="home-tab">
@@ -252,6 +325,148 @@
 				</div>
 			</div>
 
+			<!-- ========== 대시보드 패널 ========== -->
+			<div class="tab-pane fade" id="dashboard-panel" role="tabpanel" aria-labelledby="dashboard-tab">
+				<div class="app-card">
+					<h2 class="text-center fw-bold mb-4" style="color: #6c757d;">
+						<i class="bi bi-speedometer2 me-2"></i> 의사 대시보드
+					</h2>
+
+					<!-- 요약 카드 섹션 -->
+					<div class="row g-4 mb-4">
+						<!-- 총 배정 환자 수 -->
+						<div class="col-md-3 col-sm-6">
+							<div class="dashboard-card bg-primary text-white">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<h6 class="mb-1">배정된 환자</h6>
+										<h2 class="mb-0" id="dashTotalPatients">-</h2>
+									</div>
+									<i class="bi bi-people-fill" style="font-size: 2.5rem; opacity: 0.7;"></i>
+								</div>
+								<small>전체 담당 환자 수</small>
+							</div>
+						</div>
+
+						<!-- 중증 환자 수 -->
+						<div class="col-md-3 col-sm-6">
+							<div class="dashboard-card bg-danger text-white">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<h6 class="mb-1">중증 환자</h6>
+										<h2 class="mb-0" id="dashSeverePatients">-</h2>
+									</div>
+									<i class="bi bi-exclamation-triangle-fill" style="font-size: 2.5rem; opacity: 0.7;"></i>
+								</div>
+								<small>집중 관리 필요</small>
+							</div>
+						</div>
+
+						<!-- 이번 달 일기 수 -->
+						<div class="col-md-3 col-sm-6">
+							<div class="dashboard-card bg-success text-white">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<h6 class="mb-1">이번 달 일기</h6>
+										<h2 class="mb-0" id="dashMonthlyDiaries">-</h2>
+									</div>
+									<i class="bi bi-journal-text" style="font-size: 2.5rem; opacity: 0.7;"></i>
+								</div>
+								<small>환자들의 기록</small>
+							</div>
+						</div>
+
+						<!-- 평균 행복 지수 -->
+						<div class="col-md-3 col-sm-6">
+							<div class="dashboard-card bg-warning text-dark">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<h6 class="mb-1">평균 행복지수</h6>
+										<h2 class="mb-0" id="dashAvgHappiness">-</h2>
+									</div>
+									<i class="bi bi-emoji-smile-fill" style="font-size: 2.5rem; opacity: 0.7;"></i>
+								</div>
+								<small>전체 환자 평균</small>
+							</div>
+						</div>
+					</div>
+
+					<!-- 차트 및 상세 정보 섹션 -->
+					<div class="row g-4 mb-4">
+						<!-- 감정 분포 차트 -->
+						<div class="col-md-6">
+							<div class="dashboard-section">
+								<h5 class="section-title"><i class="bi bi-pie-chart-fill me-2"></i>전체 환자 감정 분포</h5>
+								<div class="chart-container" style="height: 300px;">
+									<canvas id="dashEmotionPieChart"></canvas>
+								</div>
+							</div>
+						</div>
+
+						<!-- 주간 일기 작성 추이 -->
+						<div class="col-md-6">
+							<div class="dashboard-section">
+								<h5 class="section-title"><i class="bi bi-graph-up me-2"></i>최근 7일 일기 작성 추이</h5>
+								<div class="chart-container" style="height: 300px;">
+									<canvas id="dashWeeklyLineChart"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- 환자 상태 테이블 및 알림 섹션 -->
+					<div class="row g-4">
+						<!-- 중증 환자 목록 -->
+						<div class="col-md-6">
+							<div class="dashboard-section">
+								<h5 class="section-title text-danger">
+									<i class="bi bi-exclamation-circle-fill me-2"></i>중증 환자 현황
+								</h5>
+								<div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+									<table class="table table-hover table-sm" id="dashSevereTable">
+										<thead class="table-light sticky-top">
+											<tr>
+												<th>환자명</th>
+												<th>우울지수</th>
+												<th>최근 일기</th>
+												<th>상태</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr><td colspan="4" class="text-center text-muted">로딩 중...</td></tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+
+						<!-- 최근 활동 로그 -->
+						<div class="col-md-6">
+							<div class="dashboard-section">
+								<h5 class="section-title">
+									<i class="bi bi-clock-history me-2"></i>최근 일기 작성 현황
+								</h5>
+								<div class="activity-log" id="dashRecentActivity" style="max-height: 300px; overflow-y: auto;">
+									<div class="text-center text-muted p-3">로딩 중...</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- 월별 감정 추이 (큰 차트) -->
+					<div class="row g-4 mt-2">
+						<div class="col-12">
+							<div class="dashboard-section">
+								<h5 class="section-title"><i class="bi bi-bar-chart-line-fill me-2"></i>월별 감정 추이 (전체 환자)</h5>
+								<div class="chart-container" style="height: 250px;">
+									<canvas id="dashMonthlyBarChart"></canvas>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div class="tab-pane fade " id="stats-panel" role="tabpanel"
 				aria-labelledby="stats-tab">
 
@@ -275,7 +490,7 @@
 								<div class="d-flex align-items-center">
 									<h5 class="fw-bold m-0 me-3"
 										style="color: #333; font-size: 1.15rem;"
-										id="currentMonthDisplay" data-initial-month="5">5월</h5>
+										id="currentMonthDisplay">--월</h5>
 
 									<div class="btn-group" role="group"
 										aria-label="Month Navigation">
@@ -454,7 +669,7 @@
 
 							<div
 								class="d-flex justify-content-between align-items-center mb-4">
-								<h4 class="fw-bold m-0" style="color: #555;">기록된 나의 일기 모음
+								<h4 class="fw-bold m-0" style="color: #555;">기록된 환자의 일기 모음
 									📚</h4>
 
 								<div class="col-4 col-md-3">
@@ -580,7 +795,7 @@
 											</select>
 										</div>
 										<div class="form-group">
-											<label for="userId" class="required">아이디</label>
+											<label for="inputId" class="required">아이디</label>
 											<div class="input-group">
 												<input type="text" readonly="readonly" id="inputId"
 													name="userId" class="form-control" placeholder="ID 입력"
@@ -593,7 +808,7 @@
 												id="idMessage" class="form-text text-muted"></small>
 										</div>
 										<div class="form-group">
-											<label for="name" class="required">이름 (한글)</label> <input
+											<label for="inputName" class="required">이름 (한글)</label> <input
 												type="text" id="inputName" name="name" class="form-control"
 												placeholder="실명 입력 (한글)" maxlength="10" required="required">
 										</div>
@@ -620,16 +835,18 @@
 									</h3>
 									<div class="grid-2">
 										<div class="form-group">
-											<label for="phone" class="required">휴대 전화</label> <input
+											<label for="inputPhone" class="required">휴대 전화</label> <input
 												type="tel" class="form-control" id="inputPhone" name="phone"
 												placeholder="010-XXXX-XXXX" required="required">
 										</div>
 										<div class="form-group">
-											<label for="email" class="required">이메일</label>
+											<label for="inputEmail" class="required">이메일</label>
 											<div class="input-group">
 												<input type="email" class="form-control" id="inputEmail"
 													name="email" placeholder="example@dodak.com"
 													required="required">
+												<input type="hidden" class="form-control" id="inputEmailCheck"
+													name="emailCheck">													
 												<button type="button" class="btn btn-secondary"
 													onclick="validateEmail()" id="buttonEmailCheck">중복
 													체크</button>
@@ -656,13 +873,13 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label for="addr1" class="required">주소</label> <input
+											<label for="streetAdr" class="required">주소</label> <input
 												type="text" class="form-control" id="streetAdr" name="addr1"
 												placeholder="도로명 주소" readonly required>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addr2">상세 주소</label> <input type="text"
+										<label for="inputAddressDetail">상세 주소</label> <input type="text"
 											class="form-control" id="inputAddressDetail" name="addr2"
 											placeholder="상세 주소 (선택 입력)">
 									</div>
@@ -675,7 +892,7 @@
 									</h3>
 									<div class="grid-2">
 										<div class="form-group">
-											<label for="hospitalName" class="required">소속 병원</label>
+											<label for="hospNameDisplay" class="required">소속 병원</label>
 											<div class="input-group">
 												<input type="text" id="hospNameDisplay" class="form-control"
 													placeholder="병원 선택 버튼을 눌러주세요" readonly> <input
@@ -685,7 +902,7 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label for="specialty" class="required">전문 분야</label> <input
+											<label for="inputSpecialty" class="required">전문 분야</label> <input
 												type="text" id="inputSpecialty" name="specialty"
 												class="form-control" placeholder="예: 정신 건강의학과">
 										</div>
@@ -799,7 +1016,7 @@
 													<th>환자 아이디</th>
 													<th>환자 이름</th>
 													<th>연락처</th>
-													<th>상태</th>
+													<th>증상</th>
 												</tr>
 											</thead>
 											<tbody id="assignTargetBody">
@@ -979,11 +1196,17 @@
     // ⚠️ [필수 설정] 로그인한 사용자 ID (PK)를 서버 템플릿 엔진을 통해 받아와야 합니다.
     // 예: Thymeleaf/JSP를 사용하여 <input type="hidden" id="loggedInMemberId" value="123"> 와 같이 추가해야 합니다.
     // 여기서는 ID를 가진 hidden input이 있다고 가정하고 값을 가져오거나, 임시로 1을 사용합니다.
-    const MEMBER_ID = document.getElementById('memberId') ? 
-                      document.getElementById('memberId').value : 
+    const MEMBER_ID = document.getElementById('memberId') ?
+                      document.getElementById('memberId').value :
                       '1'; // 테스트를 위해 임시로 '1' 사용
-    
+
     const DIARY_PAGE_SIZE = 4; // 한 페이지당 일기 개수 (Controller 설정과 일치해야 함)
+
+    // 통계 달력 전역 변수 (차트 탭 전환 시 상태 유지) - window 객체에 저장하여 디버깅 용이하게
+    window.statsCurrentYear = new Date().getFullYear();
+    window.statsCurrentMonth = new Date().getMonth() + 1; // 1-12
+    window.statsCalendarInitialized = false;
+
 
     // DOM 요소 캐시
     const $listPanel = document.getElementById('list-panel');
@@ -1304,7 +1527,14 @@
     
  	// ⭐️ $memberSelect에 change 이벤트 추가
     $memberSelect.addEventListener('change', () => loadDiaries(0));
-    $patientSelect.addEventListener('change', () => {});
+
+    // ⭐️ $patientSelect에 change 이벤트 추가 (통계 탭 환자 선택)
+    $patientSelect.addEventListener('change', () => {
+        const selectedPatientId = $patientSelect.value;
+        if (selectedPatientId) {
+            loadPatientStats(selectedPatientId);
+        }
+    });
     
     function fillModalWithData(diary) {    	
         // 1. 날짜 포맷팅 (길게 상세 정보 표시)
@@ -1348,6 +1578,198 @@
     
     
     /**
+     * 선택된 환자의 통계 정보를 로드합니다.
+     * @param {number} patientId 환자의 Member ID
+     */
+    function loadPatientStats(patientId) {
+        if (!patientId) return;
+
+        // 전역 변수에서 현재 선택된 연도/월 사용
+        const year = window.statsCurrentYear || new Date().getFullYear();
+        const month = window.statsCurrentMonth || (new Date().getMonth() + 1);
+
+        $.ajax({
+            url: `/api/analyses/stats/${patientId}`,
+            method: 'GET',
+            data: { year: year, month: month },
+            dataType: 'json',
+            success: function(stats) {
+                updatePieChart(stats.emotionAverages);
+                updateLineChart(stats.dailyEmotions);
+                updateIndicators(stats.indicators);
+                updateNegativeDays(stats.topNegativeDays);
+                updateDiaryCount(stats.diaryCount, stats.memberName);
+            },
+            error: function(xhr, status, error) {
+                alert('통계 데이터를 불러오는 데 실패했습니다.');
+            }
+        });
+    }
+
+    // 파이 차트 업데이트
+    let pieChartInstance = null;
+    function updatePieChart(emotions) {
+        const ctx = document.getElementById('pie-chart');
+        if (!ctx) return;
+
+        const data = {
+            labels: ['불안', '슬픔', '기쁨', '분노', '후회', '희망', '중립', '피로', '우울'],
+            datasets: [{
+                data: [
+                    emotions.anxiety || 0,
+                    emotions.sadness || 0,
+                    emotions.joy || 0,
+                    emotions.anger || 0,
+                    emotions.regret || 0,
+                    emotions.hope || 0,
+                    emotions.neutrality || 0,
+                    emotions.tiredness || 0,
+                    emotions.depression || 0
+                ],
+                backgroundColor: [
+                    '#FFA500', // 불안 - 주황
+                    '#4169E1', // 슬픔 - 파랑
+                    '#FFD700', // 기쁨 - 노랑
+                    '#DC143C', // 분노 - 빨강
+                    '#9370DB', // 후회 - 보라
+                    '#32CD32', // 희망 - 연두
+                    '#808080', // 중립 - 회색
+                    '#A0522D', // 피로 - 갈색
+                    '#483D8B'  // 우울 - 남색
+                ]
+            }]
+        };
+
+        if (pieChartInstance) {
+            pieChartInstance.destroy();
+        }
+
+        pieChartInstance = new Chart(ctx, {
+            type: 'doughnut',
+            data: data,
+            options: {
+                responsive: true,
+                legend: { position: 'right' }
+            }
+        });
+    }
+
+    // 라인 차트 업데이트
+    let lineChartInstance = null;
+    function updateLineChart(dailyEmotions) {
+        const ctx = document.getElementById('line-chart');
+        if (!ctx) return;
+
+        const labels = dailyEmotions.map(d => d.day + '일');
+        const happinessData = dailyEmotions.map(d => d.happiness || 0);
+        const sadnessData = dailyEmotions.map(d => d.sadnessIndex || 0);
+
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: '행복 지수',
+                    data: happinessData,
+                    borderColor: '#FFD700',
+                    backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                    fill: true
+                },
+                {
+                    label: '우울 지수',
+                    data: sadnessData,
+                    borderColor: '#4169E1',
+                    backgroundColor: 'rgba(65, 105, 225, 0.2)',
+                    fill: true
+                }
+            ]
+        };
+
+        if (lineChartInstance) {
+            lineChartInstance.destroy();
+        }
+
+        lineChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                scales: {
+                    yAxes: [{ ticks: { beginAtZero: true, max: 100 } }]
+                }
+            }
+        });
+    }
+
+    // 종합 지표 업데이트
+    function updateIndicators(indicators) {
+        // 우울지수 표시
+        const depressionFill = document.querySelector('.indicator-fill[style*="mood-sad"]') ||
+                               document.querySelectorAll('.indicator-fill')[0];
+        const depressionLevel = document.querySelectorAll('.indicator-level')[0];
+        if (depressionFill) {
+            depressionFill.style.width = indicators.depressionIndex + '%';
+        }
+        if (depressionLevel) {
+            depressionLevel.textContent = indicators.depressionLevel + '단계';
+        }
+
+        // 행복지수 표시
+        const happinessFill = document.querySelector('.indicator-fill[style*="mood-joy"]') ||
+                              document.querySelectorAll('.indicator-fill')[1];
+        const happinessLevel = document.querySelectorAll('.indicator-level')[1];
+        if (happinessFill) {
+            happinessFill.style.width = indicators.happinessIndex + '%';
+        }
+        if (happinessLevel) {
+            happinessLevel.textContent = indicators.happinessLevel + '단계';
+        }
+
+        // 상태 텍스트 업데이트
+        const statusTexts = document.querySelectorAll('.d-flex.justify-content-between span');
+        if (statusTexts.length >= 4) {
+            if (statusTexts[1]) statusTexts[1].textContent = indicators.depressionStatus;
+            if (statusTexts[3]) statusTexts[3].textContent = indicators.happinessStatus;
+        }
+
+        // 추천 메시지
+        const recommendationEl = document.querySelector('.text-center.mt-4');
+        if (recommendationEl) {
+            recommendationEl.textContent = indicators.recommendation;
+        }
+    }
+
+    // 부정적인 날 TOP 3 업데이트
+    function updateNegativeDays(negativeDays) {
+        const container = document.querySelector('.top-diary-list-container');
+        if (!container) return;
+
+        if (!negativeDays || negativeDays.length === 0) {
+            container.innerHTML = '<p class="text-muted text-center">데이터가 없습니다.</p>';
+            return;
+        }
+
+        let html = '<ul class="list-unstyled">';
+        negativeDays.forEach((day, index) => {
+            const emoji = day.dominantNegativeEmotion === '우울' ? '😢' :
+                          day.dominantNegativeEmotion === '불안' ? '😟' :
+                          day.dominantNegativeEmotion === '분노' ? '😠' : '😥';
+            html += `
+                <li class="mb-2 p-2 bg-light rounded">
+                    <strong>${index + 1}. ${day.date}</strong> - ${day.title}<br>
+                    <small class="text-muted">${emoji} ${day.dominantNegativeEmotion} ${day.dominantNegativeRatio}%</small>
+                </li>
+            `;
+        });
+        html += '</ul>';
+        container.innerHTML = html;
+    }
+
+    // 일기 수 표시 업데이트
+    function updateDiaryCount(count, memberName) {
+        // 필요 시 UI에 일기 수 표시 (현재 미사용)
+    }
+
+    /**
      * 사용자 목록을 로드하여 <select> 박스를 채웁니다.
      */
     async function loadMembersForSelect(memberSelect, memberId) {
@@ -1377,15 +1799,156 @@
             console.error("사용자 목록 로드 실패:", error);
         }
     }
+
+    // ========== 통계 달력 초기화 및 관리 ==========
+    // (전역 변수 window.statsCurrentYear, window.statsCurrentMonth, window.statsCalendarInitialized는 상단에 선언됨)
+
+    // 통계 달력 초기화
+    function initStatsCalendar() {
+        const yearSelect = document.getElementById('yearSelect');
+        const monthDisplay = document.getElementById('currentMonthDisplay');
+        const prevBtn = document.querySelector('.month-prev-btn');
+        const nextBtn = document.querySelector('.month-next-btn');
+
+        if (!yearSelect || !monthDisplay) return;
+
+        // 연도 옵션 생성 (현재 연도 ~ 5년 전)
+        yearSelect.innerHTML = '';
+        const currentYear = new Date().getFullYear();
+        for (let y = currentYear; y >= currentYear - 5; y--) {
+            const option = document.createElement('option');
+            option.value = y;
+            option.textContent = y + '년';
+            if (y === window.statsCurrentYear) option.selected = true;
+            yearSelect.appendChild(option);
+        }
+
+        // 월 표시 업데이트
+        monthDisplay.textContent = window.statsCurrentMonth + '월';
+
+        // 연도 변경 이벤트
+        yearSelect.addEventListener('change', function() {
+            window.statsCurrentYear = parseInt(this.value);
+            reloadStatsWithCurrentDate();
+        });
+
+        // 이전 월 버튼
+        if (prevBtn) {
+            prevBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.statsCurrentMonth--;
+                if (window.statsCurrentMonth < 1) {
+                    window.statsCurrentMonth = 12;
+                    window.statsCurrentYear--;
+                }
+                syncCalendarUI();
+                reloadStatsWithCurrentDate();
+            });
+        }
+
+        // 다음 월 버튼
+        if (nextBtn) {
+            nextBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                window.statsCurrentMonth++;
+                if (window.statsCurrentMonth > 12) {
+                    window.statsCurrentMonth = 1;
+                    window.statsCurrentYear++;
+                }
+                syncCalendarUI();
+                reloadStatsWithCurrentDate();
+            });
+        }
+    }
+
+    // 현재 선택된 날짜로 통계 다시 로드
+    function reloadStatsWithCurrentDate() {
+        const selectedPatientId = $patientSelect.value;
+        if (selectedPatientId) {
+            loadPatientStatsWithDate(selectedPatientId, window.statsCurrentYear, window.statsCurrentMonth);
+        }
+    }
+
+    // 날짜 지정 통계 로드
+    function loadPatientStatsWithDate(patientId, year, month) {
+        if (!patientId) return;
+
+        $.ajax({
+            url: `/api/analyses/stats/${patientId}`,
+            method: 'GET',
+            data: { year: year, month: month },
+            dataType: 'json',
+            success: function(stats) {
+                updatePieChart(stats.emotionAverages);
+                updateLineChart(stats.dailyEmotions);
+                updateIndicators(stats.indicators);
+                updateNegativeDays(stats.topNegativeDays);
+                updateDiaryCount(stats.diaryCount, stats.memberName);
+            },
+            error: function(xhr, status, error) {
+                console.error('통계 로드 실패:', error);
+            }
+        });
+    }
+
+    // 달력 UI를 현재 변수 값으로 동기화
+    function syncCalendarUI() {
+        const yearSelect = document.getElementById('yearSelect');
+        const monthDisplay = document.getElementById('currentMonthDisplay');
+
+        if (yearSelect) {
+            if (yearSelect.value != window.statsCurrentYear) {
+                yearSelect.value = window.statsCurrentYear;
+            }
+        }
+        if (monthDisplay) {
+            monthDisplay.textContent = window.statsCurrentMonth + '월';
+        }
+    }
+
+    // 통계 탭 활성화 시 달력 초기화 (최초 1회만)
+    $('#stats-tab').on('shown.bs.tab', function(e) {
+        if (!window.statsCalendarInitialized) {
+            initStatsCalendar();
+            window.statsCalendarInitialized = true;
+        } else {
+            // 이미 초기화된 경우 UI만 동기화
+            syncCalendarUI();
+        }
+    });
+
+    // 차트 탭 (파이/라인) 전환 시 달력 상태 유지
+    $('#chartTabs .nav-link').on('click', function(e) {
+        // 현재 값 저장 (탭 전환 중 값이 변경되지 않도록)
+        const savedYear = window.statsCurrentYear;
+        const savedMonth = window.statsCurrentMonth;
+
+        // 클릭 직후 UI 동기화 (setTimeout으로 탭 전환 완료 후 실행)
+        setTimeout(function() {
+            // 저장된 값으로 복원 (혹시 변경되었을 경우 대비)
+            window.statsCurrentYear = savedYear;
+            window.statsCurrentMonth = savedMonth;
+            syncCalendarUI();
+        }, 50);
+    });
+
+    // 차트 탭(파이/라인)의 shown.bs.tab 이벤트에서도 달력 상태 유지
+    $('#pie-tab, #line-tab').on('shown.bs.tab', function(e) {
+        // 탭 전환 완료 후 UI 동기화
+        syncCalendarUI();
+    });
 </script>
 	<script>
-	
+
 		// 폼 요소 및 버튼 변수 정의 (기존 코드를 따름)
 		const $form = document.getElementById('registerForm');
 		const $inputId = document.getElementById('inputId');
 		const $inputName = document.getElementById('inputName');
 		const $inputPhone = document.getElementById('inputPhone');
 		const $inputEmail = document.getElementById('inputEmail');
+		const $inputEmailCheck = document.getElementById('inputEmailCheck');
 		const $zipCode = document.getElementById('zipCode');
 		const $streetAdr = document.getElementById('streetAdr');
 		const $inputAddressDetail = document.getElementById('inputAddressDetail');
@@ -1404,8 +1967,10 @@
 		
 		const roleSelect = document.getElementById('roleSelect');
 		const doctorInfoSection = document.getElementById('doctorInfoSection');
+		const nameInput = document.getElementById('inputName');
 		const passwordInput = document.getElementById('password');
 		const passwordConfirmInput = document.getElementById('passwordConfirm');
+		const emailInputElement = document.getElementById('inputEmail');
 		const passwordMatchText = document.getElementById('passwordMatchText');
 		const newHospitalId = document.getElementById('newHospitalId');
 		const newHospitalName = document.getElementById('newHospitalName');
@@ -1462,29 +2027,64 @@
 	   }
 	   roleSelect.addEventListener('change', toggleDoctorInfo);
 	   toggleDoctorInfo();
+	   // 이메일 유효성 검사 및 중복 체크 함수 호출
+       function validateEmail() {
+       	var emailInput = document.getElementById('inputEmail');
+          	var email = emailInput.value;
+          	if (emailCheck(email)) {        		
+          		$("#emailMessage").text("유효한 이메일 주소입니다.").css({'color':'blue', 'font-weight':'normal'});
+          		checkEmail(); // 유효하면 중복 체크 호출
+          		return true;
+          	} else {        		
+          		$("#emailMessage").text("유효하지 않은 이메일 주소입니다.").css({'color':'red', 'font-weight':'normal'});	
+          		isEmailAvailable = false; // 형식 오류 시 중복 가능성도 false로
+          		return false;
+          	}
+       } 
 
 	   function checkPasswordMatch() {
-	       const password = passwordInput.value;
-	       const confirmPassword = passwordConfirmInput.value;
+	       	const password = passwordInput.value;
+	       	const confirmPassword = passwordConfirmInput.value;
 
-	       if (confirmPassword === '') {
-	           passwordMatchText.textContent = '';
-	           // 초기 메시지는 회색 도움말 텍스트와 구별되므로 색상 초기화는 불필요
-	           return;
-	       }
+	       	const minLength = 8;
+			const maxLength = 20;
 
-	       if (password === confirmPassword) {
-	           passwordMatchText.textContent = '비밀번호가 일치합니다.';
-	           // ⭐️ 화면 설계서에 가깝게 파란색 계열로 변경 ⭐️
-	           passwordMatchText.style.color = '#007bff'; 
-	       } else {
-	           passwordMatchText.textContent = '비밀번호가 일치하지 않습니다.';
-	           // ⭐️ 빨간색으로 변경 ⭐️
-	           passwordMatchText.style.color = '#dc3545'; 
-	       }
+	        // 1. 길이 검사 (8자 이상 20자 이하)
+	        if (password.length < minLength || password.length > maxLength) {	        	
+	        	passwordMatchText.textContent = `비밀번호는 ${minLength}~${maxLength}자 사이여야 합니다.`;
+				passwordMatchText.style.color = '#dc3545';
+				$('#password').focus();
+				return false;
+	        } else {
+	        	// 2. 조합 검사 (영문, 숫자, 특수문자 각각 최소 1개 포함)
+		        const hasLetter = /[a-zA-Z]/.test(password); // 영문 포함
+		        const hasNumber = /[0-9]/.test(password);     // 숫자 포함
+		        // 특수문자 정규식: /[^a-zA-Z0-9]/ -> 영문, 숫자가 아닌 모든 문자
+		        const hasSpecial = /[^a-zA-Z0-9]/.test(password); // 특수문자 포함
+
+		        if (!hasLetter || !hasNumber || !hasSpecial) {            
+		            passwordMatchText.textContent = "비밀번호는 영문, 숫자, 특수문자를 모두 포함해야 합니다.";
+					passwordMatchText.style.color = '#dc3545';
+		            $('#password').focus();
+		            return false;
+		        } else {
+		        	if (password === confirmPassword) {
+		 	           passwordMatchText.textContent = '비밀번호가 일치합니다.';
+		 	           // ⭐️ 화면 설계서에 가깝게 파란색 계열로 변경 ⭐️
+		 	           passwordMatchText.style.color = '#007bff'; 
+		 	           return true;
+		 	       } else {	 	       
+		 	           passwordMatchText.textContent = '비밀번호가 일치하지 않습니다.';
+		 	           // ⭐️ 빨간색으로 변경 ⭐️
+		 	           passwordMatchText.style.color = '#dc3545'; 
+		 	           return false;	           
+		 	       }
+		        }
+	        }	       
 	   }
 	   passwordInput.addEventListener('keyup', checkPasswordMatch);
 	   passwordConfirmInput.addEventListener('keyup', checkPasswordMatch);
+	   emailInputElement.addEventListener('keyup', validateEmail);
 
 	   closeHospitalModalBtns.forEach(btn => {
 	       btn.addEventListener('click', () => {
@@ -1533,7 +2133,7 @@
 	let isEmailAvailable = true;
         
         // **새로 추가된 변수**
-    let isDoctor = false;
+    let isDoctor = true;
         
         // 아이디 중복 체크 함수
        	let checkId = () => {
@@ -1561,43 +2161,65 @@
        		});
         }
        	
-       	let checkEmail = () => {
-       		const email = $('#inputEmail').val();       		
-       		
-       		$.ajax({
-       			url    : "/api/members/checkEmail",
-       			method : "get",
-       			data   : {email : email},
-       			success: function(response){
-       				if(!response){
-       					// 이메일이 중복 됨
-       					$("#emailMessage").text("이메일이 중복되었습니다.").css({'color':'blue', 'font-weight':'normal'});
-       					isEmailAvailable = false;
-       				} else {
-       					// 이메일이 중복되지 않음
-       					$("#emailMessage").text("사용 가능한 이메일입니다.").css({'color':'red', 'font-weight':'normal'});
-       					isEmailAvailable = true;
-       					
-       				}
-       			},
-       			error  : function(error){
-       				// 통신 실패
-       				$("#emailMessage").text("통신에러");
-       			}       			
-       		});
+       	let checkEmail = () => {     		
+       		const email = $('#inputEmail').val();
+       		const emailCheckInput = $('#inputEmailCheck').val();
+       		console.log(`${email} : ${emailCheckInput}`);
+       		if(emailCheckInput === email){
+        		$("#emailMessage").text("사용 가능한 이메일입니다.").css({'color':'blue', 'font-weight':'normal'});
+				isEmailAvailable = true;
+				return true;
+        	} else {
+	       		$.ajax({
+	       			url    : "/api/members/checkEmail",
+	       			method : "get",
+	       			data   : {email : email},
+	       			success: function(response){
+	       				if(!response){
+	       					// 이메일이 중복 됨
+	       					$("#emailMessage").text("이메일이 중복되었습니다.").css({'color':'red', 'font-weight':'normal'});
+	       					isEmailAvailable = false;
+	       				} else {
+	       					// 이메일이 중복되지 않음
+	       					$("#emailMessage").text("사용 가능한 이메일입니다.").css({'color':'blue', 'font-weight':'normal'});
+	       					isEmailAvailable = true;
+	       					
+	       				}
+	       			},
+	       			error  : function(error){
+	       				// 통신 실패
+	       				$("#emailMessage").text("통신에러");
+	       			}       			
+	       		});
+        	}
         }
+       	
+     		
+       	
      // 폼 태그 제출 검토
         $('#regBtn').on('click', function(e){        	
         	e.preventDefault();
-        	// 2. 비밀번호 일치 확인
+        	const inputName = $('#inputName').val();
+        	if(inputName.length>0){
+        		
+        	} else {
+        		e.preventDefault();
+        		alert("이름 항목은 필수입니다.");
+        		nameInput.focus();
+              	return;
+        	}
+        	
+        	
         	const pw = $('#password').val();
         	const pwConfirm = $('#passwordConfirm').val();
         	if(pw.length>0 && pwConfirm.length>0 ){
-	        	if(pw !== pwConfirm) { 
-	        		e.preventDefault();
-		        	alert("비밀번호가 서로 일치하지 않습니다.");	     
-		        	return;
-		        }
+           		// 2. 비밀번호 일치 확인
+               	if(!checkPasswordMatch()){
+               		e.preventDefault();
+               		alert("비밀번호와 비밀번호 확인은 필수입니다.");
+               		passwordInput.focus();
+                  		return;
+               	}
         	}
         	
         	// 3. 전화번호 형식 확인 (기존 함수는 반환값만 있고 호출이 없었음)
@@ -1611,17 +2233,39 @@
         	
         	if(!isEmailAvailable){ // 중복 체크 결과 확인
         		e.preventDefault();
+        		const emailInput = $('#inputEmail').val();        		
+        		if(emailInput.length>0){
         		// 4. 이메일 유효성 및 중복 확인
-            	if(!validateEmail()){ // validateEmail()이 false 반환하면 형식 오류
-            		e.preventDefault();
-    	        	alert("유효한 이메일 주소를 입력해 주세요.");
-    	        	return;
-    	        }
+					if(!validateEmail()){ // validateEmail()이 false 반환하면 형식 오류
+						e.preventDefault();
+						alert("유효한 이메일 주소를 입력해 주세요.");
+						return;
+					}
+        		} else {
+        			$("#emailMessage").text("이메일 중복체크는 필수입니다.").css({'color':'red', 'font-weight':'normal'});	
+        			isEmailAvailable = false;
+        			return;
+        		}
+	        } else {
+	        	const emailInput = $('#inputEmail').val();
+        		var resultDiv = document.getElementById('emailMessage');
+	        	if(emailInput.length>0){
+	        		
+	        	} else {
+	        		$("#emailMessage").text("이메일 중복체크는 필수입니다.").css({'color':'red', 'font-weight':'normal'});	        		        		
+        			isEmailAvailable = false;
+        			return;
+	        	}
 	        }
-            
+        	console.log(`isDoctor : ${isDoctor}`);
             // 5. DOCTOR 필드 필수 검사 추가
-            if (isDoctor) {
-                if ($('#hospIdx').val() === '' || $('#inputSpecialty').val() === '') {
+            if (roleSelect.value === 'DOCTOR') {
+            	const hospIdx = $('#hospIdx').val();
+            	const inputSpecialty = $('#inputSpecialty').val();
+            	console.log(`${hospIdx.length} : ${inputSpecialty.length}`);
+                if (hospIdx.length > 0 && inputSpecialty.length > 0 ) {
+                	
+                } else {
                     e.preventDefault();
                     alert("의사 회원은 병원 선택과 전문 분야 입력이 필수입니다.");
                     return;
@@ -1690,25 +2334,7 @@
         		return true;
         	}
         }
-        
-        // 이메일 유효성 검사 및 중복 체크 함수 호출
-        function validateEmail() {
-        	var emailInput = document.getElementById('inputEmail');
-        	var resultDiv = document.getElementById('emailMessage');
-
-        	var email = emailInput.value;
-
-        	if (emailCheck(email)) {
-        		resultDiv.innerHTML = '유효한 이메일 주소입니다.';
-        		checkEmail(); // 유효하면 중복 체크 호출
-        		return true;
-        	} else {
-        		resultDiv.innerHTML = '유효하지 않은 이메일 주소입니다.';
-        		isEmailAvailable = false; // 형식 오류 시 중복 가능성도 false로
-        		return false;
-        	}
-        }
-        
+     	
         // =======================================================
         // ** [병원 선택/추가 팝업] 및 [역할 선택] 로직 추가 **
         // =======================================================
@@ -1983,6 +2609,7 @@
             $inputName.value = member.name || '';
             $inputPhone.value = member.phone || '';
             $inputEmail.value = member.email || '';
+            $inputEmailCheck.value = member.email || '';
 
             // 주소 정보 설정
             $zipCode.value = member.zipCode || '';
@@ -2242,17 +2869,20 @@ function loadAssignedPatientsTable(currentMemberId) {
 
             // 테이블에 환자 데이터 추가
             members.forEach(function(member, index) {
-                // 💡 참고: '최근 기록일', '상태' 등의 데이터는 Member 객체에 없으면 별도의 API 호출이 필요합니다.
-                // 여기서는 더미 값 또는 member 객체에서 가져올 수 있는 값(예: member.lastRecordDate)을 사용합니다.
-                const statusBadge = member.status === '지연' ? '<span class="badge bg-warning text-dark">기록 지연</span>' : '<span class="badge bg-success">정상</span>';
-                
+                // 환자 상태: 1=경증(기본), 2=중증
+                const patientStatus = member.patientStatus || 1;
+                const isSevere = patientStatus === 2;
+                const statusBtn = isSevere
+                    ? `<button class="btn btn-sm btn-danger patient-status-btn" data-member-id="${member.id}" data-status="2" title="클릭하여 경증으로 변경">중증 🔥</button>`
+                    : `<button class="btn btn-sm btn-success patient-status-btn" data-member-id="${member.id}" data-status="1" title="클릭하여 중증으로 변경">경증</button>`;
+
                 const tableRow = `
                     <tr data-member-id="${member.id}">
                         <td>${index + 1}</td>
                         <td>${member.userId}</td>
                         <td>${member.name}</td>
-                        <td>${member.phone || 'N/A'}</td> 
-                        <td>${statusBadge}</td>
+                        <td>${member.phone || 'N/A'}</td>
+                        <td>${statusBtn}</td>
                     </tr>`;
                 tableBody.append(tableRow);
             });
@@ -2301,25 +2931,499 @@ $('#saveAssignmentButton').on('click', function() {
     };
     //console.log("JSON.stringify(assignmentData) : " + JSON.stringify(assignmentData));
     // AJAX/Fetch call to the new endpoint
-     $.ajax({
-        url: '/api/members/assignments',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify(assignmentData),
-        success: function(response) {
-            alert('✅ 배정 정보가 성공적으로 저장되었습니다.');
-            // 저장 후 추가 로직 (예: 페이지 새로고침 또는 UI 업데이트)
-         	// 1. 미배정 환자 리스트 로드
-            loadUnassignedPatients(MEMBER_ID);
-            
-            // 2. 배정된 환자 테이블 로드
-            loadAssignedPatientsTable(MEMBER_ID);
-        },
-        error: function(xhr, status, error) {
-            alert('❌ 배정 정보 저장 중 오류가 발생했습니다: ' + xhr.responseText);
-        }
-    }); 
+    if(assignmentData.assignedPatientIds.length>0){
+    	$.ajax({
+            url: '/api/members/assignments',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(assignmentData),
+            success: function(response) {
+                alert('✅ 배정 정보가 성공적으로 저장되었습니다.');
+                // 저장 후 추가 로직 (예: 페이지 새로고침 또는 UI 업데이트)
+             	// 1. 미배정 환자 리스트 로드
+                loadUnassignedPatients(MEMBER_ID);
+                
+                // 2. 배정된 환자 테이블 로드
+                loadAssignedPatientsTable(MEMBER_ID);
+            },
+            error: function(xhr, status, error) {
+                alert('❌ 배정 정보 저장 중 오류가 발생했습니다: ' + xhr.responseText);
+            }
+        }); 
+    } else {
+    	alert('❌ 배정될 환자가 없습니다.');
+    }
+
 });
 </script>
+
+<!-- 환자 상태 토글 및 중증 환자 알림 기능 -->
+<script>
+// 환자 상태 토글 버튼 클릭 이벤트 (이벤트 위임)
+$(document).on('click', '.patient-status-btn', function() {
+    const btn = $(this);
+    const memberId = btn.data('member-id');
+    const currentStatus = btn.data('status');
+    const newStatus = currentStatus === 2 ? 1 : 2; // 토글
+
+    if (!confirm(newStatus === 2 ? '해당 환자를 중증으로 변경하시겠습니까?' : '해당 환자를 경증으로 변경하시겠습니까?')) {
+        return;
+    }
+
+    $.ajax({
+        url: `/api/members/${memberId}/patient-status`,
+        method: 'PATCH',
+        contentType: 'application/json',
+        data: JSON.stringify({ patientStatus: newStatus }),
+        success: function(response) {
+            // 버튼 상태 업데이트
+            if (newStatus === 2) {
+                btn.removeClass('btn-success').addClass('btn-danger');
+                btn.html('중증 🔥');
+                btn.attr('title', '클릭하여 경증으로 변경');
+            } else {
+                btn.removeClass('btn-danger').addClass('btn-success');
+                btn.html('경증');
+                btn.attr('title', '클릭하여 중증으로 변경');
+            }
+            btn.data('status', newStatus);
+
+            // 중증 환자 알림 목록 갱신
+            loadSeverePatientsAlert(MEMBER_ID);
+
+            alert(newStatus === 2 ? '중증 환자로 변경되었습니다.' : '경증 환자로 변경되었습니다.');
+        },
+        error: function(xhr, status, error) {
+            console.error('환자 상태 변경 실패:', error);
+            alert('환자 상태 변경 중 오류가 발생했습니다.');
+        }
+    });
+});
+
+// 중증 환자 알림 목록 로드
+function loadSeverePatientsAlert(memberId) {
+    const alertList = $('#dangerAlertList');
+
+    $.ajax({
+        url: `/api/members/severe/${memberId}`,
+        method: 'GET',
+        dataType: 'json',
+        success: function(patients) {
+            // 목록 초기화 (헤더 유지)
+            alertList.empty();
+            alertList.append('<h6 class="dropdown-header text-danger">🚨 심층 면담 필요 환자</h6>');
+
+            if (!patients || patients.length === 0) {
+                alertList.append('<li><span class="dropdown-item text-muted">현재 중증 환자가 없습니다.</span></li>');
+            } else {
+                patients.forEach(function(patient) {
+                    const maskedName = patient.name.charAt(0) + '*' + patient.name.slice(2);
+                    alertList.append(`
+                        <li>
+                            <a class="dropdown-item severe-patient-item" href="#" data-patient-id="${patient.id}" data-patient-name="${patient.name}">
+                                <span>${maskedName}</span>
+                                <span class="fire-icon-right">🔥</span>
+                            </a>
+                        </li>
+                    `);
+                });
+            }
+
+            alertList.append('<li><hr class="dropdown-divider"></li>');
+            alertList.append('<li><a class="dropdown-item text-muted" href="#" onclick="showAllSeverePatients(); return false;">전체 위험군 보기...</a></li>');
+
+            // 알림 아이콘 업데이트 (중증 환자가 있으면 표시)
+            const alertIcon = $('#dangerAlertIcon i');
+            if (patients && patients.length > 0) {
+                alertIcon.removeClass('text-muted').addClass('text-danger');
+            } else {
+                alertIcon.removeClass('text-danger').addClass('text-muted');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('중증 환자 목록 로드 실패:', error);
+        }
+    });
+}
+
+// 중증 환자 클릭 시 이달의 마음 통계 탭으로 이동 및 환자 선택
+$(document).on('click', '.severe-patient-item', function(e) {
+    e.preventDefault();
+    const patientId = $(this).data('patient-id');
+    const patientName = $(this).data('patient-name');
+
+    // 1. 이달의 마음 통계 탭 활성화
+    $('#stats-tab').trigger('click');
+
+    // 2. 환자 선택 드롭다운에서 해당 환자 선택 (탭 전환 후 드롭다운 로드 대기)
+    setTimeout(function() {
+        const patientSelect = $('#patientSelect');
+        if (patientSelect.length) {
+            // 옵션 중 해당 환자 ID를 가진 항목 선택
+            const optionExists = patientSelect.find(`option[value="${patientId}"]`).length > 0;
+            if (optionExists) {
+                patientSelect.val(patientId).trigger('change');
+                console.log(`${patientName} 환자가 선택되었습니다.`);
+            } else {
+                // 드롭다운 로드 완료 대기 후 재시도
+                setTimeout(function() {
+                    const retryExists = patientSelect.find(`option[value="${patientId}"]`).length > 0;
+                    if (retryExists) {
+                        patientSelect.val(patientId).trigger('change');
+                        console.log(`${patientName} 환자가 선택되었습니다. (재시도)`);
+                    } else {
+                        console.log('환자 ID가 선택 목록에 없습니다:', patientId);
+                    }
+                }, 500);
+            }
+        }
+    }, 400);
+});
+
+// 전체 중증 환자 보기 (마이페이지 환자 배정 탭으로 이동)
+function showAllSeverePatients() {
+    // 마이페이지 탭 활성화
+    $('#mypage-tab').trigger('click');
+    // 환자 배정 탭 활성화
+    setTimeout(function() {
+        $('#assign-tab').trigger('click');
+    }, 100);
+}
+
+// 페이지 로드 시 중증 환자 알림 목록 로드
+$(document).ready(function() {
+    if (typeof MEMBER_ID !== 'undefined' && MEMBER_ID) {
+        loadSeverePatientsAlert(MEMBER_ID);
+    }
+});
+</script>
+
+<!-- ========== 대시보드 JavaScript ========== -->
+<script>
+// 대시보드 차트 인스턴스
+let dashPieChart = null;
+let dashLineChart = null;
+let dashBarChart = null;
+
+// 대시보드 탭 활성화 시 데이터 로드
+$('#dashboard-tab').on('shown.bs.tab', function() {
+    loadDashboardData();
+});
+
+// 대시보드 데이터 로드 - 단일 API 호출
+function loadDashboardData() {
+    if (!MEMBER_ID) return;
+
+    $.ajax({
+        url: `/api/analyses/dashboard/${MEMBER_ID}`,
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            // 1. 요약 카드 업데이트
+            $('#dashTotalPatients').text(data.totalPatients || 0);
+            $('#dashSeverePatients').text(data.severePatients || 0);
+            $('#dashMonthlyDiaries').text(data.monthlyDiaryCount || 0);
+
+            if (data.avgHappinessIndex) {
+                $('#dashAvgHappiness').text(parseFloat(data.avgHappinessIndex).toFixed(1) + '%');
+            } else {
+                $('#dashAvgHappiness').text('-');
+            }
+
+            // 2. 전체 감정 파이 차트 업데이트
+            if (data.emotionSummary) {
+                updateDashPieChart({
+                    anxiety: parseFloat(data.emotionSummary.anxiety) || 0,
+                    sadness: parseFloat(data.emotionSummary.sadness) || 0,
+                    joy: parseFloat(data.emotionSummary.joy) || 0,
+                    anger: parseFloat(data.emotionSummary.anger) || 0,
+                    regret: parseFloat(data.emotionSummary.regret) || 0,
+                    hope: parseFloat(data.emotionSummary.hope) || 0,
+                    neutrality: parseFloat(data.emotionSummary.neutrality) || 0,
+                    tiredness: parseFloat(data.emotionSummary.tiredness) || 0,
+                    depression: parseFloat(data.emotionSummary.depression) || 0
+                });
+            }
+
+            // 3. 주간 일기 작성 추이 라인 차트 업데이트
+            if (data.weeklyDiaryCounts && data.weeklyDiaryCounts.length > 0) {
+                updateDashLineChart(data.weeklyDiaryCounts);
+            } else {
+                updateDashLineChart([]);
+            }
+
+            // 4. 월별 감정 추이 바 차트 업데이트
+            if (data.monthlyTrends && data.monthlyTrends.length > 0) {
+                updateDashBarChart(data.monthlyTrends);
+            } else {
+                updateDashBarChart([]);
+            }
+
+            // 5. 최근 일기 활동 업데이트
+            if (data.recentActivities) {
+                updateRecentActivities(data.recentActivities);
+            }
+
+            // 6. 중증 환자 테이블 업데이트
+            if (data.severePatientDetails) {
+                updateSeverePatientTable(data.severePatientDetails);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Dashboard load error:', error);
+            $('#dashTotalPatients').text('0');
+            $('#dashSeverePatients').text('0');
+            $('#dashMonthlyDiaries').text('0');
+            $('#dashAvgHappiness').text('-');
+            $('#dashRecentActivity').html('<div class="text-center text-danger p-3">데이터 로드 실패</div>');
+            $('#dashSevereTable tbody').html('<tr><td colspan="4" class="text-center text-danger">로드 실패</td></tr>');
+        }
+    });
+}
+
+// 최근 일기 활동 UI 업데이트
+function updateRecentActivities(activities) {
+    const container = $('#dashRecentActivity');
+    container.empty();
+
+    if (!activities || activities.length === 0) {
+        container.html('<div class="text-center text-muted p-3">최근 작성된 일기가 없습니다.</div>');
+        return;
+    }
+
+    activities.forEach(function(activity) {
+        const moodClass = getMoodClassFromEmotion(activity.dominantEmotion);
+        const emoji = getEmotionEmojiByName(activity.dominantEmotion);
+
+        const activityItem = `
+            <div class="activity-item ${moodClass}">
+                <div class="d-flex justify-content-between">
+                    <span class="activity-name">${activity.memberName}</span>
+                    <span class="activity-time">${activity.createdAt}</span>
+                </div>
+                <div class="activity-title">${emoji} ${activity.diaryTitle || '제목 없음'}</div>
+            </div>
+        `;
+        container.append(activityItem);
+    });
+}
+
+// 중증 환자 테이블 UI 업데이트
+function updateSeverePatientTable(patients) {
+    const tbody = $('#dashSevereTable tbody');
+    tbody.empty();
+
+    if (!patients || patients.length === 0) {
+        tbody.append('<tr><td colspan="4" class="text-center text-muted">중증 환자가 없습니다</td></tr>');
+        return;
+    }
+
+    patients.forEach(function(patient) {
+        const depressionIdx = patient.depressionIndex ? parseFloat(patient.depressionIndex).toFixed(1) + '%' : '-';
+        const lastDate = patient.lastDiaryDate || '-';
+
+        const row = `
+            <tr data-patient-id="${patient.memberId}" onclick="goToPatientStats(${patient.memberId})" style="cursor:pointer;">
+                <td><strong>${patient.memberName}</strong></td>
+                <td><span class="text-danger">${depressionIdx}</span></td>
+                <td><small class="text-muted">${lastDate}</small></td>
+                <td><span class="status-badge severe">중증</span></td>
+            </tr>
+        `;
+        tbody.append(row);
+    });
+}
+
+// 감정명으로 CSS 클래스 반환
+function getMoodClassFromEmotion(emotionName) {
+    if (!emotionName) return '';
+    const classMap = {
+        '기쁨': 'mood-joy', '희망': 'mood-joy',
+        '슬픔': 'mood-sad', '우울': 'mood-depression',
+        '분노': 'mood-anger', '불안': 'mood-anxiety',
+        '후회': 'mood-sad', '피로': 'mood-sad', '중립': ''
+    };
+    return classMap[emotionName] || '';
+}
+
+// 감정명으로 이모지 반환
+function getEmotionEmojiByName(emotionName) {
+    if (!emotionName) return '';
+    const emojiMap = {
+        '기쁨': '', '희망': '', '슬픔': '', '우울': '',
+        '분노': '', '불안': '', '후회': '', '피로': '', '중립': ''
+    };
+    return emojiMap[emotionName] || '';
+}
+
+// 대시보드 파이 차트
+function updateDashPieChart(emotions) {
+    const ctx = document.getElementById('dashEmotionPieChart');
+    if (!ctx) return;
+
+    const data = {
+        labels: ['불안', '슬픔', '기쁨', '분노', '후회', '희망', '중립', '피로', '우울'],
+        datasets: [{
+            data: [
+                emotions.anxiety, emotions.sadness, emotions.joy, emotions.anger,
+                emotions.regret, emotions.hope, emotions.neutrality, emotions.tiredness, emotions.depression
+            ],
+            backgroundColor: [
+                '#FFA500', '#4169E1', '#FFD700', '#DC143C', '#9370DB',
+                '#32CD32', '#808080', '#A0522D', '#483D8B'
+            ]
+        }]
+    };
+
+    if (dashPieChart) dashPieChart.destroy();
+    dashPieChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
+        options: { responsive: true, maintainAspectRatio: false, legend: { position: 'right' } }
+    });
+}
+
+// 대시보드 주간 라인 차트 (실제 데이터)
+function updateDashLineChart(weeklyData) {
+    const ctx = document.getElementById('dashWeeklyLineChart');
+    if (!ctx) return;
+
+    let labels = [];
+    let counts = [];
+
+    if (weeklyData && weeklyData.length > 0) {
+        weeklyData.forEach(function(item) {
+            labels.push(item.dayLabel || item.date);
+            counts.push(item.count || 0);
+        });
+    } else {
+        labels = ['6일 전', '5일 전', '4일 전', '3일 전', '2일 전', '어제', '오늘'];
+        counts = [0, 0, 0, 0, 0, 0, 0];
+    }
+
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: '일기 작성 수',
+            data: counts,
+            borderColor: '#6c5ce7',
+            backgroundColor: 'rgba(108, 92, 231, 0.2)',
+            fill: true,
+            tension: 0.4
+        }]
+    };
+
+    if (dashLineChart) dashLineChart.destroy();
+    dashLineChart = new Chart(ctx, {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { yAxes: [{ ticks: { beginAtZero: true } }] }
+        }
+    });
+}
+
+// 대시보드 월별 바 차트 (실제 데이터)
+function updateDashBarChart(monthlyData) {
+    const ctx = document.getElementById('dashMonthlyBarChart');
+    if (!ctx) return;
+
+    let labels = [];
+    let happinessData = [];
+    let depressionData = [];
+
+    if (monthlyData && monthlyData.length > 0) {
+        monthlyData.forEach(function(item) {
+            labels.push(item.monthLabel || (item.month + '월'));
+            happinessData.push(parseFloat(item.happinessIndex) || 0);
+            depressionData.push(parseFloat(item.depressionIndex) || 0);
+        });
+    } else {
+        const now = new Date();
+        for (let i = 5; i >= 0; i--) {
+            const m = new Date(now.getFullYear(), now.getMonth() - i, 1);
+            labels.push((m.getMonth() + 1) + '월');
+            happinessData.push(0);
+            depressionData.push(0);
+        }
+    }
+
+    const data = {
+        labels: labels,
+        datasets: [
+            {
+                label: '행복 지수',
+                data: happinessData,
+                backgroundColor: '#FFD700'
+            },
+            {
+                label: '우울 지수',
+                data: depressionData,
+                backgroundColor: '#4169E1'
+            }
+        ]
+    };
+
+    if (dashBarChart) dashBarChart.destroy();
+    dashBarChart = new Chart(ctx, {
+        type: 'bar',
+        data: data,
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { yAxes: [{ ticks: { beginAtZero: true, max: 100 } }] }
+        }
+    });
+}
+
+// 환자 통계 페이지로 이동
+function goToPatientStats(patientId) {
+    $('#stats-tab').trigger('click');
+    setTimeout(function() {
+        const patientSelect = $('#patientSelect');
+        if (patientSelect.find(`option[value="${patientId}"]`).length > 0) {
+            patientSelect.val(patientId).trigger('change');
+        }
+    }, 500);
+}
+
+// 유틸리티 함수들
+function getDominantEmotion(diary) {
+    const emotions = {
+        '불안': diary.anxietyRatio || 0,
+        '슬픔': diary.sadnessRatio || 0,
+        '기쁨': diary.joyRatio || 0,
+        '분노': diary.angerRatio || 0,
+        '후회': diary.regretRatio || 0,
+        '희망': diary.hopeRatio || 0,
+        '중립': diary.neutralityRatio || 0,
+        '피로': diary.tirednessRatio || 0,
+        '우울': diary.depressionRatio || 0
+    };
+    return Object.keys(emotions).reduce((a, b) => emotions[a] > emotions[b] ? a : b);
+}
+
+function getMoodClass(emotion) {
+    const classMap = {
+        '기쁨': 'mood-joy', '희망': 'mood-joy',
+        '슬픔': 'mood-sad', '우울': 'mood-depression',
+        '분노': 'mood-anger', '불안': 'mood-anxiety'
+    };
+    return classMap[emotion] || '';
+}
+
+function getEmotionEmoji(emotion) {
+    const emojiMap = {
+        '기쁨': '😊', '희망': '✨', '슬픔': '😢', '우울': '💙',
+        '분노': '🔥', '불안': '😟', '후회': '😔', '피로': '😴', '중립': '😐'
+    };
+    return emojiMap[emotion] || '📝';
+}
+</script>
+
+<!-- 외부 JavaScript 모듈 파일 (공통/마이페이지) -->
+<!-- mypage.js와 hospital.js는 인라인 스크립트와 변수 중복으로 제외 (doctor 페이지 전용 코드 사용) -->
 </body>
 </html>

@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DODAK - 최종 결과 보고서</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+        :root {
+            --primary: #8B6914;
+            --primary-light: #C4A35A;
+            --primary-dark: #5C4510;
+            --accent: #D4A853;
+            --bg: #FDF8F0;
+            --bg-card: #FFFFFF;
+            --bg-section: #F9F3E9;
+            --text: #3A3A3A;
+            --text-light: #6B6B6B;
+            --text-muted: #999;
+            --border: #E8DCC8;
+            --border-light: #F0E8D8;
+            --success: #4CAF50;
+            --danger: #E74C3C;
+            --warning: #F39C12;
+            --info: #3498DB;
+            --emotion-joy: #4CAF50;
+            --emotion-hope: #00BCD4;
+            --emotion-neutral: #9E9E9E;
+            --emotion-anger: #F44336;
+            --emotion-sadness: #2196F3;
+            --emotion-anxiety: #FF9800;
+            --emotion-tired: #424242;
+            --emotion-regret: #9C27B0;
+            --emotion-depression: #1A237E;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            font-size: 15px;
+        }
+
+        /* ===== COVER PAGE ===== */
+        .cover {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(160deg, #F9F3E9 0%, #EDE0CA 40%, #D4C4A0 100%);
+            text-align: center;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        .cover::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg, transparent, transparent 29px,
+                rgba(139,105,20,0.06) 29px, rgba(139,105,20,0.06) 30px
+            ),
+            repeating-linear-gradient(
+                90deg, transparent, transparent 29px,
+                rgba(139,105,20,0.06) 29px, rgba(139,105,20,0.06) 30px
+            );
+            pointer-events: none;
+        }
+        .cover-mascot { font-size: 100px; margin-bottom: 10px; position: relative; z-index: 1; }
+        .cover h1 {
+            font-size: 3.2rem; font-weight: 900; color: var(--primary-dark);
+            margin-bottom: 8px; position: relative; z-index: 1;
+        }
+        .cover .cover-subtitle {
+            font-size: 1.4rem; color: var(--primary); font-weight: 500;
+            margin-bottom: 30px; position: relative; z-index: 1;
+        }
+        .cover .cover-slogan {
+            font-size: 1.1rem; color: var(--text-light); font-style: italic;
+            margin-bottom: 50px; position: relative; z-index: 1;
+        }
+        .cover-meta {
+            position: relative; z-index: 1;
+            background: rgba(255,255,255,0.7); border-radius: 16px;
+            padding: 30px 50px; backdrop-filter: blur(8px);
+            border: 1px solid var(--border);
+        }
+        .cover-meta table { margin: 0 auto; border-collapse: collapse; }
+        .cover-meta td { padding: 6px 20px; font-size: 1rem; }
+        .cover-meta td:first-child { font-weight: 700; color: var(--primary-dark); text-align: right; }
+        .cover-meta td:last-child { color: var(--text); text-align: left; }
+        .cover-badges {
+            position: relative; z-index: 1;
+            display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+            margin-top: 30px;
+        }
+        .cover-badge {
+            background: var(--primary); color: #fff; padding: 6px 18px;
+            border-radius: 20px; font-size: 0.85rem; font-weight: 500;
+        }
+
+        /* ===== TOC ===== */
+        .toc {
+            max-width: 900px; margin: 60px auto; padding: 0 30px;
+        }
+        .toc h2 {
+            font-size: 1.8rem; color: var(--primary-dark); margin-bottom: 30px;
+            padding-bottom: 12px; border-bottom: 3px solid var(--accent);
+        }
+        .toc-list { list-style: none; }
+        .toc-list > li {
+            padding: 10px 0; border-bottom: 1px dashed var(--border);
+        }
+        .toc-list a {
+            text-decoration: none; color: var(--text);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: color 0.2s;
+        }
+        .toc-list a:hover { color: var(--primary); }
+        .toc-list .toc-num { font-weight: 700; color: var(--primary); margin-right: 12px; min-width: 30px; }
+        .toc-list .toc-dots { flex: 1; border-bottom: 1px dotted var(--border-light); margin: 0 10px; height: 1px; }
+
+        /* ===== MAIN CONTENT ===== */
+        .main { max-width: 960px; margin: 0 auto; padding: 0 30px 80px; }
+
+        /* Section */
+        .section { margin-bottom: 60px; scroll-margin-top: 30px; }
+        .section-header {
+            display: flex; align-items: center; gap: 14px;
+            margin-bottom: 28px; padding-bottom: 14px;
+            border-bottom: 3px solid var(--accent);
+        }
+        .section-num {
+            background: var(--primary); color: #fff; width: 44px; height: 44px;
+            border-radius: 12px; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1.1rem; flex-shrink: 0;
+        }
+        .section-title { font-size: 1.7rem; font-weight: 700; color: var(--primary-dark); }
+
+        /* Sub-section */
+        .subsection { margin: 30px 0; }
+        .subsection h3 {
+            font-size: 1.25rem; font-weight: 700; color: var(--primary);
+            margin-bottom: 16px; padding-left: 14px;
+            border-left: 4px solid var(--accent);
+        }
+        .subsection h4 {
+            font-size: 1.1rem; font-weight: 600; color: var(--primary-dark);
+            margin: 20px 0 12px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 24px; margin: 16px 0;
+            box-shadow: 0 2px 12px rgba(139,105,20,0.06);
+        }
+        .card-accent {
+            border-left: 5px solid var(--accent);
+        }
+
+        /* Grid */
+        .grid { display: grid; gap: 18px; margin: 16px 0; }
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+        /* Feature Cards */
+        .feature-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 22px; text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(139,105,20,0.12);
+        }
+        .feature-icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .feature-card h4 { color: var(--primary-dark); margin-bottom: 8px; font-size: 1.05rem; }
+        .feature-card p { color: var(--text-light); font-size: 0.9rem; line-height: 1.6; }
+
+        /* Stat Cards */
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: #fff; border-radius: 14px; padding: 24px; text-align: center;
+        }
+        .stat-number { font-size: 2.4rem; font-weight: 900; }
+        .stat-label { font-size: 0.9rem; opacity: 0.9; margin-top: 4px; }
+
+        /* Tables */
+        table {
+            width: 100%; border-collapse: collapse; margin: 14px 0;
+            font-size: 0.93rem;
+        }
+        table th, table td {
+            padding: 11px 14px; text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        table th {
+            background: var(--bg-section); font-weight: 600;
+            color: var(--primary-dark); font-size: 0.88rem;
+            border-bottom: 2px solid var(--accent);
+        }
+        table tr:hover td { background: rgba(212,168,83,0.05); }
+        table code {
+            background: #F5F0E5; padding: 2px 7px; border-radius: 4px;
+            font-size: 0.85rem; color: var(--primary-dark);
+        }
+        .check { color: var(--success); font-weight: 700; }
+
+        /* Code Block / Diagram */
+        .diagram {
+            background: #2D2A24; color: #E8DCC8; border-radius: 12px;
+            padding: 24px; margin: 16px 0; overflow-x: auto;
+            font-family: 'Consolas', 'D2Coding', monospace;
+            font-size: 0.85rem; line-height: 1.6;
+            white-space: pre;
+        }
+        .code-block {
+            background: #1E1E1E; color: #D4D4D4; border-radius: 10px;
+            padding: 18px; margin: 12px 0; overflow-x: auto;
+            font-family: 'Consolas', 'D2Coding', monospace;
+            font-size: 0.85rem; line-height: 1.5;
+        }
+        .code-block .key { color: #9CDCFE; }
+        .code-block .val { color: #CE9178; }
+        .code-block .num { color: #B5CEA8; }
+
+        /* Screenshots */
+        .screenshot-wrap {
+            margin: 18px 0; border: 1px solid var(--border);
+            border-radius: 14px; overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+        .screenshot-wrap img {
+            width: 100%; display: block;
+        }
+        .screenshot-caption {
+            background: var(--bg-section); padding: 10px 18px;
+            font-size: 0.88rem; color: var(--text-light); text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Emotion Chips */
+        .emotion-chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+        .emotion-chip {
+            padding: 8px 18px; border-radius: 20px; font-size: 0.9rem;
+            font-weight: 500; color: #fff;
+        }
+        .emotion-chip.joy { background: var(--emotion-joy); }
+        .emotion-chip.hope { background: var(--emotion-hope); }
+        .emotion-chip.neutral { background: var(--emotion-neutral); }
+        .emotion-chip.anger { background: var(--emotion-anger); }
+        .emotion-chip.sadness { background: var(--emotion-sadness); }
+        .emotion-chip.anxiety { background: var(--emotion-anxiety); }
+        .emotion-chip.tired { background: var(--emotion-tired); }
+        .emotion-chip.regret { background: var(--emotion-regret); }
+        .emotion-chip.depression { background: var(--emotion-depression); }
+
+        /* Chatbot Demo */
+        .chat-demo {
+            background: var(--bg-section); border-radius: 14px;
+            padding: 24px; max-width: 560px; margin: 16px auto;
+            border: 1px solid var(--border);
+        }
+        .chat-demo h4 { text-align: center; margin-bottom: 16px; color: var(--primary); }
+        .chat-msg {
+            padding: 12px 16px; border-radius: 14px; margin: 10px 0;
+            max-width: 80%; font-size: 0.93rem; line-height: 1.6;
+        }
+        .chat-user {
+            background: var(--primary); color: #fff; margin-left: auto; text-align: right;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-bot {
+            background: var(--bg-card); color: var(--text); border: 1px solid var(--border);
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Flow */
+        .flow {
+            display: flex; align-items: center; justify-content: center;
+            flex-wrap: wrap; gap: 8px; margin: 20px 0;
+        }
+        .flow-item {
+            background: var(--bg-card); border: 2px solid var(--accent);
+            border-radius: 14px; padding: 16px 20px; text-align: center;
+            min-width: 110px;
+        }
+        .flow-item .fi-icon { font-size: 2rem; margin-bottom: 4px; }
+        .flow-item .fi-label { font-size: 0.88rem; font-weight: 600; color: var(--primary-dark); }
+        .flow-arrow { font-size: 1.5rem; color: var(--accent); font-weight: 700; }
+
+        /* Highlight Box */
+        .highlight {
+            background: linear-gradient(135deg, rgba(212,168,83,0.12), rgba(139,105,20,0.06));
+            border-left: 5px solid var(--accent);
+            border-radius: 0 12px 12px 0;
+            padding: 20px 24px; margin: 16px 0;
+        }
+        .highlight strong { color: var(--primary-dark); }
+
+        /* UL */
+        .content-list { padding-left: 20px; margin: 10px 0; }
+        .content-list li { margin: 6px 0; }
+
+        /* Architecture Layers */
+        .layer-box {
+            background: var(--bg-card); border: 2px solid var(--accent);
+            border-radius: 10px; padding: 14px 20px; margin: 8px 0;
+            text-align: center; font-weight: 600; color: var(--primary-dark);
+            font-size: 0.95rem;
+        }
+        .layer-arrow { text-align: center; color: var(--accent); font-size: 1.3rem; padding: 4px 0; }
+        .layer-row { display: flex; gap: 12px; }
+        .layer-row .layer-box { flex: 1; }
+
+        /* Divider */
+        .divider {
+            border: none; border-top: 2px dashed var(--border);
+            margin: 50px 0;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center; padding: 40px 20px;
+            background: var(--bg-section); border-top: 1px solid var(--border);
+            color: var(--text-light); font-size: 0.95rem;
+        }
+        .footer strong { color: var(--primary-dark); }
+
+        /* Print */
+        @media print {
+            .cover { min-height: auto; page-break-after: always; }
+            .toc { page-break-after: always; }
+            .section { page-break-inside: avoid; }
+            body { font-size: 12px; }
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+            .cover h1 { font-size: 2.2rem; }
+            .flow { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+            .layer-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ======================== COVER ======================== -->
+<div class="cover">
+    <div class="cover-mascot">🐿️</div>
+    <h1>DODAK(도닥)</h1>
+    <p class="cover-subtitle">AI 기반 감정 일기 & 심리 케어 플랫폼</p>
+    <p class="cover-slogan">"도닥도닥, 당신의 마음을 어루만져 드려요"</p>
+    <div class="cover-meta">
+        <table>
+            <tr><td>문서 유형</td><td>최종 결과 보고서</td></tr>
+            <tr><td>프로젝트명</td><td>DODAK - 일상을 '도닥'여주는 마음 기록 웹</td></tr>
+            <tr><td>작성일</td><td>2026-02-07</td></tr>
+            <tr><td>버전</td><td>1.0</td></tr>
+            <tr><td>개발 인원</td><td>6명 (최대영 PM/기획·프론트엔드, 박제연 기획·백엔드, 주현준 프론트엔드, 지태민 DB·테스트, 서유나 문서, 조민솔 문서)</td></tr>
+        </table>
+    </div>
+    <div class="cover-badges">
+        <span class="cover-badge">Spring Boot 3.5</span>
+        <span class="cover-badge">FastAPI</span>
+        <span class="cover-badge">KoBERT / KoGPT2</span>
+        <span class="cover-badge">MySQL 8.0</span>
+        <span class="cover-badge">Thymeleaf</span>
+        <span class="cover-badge">Java 17</span>
+    </div>
+</div>
+
+<!-- ======================== TOC ======================== -->
+<div class="toc">
+    <h2>목차</h2>
+    <ol class="toc-list">
+        <li><a href="#sec1"><span class="toc-num">1</span> 프로젝트 개요 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec2"><span class="toc-num">2</span> 시스템 아키텍처 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec3"><span class="toc-num">3</span> 기술 스택 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec4"><span class="toc-num">4</span> 주요 기능 요약 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec5"><span class="toc-num">5</span> 데이터베이스 설계 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec6"><span class="toc-num">6</span> 구현 기능 상세 및 화면 결과 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec7"><span class="toc-num">7</span> AI 감정 분석 시스템 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec8"><span class="toc-num">8</span> API 체계 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec9"><span class="toc-num">9</span> 보안 체계 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec10"><span class="toc-num">10</span> 인프라 구성 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec11"><span class="toc-num">11</span> 비기능 요구사항 달성 현황 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec12"><span class="toc-num">12</span> 유스케이스 구현 현황 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec13"><span class="toc-num">13</span> 에러 처리 및 장애 대응 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec14"><span class="toc-num">14</span> UI/UX 디자인 특징 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec15"><span class="toc-num">15</span> 비즈니스 규칙 요약 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec16"><span class="toc-num">16</span> 기대 효과 <span class="toc-dots"></span></a></li>
+        <li><a href="#sec17"><span class="toc-num">17</span> 결론 및 향후 계획 <span class="toc-dots"></span></a></li>
+    </ol>
+</div>
+
+<!-- ======================== MAIN ======================== -->
+<div class="main">
+
+<!-- ===== 1. 프로젝트 개요 ===== -->
+<div class="section" id="sec1">
+    <div class="section-header">
+        <div class="section-num">1</div>
+        <div class="section-title">프로젝트 개요</div>
+    </div>
+
+    <div class="subsection">
+        <h3>1.1 프로젝트 소개</h3>
+        <p><strong>DODAK(도닥)</strong>은 사용자의 일상 감정을 일기 형태로 기록하고, AI 기반으로 8가지 감정을 분석하여 심리적 건강을 지원하는 웹 서비스입니다. '도닥'이라는 이름은 사용자의 마음을 따뜻하게 '도닥여준다'는 의미를 담고 있으며, 마스코트 '도닥이'(다람쥐 캐릭터)가 사용자의 감정 여정을 함께합니다.</p>
+    </div>
+
+    <div class="subsection">
+        <h3>1.2 프로젝트 배경</h3>
+        <p>현대인의 정신 건강 문제가 심각해지고 있습니다.</p>
+        <table>
+            <thead><tr><th>문제</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td>😰 감정 방치</td><td>바쁜 일상 속 자신의 감정을 인식하지 못하고 방치하는 현대인 증가</td></tr>
+                <tr><td>📈 심리 질환 증가</td><td>우울증, 불안장애 등 정신 건강 문제 지속적 증가 추세</td></tr>
+                <tr><td>🚧 상담 접근성 부족</td><td>높은 심리 상담 비용과 시간적 제약으로 인한 낮은 상담 접근성</td></tr>
+            </tbody>
+        </table>
+        <div class="highlight">
+            <strong>DODAK의 해결 방안:</strong> "누구나 쉽게 자신의 감정을 기록하고, AI의 도움으로 마음 건강을 관리할 수 있는 서비스"
+            <ul class="content-list" style="margin-top:10px;">
+                <li>일기를 통한 자기 감정 인식 → 감정 패턴 파악</li>
+                <li>AI 감정 분석으로 객관적 심리 현황 파악 → 우울증 조기 발견</li>
+                <li>24시간 접근 가능한 챗봇 상담 → 시간/비용 장벽 해소</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="subsection">
+        <h3>1.3 프로젝트 목적</h3>
+        <ul class="content-list">
+            <li>일기 작성을 통한 자기 감정 인식 및 기록 습관 형성</li>
+            <li>AI 기반 8가지 감정 자동 분류 및 우울증 위험도 예측</li>
+            <li>AI 챗봇(KoGPT2, KoBERT)을 활용한 24시간 심리 상담 지원</li>
+            <li>감정 맞춤형 YouTube 음악 추천으로 치유 콘텐츠 제공</li>
+            <li>전문 의사 연결 및 상담 예약 시스템 운영</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <h3>1.4 프로젝트 범위</h3>
+        <table>
+            <thead><tr><th>구분</th><th>내용</th></tr></thead>
+            <tbody>
+                <tr><td>대상 사용자</td><td>일반 사용자(USER), 의사(DOCTOR), 관리자(ADMIN)</td></tr>
+                <tr><td>핵심 기능</td><td>감정 일기, AI 감정 분석, 챗봇 상담, 음악 추천, 예약 관리</td></tr>
+                <tr><td>개발 기간</td><td>분석/설계 1주 + 개발 4주 + 테스트 1주 + 배포 1주 (총 7주)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 2. 시스템 아키텍처 ===== -->
+<div class="section" id="sec2">
+    <div class="section-header">
+        <div class="section-num">2</div>
+        <div class="section-title">시스템 아키텍처</div>
+    </div>
+
+    <div class="subsection">
+        <h3>2.1 전체 시스템 구성</h3>
+        <p>DODAK은 3-Tier 아키텍처로 구성되며, Spring Boot 웹 서버, FastAPI AI 서버, MySQL 데이터베이스가 유기적으로 연동됩니다.</p>
+
+        <div style="max-width:600px;margin:24px auto;">
+            <div class="layer-box" style="background:var(--bg-section);">🖥️ Client (Browser) - 사용자 웹 인터페이스</div>
+            <div class="layer-arrow">⬇️ HTTP/HTTPS</div>
+            <div class="layer-box">🎯 Spring Boot Web Server (:8083)<br><small>Controller → Service → Repository → Entity (JPA) + Spring Security + Thymeleaf</small></div>
+            <div class="layer-arrow">⬇️&nbsp;&nbsp;&nbsp;&nbsp;⬇️&nbsp;&nbsp;&nbsp;&nbsp;⬇️</div>
+            <div class="layer-row">
+                <div class="layer-box" style="background:#E3F2FD;">💾 MySQL 8.0<br><small>:3306 (6개 테이블)</small></div>
+                <div class="layer-box" style="background:#FFF3E0;">🤖 FastAPI AI<br><small>:8000 (KoBERT/KoGPT2)</small></div>
+                <div class="layer-box" style="background:#FCE4EC;">📺 YouTube API<br><small>Selenium 크롤링</small></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="subsection">
+        <h3>2.2 서비스 흐름도</h3>
+        <p>사용자가 일기를 작성하면 AI 분석이 자동으로 수행되고, 결과에 따라 음악 추천 또는 전문 상담으로 연결됩니다.</p>
+        <div class="flow">
+            <div class="flow-item"><div class="fi-icon">📝</div><div class="fi-label">일기 작성</div></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item"><div class="fi-icon">🤖</div><div class="fi-label">AI 분석</div></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item"><div class="fi-icon">📊</div><div class="fi-label">결과 확인</div></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item"><div class="fi-icon">🎵</div><div class="fi-label">음악 추천</div></div>
+        </div>
+
+        <div class="chat-demo">
+            <h4>💬 AI 챗봇 상담 대화 예시</h4>
+            <div class="chat-msg chat-user">오늘 너무 힘들었어요...</div>
+            <div class="chat-msg chat-bot">많이 힘드셨군요. 괜찮아요, 여기에 모든 것을 털어놓아도 좋습니다. 어떤 일이 있었는지 이야기해 주실 수 있나요?</div>
+            <div class="chat-msg chat-user">회사에서 상사한테 혼났어요 😢</div>
+            <div class="chat-msg chat-bot">그런 일이 있었군요. 억울하고 속상하셨을 것 같아요. 당신의 감정은 충분히 이해할 수 있어요. 💜</div>
+        </div>
+    </div>
+
+    <div class="subsection">
+        <h3>2.3 레이어 아키텍처</h3>
+        <table>
+            <thead><tr><th>레이어</th><th>역할</th><th>기술</th></tr></thead>
+            <tbody>
+                <tr><td>Presentation</td><td>사용자 인터페이스</td><td>Thymeleaf + HTML5/CSS3/JavaScript</td></tr>
+                <tr><td>Controller</td><td>요청/응답 처리</td><td>Spring MVC REST Controller</td></tr>
+                <tr><td>Service</td><td>비즈니스 로직</td><td>Spring Service Layer</td></tr>
+                <tr><td>Repository</td><td>데이터 접근</td><td>JPA Repository + QueryDSL</td></tr>
+                <tr><td>Entity</td><td>데이터 모델</td><td>JPA Entity (6개 테이블)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 3. 기술 스택 ===== -->
+<div class="section" id="sec3">
+    <div class="section-header">
+        <div class="section-num">3</div>
+        <div class="section-title">기술 스택</div>
+    </div>
+
+    <div class="subsection">
+        <h3>3.1 Backend (Spring Boot)</h3>
+        <table>
+            <thead><tr><th>기술</th><th>버전</th><th>용도</th></tr></thead>
+            <tbody>
+                <tr><td>Spring Boot</td><td>3.5.7</td><td>메인 웹 애플리케이션 프레임워크</td></tr>
+                <tr><td>Spring Security</td><td>6.x</td><td>인증/인가 (세션 기반, BCrypt 암호화)</td></tr>
+                <tr><td>Spring Data JPA</td><td>3.x</td><td>ORM 및 데이터 접근 계층</td></tr>
+                <tr><td>Thymeleaf</td><td>3.x</td><td>서버사이드 렌더링 템플릿 엔진</td></tr>
+                <tr><td>QueryDSL</td><td>5.0.0</td><td>타입 세이프 동적 쿼리 빌더</td></tr>
+                <tr><td>MySQL Connector/J</td><td>8.x</td><td>JDBC 드라이버</td></tr>
+                <tr><td>Lombok</td><td>latest</td><td>보일러플레이트 코드 자동 생성</td></tr>
+                <tr><td>Java</td><td>17 LTS</td><td>프로그래밍 언어</td></tr>
+                <tr><td>Maven</td><td>3.x</td><td>빌드 및 의존성 관리</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="subsection">
+        <h3>3.2 AI Server (FastAPI)</h3>
+        <table>
+            <thead><tr><th>기술</th><th>용도</th></tr></thead>
+            <tbody>
+                <tr><td>FastAPI + Uvicorn</td><td>비동기 REST API 서버</td></tr>
+                <tr><td>KoBERT (skt/kobert-base-v1)</td><td>감정 분류 모델 (Complex 챗봇)</td></tr>
+                <tr><td>KoGPT2</td><td>대화 생성 모델 (Simple 챗봇)</td></tr>
+                <tr><td>Selenium + BeautifulSoup4</td><td>YouTube 음악 크롤링</td></tr>
+                <tr><td>Pydantic</td><td>데이터 검증 및 직렬화</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="subsection">
+        <h3>3.3 Frontend &amp; Database</h3>
+        <div class="grid grid-2">
+            <div>
+                <h4>Frontend</h4>
+                <table>
+                    <tbody>
+                        <tr><td>HTML5 / CSS3</td><td>마크업 및 스타일링</td></tr>
+                        <tr><td>JavaScript (ES6+)</td><td>동적 인터랙션, AJAX</td></tr>
+                        <tr><td>Thymeleaf</td><td>Spring Boot SSR</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div>
+                <h4>Database</h4>
+                <table>
+                    <tbody>
+                        <tr><td>DBMS</td><td>MySQL 8.0</td></tr>
+                        <tr><td>테이블 수</td><td>6개</td></tr>
+                        <tr><td>ORM</td><td>JPA + QueryDSL</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="subsection">
+        <h3>3.4 프로젝트 규모 통계</h3>
+        <div class="grid grid-4">
+            <div class="stat-card"><div class="stat-number">40+</div><div class="stat-label">Java 클래스</div></div>
+            <div class="stat-card"><div class="stat-number">5</div><div class="stat-label">AI API</div></div>
+            <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">DB 테이블</div></div>
+            <div class="stat-card"><div class="stat-number">8</div><div class="stat-label">감정 분류</div></div>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 4. 주요 기능 요약 ===== -->
+<div class="section" id="sec4">
+    <div class="section-header">
+        <div class="section-num">4</div>
+        <div class="section-title">주요 기능 요약</div>
+    </div>
+    <div class="grid grid-3">
+        <div class="feature-card"><div class="feature-icon">📝</div><h4>감정 일기</h4><p>일상의 감정을 자유롭게 기록하고, 사진과 함께 추억을 남길 수 있음</p></div>
+        <div class="feature-card"><div class="feature-icon">🤖</div><h4>AI 감정 분석</h4><p>작성한 일기를 AI가 분석하여 8가지 감정 비율과 우울증 위험도를 제공</p></div>
+        <div class="feature-card"><div class="feature-icon">💬</div><h4>AI 챗봇 상담</h4><p>KoGPT2(가벼운 대화), KoBERT(심층 상담) 기반 24시간 심리 상담</p></div>
+        <div class="feature-card"><div class="feature-icon">🎵</div><h4>음악 추천</h4><p>분석된 감정에 맞는 YouTube 음악을 자동 추천하여 마음 치유</p></div>
+        <div class="feature-card"><div class="feature-icon">🏥</div><h4>전문 상담 연결</h4><p>필요시 전문 상담사/의사와 연결하여 전문적인 상담 가능</p></div>
+        <div class="feature-card"><div class="feature-icon">📊</div><h4>감정 통계</h4><p>기간별 감정 변화 추이 시각화 및 마음 건강 관리 대시보드</p></div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 5. 데이터베이스 설계 ===== -->
+<div class="section" id="sec5">
+    <div class="section-header">
+        <div class="section-num">5</div>
+        <div class="section-title">데이터베이스 설계</div>
+    </div>
+
+    <div class="subsection">
+        <h3>5.1 ERD (Entity-Relationship Diagram)</h3>
+        <div class="diagram">┌──────────────────┐       ┌──────────────────┐       ┌──────────────────┐
+│    tb_member     │       │     tb_diary     │       │   tb_analysis    │
+├──────────────────┤       ├──────────────────┤       ├──────────────────┤
+│ id (PK)          │──┐    │ diary_idx (PK)   │──────▶│ analysis_idx(PK) │
+│ user_id (UK)     │  │    │ id (FK)          │       │ diary_idx (FK)   │
+│ password (BCrypt)│  └───▶│ diary_title      │       │ model_name       │
+│ name             │       │ diary_content    │       │ 8개 감정 비율     │
+│ email, phone     │       │ file1~3          │       │ depression_ratio │
+│ zip_code         │       │ created_at       │       │ created_at       │
+│ addr1, addr2     │       └──────────────────┘       └──────────────────┘
+│ role, joined_at  │
+│ profile_image    │
+└──────────────────┘
+┌──────────────────┐       ┌──────────────────┐       ┌──────────────────┐
+│   tb_hospital    │       │    tb_doctor     │       │    tb_arrange    │
+├──────────────────┤       ├──────────────────┤       ├──────────────────┤
+│ hosp_idx (PK)    │──────▶│ doc_idx (PK)     │◀──────│ arr_idx (PK)     │
+│ hosp_name        │       │ hosp_idx (FK)    │       │ member_id (FK)   │
+│ zip_code         │       │ member_id (FK)   │       │ doc_idx (FK)     │
+│ addr1, addr2     │       │ specialty        │       │ arr_date/time    │
+│ tel, created_at  │       │ created_at       │       │ status           │
+└──────────────────┘       └──────────────────┘       └──────────────────┘</div>
+    </div>
+
+    <div class="subsection">
+        <h3>5.2 감정 분석 결과 저장 구조 (tb_analysis)</h3>
+        <table>
+            <thead><tr><th>컬럼</th><th>타입</th><th>설명</th></tr></thead>
+            <tbody>
+                <tr><td><code>anxiety_ratio</code></td><td>DECIMAL(4,1)</td><td>불안 비율 (0.0~100.0)</td></tr>
+                <tr><td><code>sadness_ratio</code></td><td>DECIMAL(4,1)</td><td>슬픔 비율</td></tr>
+                <tr><td><code>joy_ratio</code></td><td>DECIMAL(4,1)</td><td>기쁨 비율</td></tr>
+                <tr><td><code>anger_ratio</code></td><td>DECIMAL(4,1)</td><td>분노 비율</td></tr>
+                <tr><td><code>regret_ratio</code></td><td>DECIMAL(4,1)</td><td>후회 비율</td></tr>
+                <tr><td><code>hope_ratio</code></td><td>DECIMAL(4,1)</td><td>희망 비율</td></tr>
+                <tr><td><code>neutrality_ratio</code></td><td>DECIMAL(4,1)</td><td>중립 비율</td></tr>
+                <tr><td><code>tiredness_ratio</code></td><td>DECIMAL(4,1)</td><td>피로 비율</td></tr>
+                <tr><td><code>depression_ratio</code></td><td>DECIMAL(4,1)</td><td>우울증 위험도</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 6. 구현 기능 상세 및 화면 결과 ===== -->
+<div class="section" id="sec6">
+    <div class="section-header">
+        <div class="section-num">6</div>
+        <div class="section-title">구현 기능 상세 및 화면 결과</div>
+    </div>
+
+    <div class="subsection">
+        <h3>6.1 공개 화면 (비로그인)</h3>
+
+        <h4>6.1.1 메인 페이지 (Index)</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/public_01_index.png" alt="메인 페이지"><div class="screenshot-caption">메인 랜딩 페이지 - DODAK 서비스 소개, 마스코트 '도닥이', 회원가입/로그인 CTA</div></div>
+
+        <h4>6.1.2 로그인 페이지</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/public_02_login.png" alt="로그인 페이지"><div class="screenshot-caption">로그인 - Spring Security 세션 인증, BCrypt 암호화</div></div>
+
+        <h4>6.1.3 회원가입 페이지</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/public_03_signup.png" alt="회원가입 페이지"><div class="screenshot-caption">회원가입 - 기본정보, 연락정보, 주소정보, 약관동의 섹션 구성</div></div>
+    </div>
+
+    <div class="subsection">
+        <h3>6.2 일반 회원(USER) 화면</h3>
+
+        <h4>6.2.1 회원 메인 페이지</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/member_01_home.png" alt="회원 메인"><div class="screenshot-caption">회원 메인 - 마스코트 도닥이 소개, 서비스 가치 안내</div></div>
+
+        <h4>6.2.2 일기 작성 페이지</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/member_02_diary_write.png" alt="일기 작성"><div class="screenshot-caption">일기 작성 - 9가지 감정 칩, 제목(30자)/내용(1000자), AI 분석 자동 연동</div></div>
+
+        <h4>6.2.3 일기 목록 페이지</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/member_03_diary_list.png" alt="일기 목록"><div class="screenshot-caption">일기 목록 - 날짜/키워드 검색, 감정 컬러 배지, 페이지네이션</div></div>
+
+        <h4>6.2.4 마이페이지</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/member_04_mypage.png" alt="회원 마이페이지"><div class="screenshot-caption">마이페이지 - 기본정보/연락정보/주소정보 수정, 프로필 이미지 변경</div></div>
+    </div>
+
+    <div class="subsection">
+        <h3>6.3 의사(DOCTOR) 화면</h3>
+
+        <h4>6.3.1 의사 대시보드</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/doctor_02_dashboard.png" alt="의사 대시보드"><div class="screenshot-caption">의사 대시보드 - 환자 요약카드(4개), 감정분포 파이차트, 7일 추이, 중증환자 현황, 월별 감정 막대차트</div></div>
+
+        <h4>6.3.2 환자 통계 페이지</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/doctor_03_patient_stats.png" alt="환자 통계"><div class="screenshot-caption">환자 통계 - 월별 달력, 우울/행복 지수, 부정적인 날 TOP 3, 마음 추이 차트</div></div>
+
+        <h4>6.3.3 환자 일기 목록</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/doctor_04_patient_diary_list.png" alt="환자 일기 목록"><div class="screenshot-caption">환자 일기 목록 - 환자 선택 드롭다운, 날짜/키워드 검색</div></div>
+
+        <h4>6.3.4 의사 마이페이지</h4>
+        <div class="screenshot-wrap"><img src="../screenshot/doctor_05_mypage.png" alt="의사 마이페이지"><div class="screenshot-caption">의사 마이페이지 - 의사 정보(소속 병원, 전문 분야), 환자 배정 탭</div></div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 7. AI 감정 분석 시스템 ===== -->
+<div class="section" id="sec7">
+    <div class="section-header">
+        <div class="section-num">7</div>
+        <div class="section-title">AI 감정 분석 시스템</div>
+    </div>
+
+    <div class="subsection">
+        <h3>7.1 8가지 감정 분류 체계</h3>
+        <div class="emotion-chips">
+            <span class="emotion-chip joy">😊 기쁨</span>
+            <span class="emotion-chip hope">🌟 희망</span>
+            <span class="emotion-chip neutral">😐 중립</span>
+            <span class="emotion-chip anger">😤 분노</span>
+            <span class="emotion-chip sadness">😢 슬픔</span>
+            <span class="emotion-chip anxiety">😰 불안</span>
+            <span class="emotion-chip tired">😫 피로</span>
+            <span class="emotion-chip regret">😔 후회</span>
+        </div>
+        <table>
+            <thead><tr><th>감정</th><th>영문</th><th>키워드 예시</th><th>UI 색상</th></tr></thead>
+            <tbody>
+                <tr><td>기쁨</td><td>joy</td><td>좋다, 행복, 기쁘다, 감사</td><td style="color:var(--emotion-joy);font-weight:700;">■ 초록</td></tr>
+                <tr><td>희망</td><td>hope</td><td>할 수 있다, 희망, 기대</td><td style="color:var(--emotion-hope);font-weight:700;">■ 하늘</td></tr>
+                <tr><td>중립</td><td>neutrality</td><td>(특별한 감정 없음)</td><td style="color:var(--emotion-neutral);font-weight:700;">■ 회색</td></tr>
+                <tr><td>분노</td><td>anger</td><td>화나다, 짜증, 분노</td><td style="color:var(--emotion-anger);font-weight:700;">■ 빨강</td></tr>
+                <tr><td>슬픔</td><td>sadness</td><td>슬프다, 눈물, 우울</td><td style="color:var(--emotion-sadness);font-weight:700;">■ 파랑</td></tr>
+                <tr><td>불안</td><td>anxiety</td><td>불안, 걱정, 두렵다</td><td style="color:var(--emotion-anxiety);font-weight:700;">■ 주황</td></tr>
+                <tr><td>피로</td><td>tiredness</td><td>피곤, 지치다, 녹초</td><td style="color:var(--emotion-tired);font-weight:700;">■ 검정</td></tr>
+                <tr><td>후회</td><td>regret</td><td>후회, 아쉽다</td><td style="color:var(--emotion-regret);font-weight:700;">■ 보라</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="subsection">
+        <h3>7.2 우울증 위험도 평가</h3>
+        <table>
+            <thead><tr><th>위험 수준</th><th>키워드 예시</th><th>시스템 대응</th></tr></thead>
+            <tbody>
+                <tr><td style="color:var(--danger);font-weight:700;">⚠️ 고위험</td><td>죽고 싶다, 사라지고 싶다, 의미 없다</td><td>전문 상담 연결 안내 강조</td></tr>
+                <tr><td style="color:var(--warning);font-weight:700;">🔶 중위험</td><td>절망, 포기하고 싶다</td><td>전문 상담 권유 메시지</td></tr>
+                <tr><td style="color:var(--success);font-weight:700;">✅ 정상</td><td>(해당 키워드 없음)</td><td>일반 감정 분석 결과 표시</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="subsection">
+        <h3>7.3 분석 프로세스</h3>
+        <div class="flow" style="flex-wrap:wrap;">
+            <div class="flow-item"><div class="fi-icon">📝</div><div class="fi-label">텍스트 입력</div></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item"><div class="fi-icon">🔗</div><div class="fi-label">URL 디코딩</div></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item"><div class="fi-icon">✂️</div><div class="fi-label">문장 분리</div></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item"><div class="fi-icon">🔍</div><div class="fi-label">키워드 분석</div></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item"><div class="fi-icon">📊</div><div class="fi-label">비율 계산</div></div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-item"><div class="fi-icon">📋</div><div class="fi-label">JSON 반환</div></div>
+        </div>
+        <div class="code-block">{
+  <span class="key">"joy"</span>: <span class="num">25.5</span>,      <span class="key">"hope"</span>: <span class="num">10.0</span>,
+  <span class="key">"neutrality"</span>: <span class="num">15.0</span>, <span class="key">"anger"</span>: <span class="num">5.0</span>,
+  <span class="key">"sadness"</span>: <span class="num">20.0</span>,  <span class="key">"anxiety"</span>: <span class="num">10.0</span>,
+  <span class="key">"tiredness"</span>: <span class="num">8.5</span>, <span class="key">"regret"</span>: <span class="num">6.0</span>,
+  <span class="key">"depression"</span>: <span class="num">15.0</span>
+}</div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 8. API 체계 ===== -->
+<div class="section" id="sec8">
+    <div class="section-header">
+        <div class="section-num">8</div>
+        <div class="section-title">API 체계</div>
+    </div>
+
+    <div class="subsection">
+        <h3>8.1 Spring Boot REST API</h3>
+        <table>
+            <thead><tr><th>엔드포인트</th><th>메서드</th><th>기능</th></tr></thead>
+            <tbody>
+                <tr><td><code>/api/member/{id}</code></td><td>GET/PUT</td><td>회원 조회/수정</td></tr>
+                <tr><td><code>/api/diary</code></td><td>GET/POST</td><td>일기 목록 조회/작성</td></tr>
+                <tr><td><code>/api/diary/{diaryIdx}</code></td><td>PUT/DELETE</td><td>일기 수정/삭제</td></tr>
+                <tr><td><code>/api/analysis</code></td><td>GET/POST</td><td>분석 결과 조회/저장</td></tr>
+                <tr><td><code>/api/hospital</code></td><td>GET/POST</td><td>병원 조회/등록</td></tr>
+                <tr><td><code>/api/doctor</code></td><td>GET/POST</td><td>의사 조회/등록</td></tr>
+                <tr><td><code>/api/arrange</code></td><td>GET/POST</td><td>예약 조회/신청</td></tr>
+                <tr><td><code>/api/arrange/{arrIdx}/status</code></td><td>PUT</td><td>예약 상태 변경</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="subsection">
+        <h3>8.2 FastAPI AI Server API</h3>
+        <table>
+            <thead><tr><th>엔드포인트</th><th>메서드</th><th>기능</th><th>응답 시간 목표</th></tr></thead>
+            <tbody>
+                <tr><td><code>/diary?s={텍스트}</code></td><td>GET</td><td>일기 감정 분석 (8감정 + 우울증)</td><td>5초 이내</td></tr>
+                <tr><td><code>/chatbot/g?s={메시지}</code></td><td>GET</td><td>Simple 챗봇 (KoGPT2)</td><td>3초 이내</td></tr>
+                <tr><td><code>/chatbot/b?s={메시지}</code></td><td>GET</td><td>Complex 챗봇 (KoBERT)</td><td>3초 이내</td></tr>
+                <tr><td><code>/youtube/search</code></td><td>POST</td><td>감정 맞춤 음악 검색 (Selenium)</td><td>10초 이내</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="subsection">
+        <h3>8.3 감정-음악 매핑</h3>
+        <table>
+            <thead><tr><th>감정</th><th>YouTube 검색 쿼리</th></tr></thead>
+            <tbody>
+                <tr><td>분노</td><td>분노 가라앉히는 음악</td></tr>
+                <tr><td>불안</td><td>불안할때 듣는 노래</td></tr>
+                <tr><td>슬픔</td><td>슬플때 듣는 노래</td></tr>
+                <tr><td>기쁨</td><td>기쁠때 듣는 노래</td></tr>
+                <tr><td>후회</td><td>후회할때 듣는노래</td></tr>
+                <tr><td>희망</td><td>희망찬 브금</td></tr>
+                <tr><td>중립</td><td>머릿속이 복잡할때 듣는 노래</td></tr>
+                <tr><td>피로</td><td>지치고 힘들때 듣는 노래</td></tr>
+                <tr><td>우울</td><td>우울함을 달래줄 노래</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 9. 보안 체계 ===== -->
+<div class="section" id="sec9">
+    <div class="section-header">
+        <div class="section-num">9</div>
+        <div class="section-title">보안 체계</div>
+    </div>
+
+    <div class="subsection">
+        <h3>9.1 인증/인가</h3>
+        <table>
+            <thead><tr><th>항목</th><th>구현 내용</th></tr></thead>
+            <tbody>
+                <tr><td>인증 방식</td><td>Spring Security 세션 기반 인증</td></tr>
+                <tr><td>비밀번호</td><td>BCrypt 단방향 암호화 저장</td></tr>
+                <tr><td>권한 관리</td><td>역할 기반(RBAC): USER, DOCTOR, ADMIN</td></tr>
+                <tr><td>세션 관리</td><td>CustomAuthSuccessHandler 권한별 리다이렉트</td></tr>
+                <tr><td>CORS</td><td>허용된 내부 네트워크 Origin만 접근 가능</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="subsection">
+        <h3>9.2 권한별 접근 제어</h3>
+        <table>
+            <thead><tr><th>기능</th><th>USER</th><th>DOCTOR</th><th>ADMIN</th></tr></thead>
+            <tbody>
+                <tr><td>일기 작성/조회</td><td class="check">O</td><td>-</td><td class="check">O</td></tr>
+                <tr><td>감정 분석</td><td class="check">O</td><td>-</td><td class="check">O</td></tr>
+                <tr><td>챗봇 상담</td><td class="check">O</td><td>-</td><td class="check">O</td></tr>
+                <tr><td>예약 신청</td><td class="check">O</td><td>-</td><td class="check">O</td></tr>
+                <tr><td>환자 정보 조회</td><td>-</td><td class="check">O</td><td class="check">O</td></tr>
+                <tr><td>대시보드</td><td>-</td><td class="check">O</td><td class="check">O</td></tr>
+                <tr><td>예약 상태 변경</td><td>-</td><td class="check">O</td><td class="check">O</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 10. 인프라 구성 ===== -->
+<div class="section" id="sec10">
+    <div class="section-header">
+        <div class="section-num">10</div>
+        <div class="section-title">인프라 구성</div>
+    </div>
+    <table>
+        <thead><tr><th>구분</th><th>호스트</th><th>포트</th><th>역할</th></tr></thead>
+        <tbody>
+            <tr><td>Web Server</td><td>192.168.0.x</td><td>8083</td><td>Spring Boot (Tomcat)</td></tr>
+            <tr><td>AI Server</td><td>192.168.0.20</td><td>8000</td><td>FastAPI (Uvicorn)</td></tr>
+            <tr><td>Database</td><td>192.168.0.x</td><td>3306</td><td>MySQL 8.0</td></tr>
+        </tbody>
+    </table>
+    <ul class="content-list" style="margin-top:14px;">
+        <li>내부 네트워크(192.168.0.0/24) 기반 운영</li>
+        <li>Web Server ↔ AI Server 간 REST API 통신</li>
+        <li>Web Server ↔ MySQL 간 JDBC 연결</li>
+        <li>CORS 정책으로 허용된 Origin만 접근 가능</li>
+    </ul>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 11. 비기능 요구사항 달성 현황 ===== -->
+<div class="section" id="sec11">
+    <div class="section-header">
+        <div class="section-num">11</div>
+        <div class="section-title">비기능 요구사항 달성 현황</div>
+    </div>
+
+    <div class="subsection">
+        <h3>11.1 성능</h3>
+        <table>
+            <thead><tr><th>항목</th><th>목표</th><th>달성</th></tr></thead>
+            <tbody>
+                <tr><td>일반 API 응답</td><td>2초 이내</td><td class="check">✅</td></tr>
+                <tr><td>페이지 로딩</td><td>3초 이내</td><td class="check">✅</td></tr>
+                <tr><td>일기 저장</td><td>1초 이내</td><td class="check">✅</td></tr>
+                <tr><td>감정 분석</td><td>5초 이내</td><td class="check">✅</td></tr>
+                <tr><td>챗봇 응답</td><td>3초 이내</td><td class="check">✅</td></tr>
+                <tr><td>음악 검색 (크롤링 포함)</td><td>10초 이내</td><td class="check">✅</td></tr>
+                <tr><td>동시 접속</td><td>100명 이상</td><td class="check">✅</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="subsection">
+        <h3>11.2 보안 &amp; 가용성</h3>
+        <table>
+            <thead><tr><th>항목</th><th>목표</th><th>달성</th></tr></thead>
+            <tbody>
+                <tr><td>Spring Security 세션 인증</td><td>구현</td><td class="check">✅</td></tr>
+                <tr><td>BCrypt 비밀번호 암호화</td><td>구현</td><td class="check">✅</td></tr>
+                <tr><td>CORS 제어</td><td>구현</td><td class="check">✅</td></tr>
+                <tr><td>역할 기반 접근 제어</td><td>구현</td><td class="check">✅</td></tr>
+                <tr><td>24/7 운영</td><td>지원</td><td class="check">✅</td></tr>
+                <tr><td>AI 분석 실패 시 대응</td><td>재시도 + 기본값</td><td class="check">✅</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 12. 유스케이스 구현 현황 ===== -->
+<div class="section" id="sec12">
+    <div class="section-header">
+        <div class="section-num">12</div>
+        <div class="section-title">유스케이스 구현 현황</div>
+    </div>
+    <table>
+        <thead><tr><th>UC ID</th><th>유스케이스명</th><th>액터</th><th>구현 상태</th></tr></thead>
+        <tbody>
+            <tr><td>UC-01</td><td>회원가입</td><td>비회원</td><td class="check">✅ 완료</td></tr>
+            <tr><td>UC-02</td><td>로그인</td><td>회원</td><td class="check">✅ 완료</td></tr>
+            <tr><td>UC-03</td><td>일기 작성</td><td>User</td><td class="check">✅ 완료</td></tr>
+            <tr><td>UC-04</td><td>감정 분석</td><td>AI Server</td><td class="check">✅ 완료</td></tr>
+            <tr><td>UC-05</td><td>챗봇 상담</td><td>User</td><td class="check">✅ 완료</td></tr>
+            <tr><td>UC-06</td><td>음악 추천</td><td>User</td><td class="check">✅ 완료</td></tr>
+            <tr><td>UC-07</td><td>예약 신청</td><td>User</td><td class="check">✅ 완료</td></tr>
+            <tr><td>UC-08</td><td>예약 확정</td><td>Doctor</td><td class="check">✅ 완료</td></tr>
+            <tr><td>UC-09</td><td>환자 정보 조회</td><td>Doctor</td><td class="check">✅ 완료</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 13. 에러 처리 ===== -->
+<div class="section" id="sec13">
+    <div class="section-header">
+        <div class="section-num">13</div>
+        <div class="section-title">에러 처리 및 장애 대응</div>
+    </div>
+
+    <div class="subsection">
+        <h3>13.1 에러 코드 체계</h3>
+        <table>
+            <thead><tr><th>코드</th><th>메시지</th><th>처리 방법</th></tr></thead>
+            <tbody>
+                <tr><td>E001</td><td>인증 실패</td><td>로그인 페이지 리다이렉트</td></tr>
+                <tr><td>E002</td><td>권한 없음</td><td>403 Forbidden 응답</td></tr>
+                <tr><td>E003</td><td>데이터 없음</td><td>404 Not Found 응답</td></tr>
+                <tr><td>E004</td><td>AI 서버 연결 실패</td><td>기본 응답 제공</td></tr>
+                <tr><td>E005</td><td>파일 업로드 실패</td><td>에러 메시지 표시</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="subsection">
+        <h3>13.2 AI 분석 실패 대응 전략</h3>
+        <div class="card card-accent">
+            <p><strong>1. FastAPI 서버 연결 실패</strong></p>
+            <ul class="content-list">
+                <li>일기는 정상 저장</li>
+                <li>분석 결과 "분석 대기중" 상태로 저장</li>
+                <li>재시도 로직 실행 (최대 3회)</li>
+            </ul>
+            <p style="margin-top:12px;"><strong>2. 분석 결과 파싱 실패</strong></p>
+            <ul class="content-list">
+                <li>기본값 적용 (neutrality: 100%, 나머지: 0%)</li>
+                <li>로그 기록</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 14. UI/UX ===== -->
+<div class="section" id="sec14">
+    <div class="section-header">
+        <div class="section-num">14</div>
+        <div class="section-title">UI/UX 디자인 특징</div>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="card">
+            <h4>디자인 컨셉</h4>
+            <ul class="content-list">
+                <li><strong>테마:</strong> 따뜻한 베이지/크림 톤</li>
+                <li><strong>마스코트:</strong> 다람쥐 '도닥이'</li>
+                <li><strong>배경:</strong> 격자무늬 다이어리 느낌</li>
+                <li><strong>감정:</strong> 9가지 고유 색상 코드</li>
+            </ul>
+        </div>
+        <div class="card">
+            <h4>접근성 &amp; 사용성</h4>
+            <ul class="content-list">
+                <li>카드 기반 레이아웃 정보 구조화</li>
+                <li>색상 + 텍스트 + 아이콘 시각적 구분</li>
+                <li>페이지네이션, 검색 필터 지원</li>
+                <li>파이/라인/막대 차트 데이터 시각화</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 15. 비즈니스 규칙 ===== -->
+<div class="section" id="sec15">
+    <div class="section-header">
+        <div class="section-num">15</div>
+        <div class="section-title">비즈니스 규칙 요약</div>
+    </div>
+
+    <div class="grid grid-3">
+        <div class="card">
+            <h4>📝 일기 관련</h4>
+            <table><tbody>
+                <tr><td>BR-D01</td><td>본인만 조회/수정/삭제</td></tr>
+                <tr><td>BR-D02</td><td>첨부파일 최대 3개</td></tr>
+                <tr><td>BR-D03</td><td>삭제 시 분석 결과 함께 삭제</td></tr>
+            </tbody></table>
+        </div>
+        <div class="card">
+            <h4>📊 분석 관련</h4>
+            <table><tbody>
+                <tr><td>BR-A01</td><td>일기 1 : 분석 1 (1:1)</td></tr>
+                <tr><td>BR-A02</td><td>우울 30%↑ 시 상담 안내</td></tr>
+                <tr><td>BR-A03</td><td>실패 시 중립 100% 기본값</td></tr>
+            </tbody></table>
+        </div>
+        <div class="card">
+            <h4>📅 예약 관련</h4>
+            <table><tbody>
+                <tr><td>BR-R01</td><td>같은 시간 중복 예약 불가</td></tr>
+                <tr><td>BR-R02</td><td>24시간 전까지 취소 가능</td></tr>
+                <tr><td>BR-R03</td><td>의사만 상태 변경 가능</td></tr>
+            </tbody></table>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 16. 기대 효과 ===== -->
+<div class="section" id="sec16">
+    <div class="section-header">
+        <div class="section-num">16</div>
+        <div class="section-title">기대 효과</div>
+    </div>
+
+    <div class="grid grid-3">
+        <div class="feature-card">
+            <div class="feature-icon">🧘</div>
+            <h4>자기 인식 향상</h4>
+            <p>일기 작성을 통한 자신의 감정 패턴 인식 및 이해 증진</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🚨</div>
+            <h4>심리 문제 조기 발견</h4>
+            <p>우울증 위험도 분석을 통한 심리 문제 조기 감지 및 개입</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">💜</div>
+            <h4>접근성 향상</h4>
+            <p>24시간 AI 챗봇으로 시간/비용 제약 없이 심리 지원 가능</p>
+        </div>
+    </div>
+    <div class="grid grid-2" style="margin-top:0;">
+        <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h4>데이터 기반 전문 상담</h4>
+            <p>의사가 환자의 장기 감정 추이 데이터를 활용하여 보다 정확한 상담 가능</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎵</div>
+            <h4>치유 콘텐츠 연계</h4>
+            <p>감정 상태에 맞는 음악 추천으로 일상 속 자연스러운 감정 케어</p>
+        </div>
+    </div>
+</div>
+
+<hr class="divider">
+
+<!-- ===== 17. 결론 ===== -->
+<div class="section" id="sec17">
+    <div class="section-header">
+        <div class="section-num">17</div>
+        <div class="section-title">결론 및 향후 계획</div>
+    </div>
+
+    <div class="subsection">
+        <h3>17.1 프로젝트 성과</h3>
+        <div class="highlight">
+            DODAK 프로젝트는 계획된 모든 핵심 기능을 성공적으로 구현하였습니다.
+        </div>
+        <ul class="content-list">
+            <li><strong>9개 유스케이스</strong> 전체 구현 완료</li>
+            <li><strong>Spring Boot + FastAPI + MySQL</strong> 3-Tier 아키텍처 안정적 구축</li>
+            <li><strong>KoBERT/KoGPT2 기반 AI 감정 분석</strong> 및 챗봇 상담 시스템 운영</li>
+            <li><strong>8가지 감정 분류 + 우울증 위험도 예측</strong> 알고리즘 구현</li>
+            <li><strong>의사 대시보드:</strong> 환자 감정 추이 시각화 및 중증 환자 모니터링</li>
+            <li><strong>YouTube 음악 추천:</strong> 감정 맞춤형 치유 콘텐츠 자동 연계</li>
+            <li><strong>Spring Security 기반 보안:</strong> 역할별 접근 제어, BCrypt 암호화</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <h3>17.2 차별화 포인트</h3>
+        <div class="grid grid-2">
+            <div class="card card-accent"><strong>1. AI 기반 자동 감정 분석</strong><p style="margin-top:8px;">일기 저장과 동시에 8가지 감정을 자동 분류하여 사용자의 자기 인식을 지원</p></div>
+            <div class="card card-accent"><strong>2. 듀얼 챗봇 시스템</strong><p style="margin-top:8px;">가벼운 대화(KoGPT2)와 심층 상담(KoBERT)을 분리하여 상황에 맞는 지원 제공</p></div>
+            <div class="card card-accent"><strong>3. 우울증 조기 감지</strong><p style="margin-top:8px;">고위험 키워드 감지 시 자동으로 전문 상담 연결을 안내하여 조기 개입 유도</p></div>
+            <div class="card card-accent"><strong>4. 의사-환자 연동</strong><p style="margin-top:8px;">의사가 담당 환자의 감정 추이를 대시보드로 모니터링하고, 중증 환자를 집중 관리</p></div>
+        </div>
+    </div>
+
+    <div class="subsection">
+        <h3>17.3 향후 개선 방향</h3>
+        <table>
+            <thead><tr><th>영역</th><th>개선 사항</th></tr></thead>
+            <tbody>
+                <tr><td>AI 모델</td><td>KoBERT 미세 조정(Fine-tuning)으로 감정 분류 정확도 향상</td></tr>
+                <tr><td>모바일</td><td>모바일 반응형 디자인 최적화 또는 네이티브 앱 개발</td></tr>
+                <tr><td>알림</td><td>예약 확정/취소 시 이메일/SMS 알림 기능 추가</td></tr>
+                <tr><td>데이터</td><td>장기 감정 추이 기반 개인화 리포트 자동 생성</td></tr>
+                <tr><td>보안</td><td>일기 내용 AES 암호화 저장 옵션 추가</td></tr>
+                <tr><td>확장</td><td>OAuth2 소셜 로그인 지원 (카카오, 네이버)</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div><!-- /main -->
+
+<!-- ======================== FOOTER ======================== -->
+<div class="footer">
+    <p style="font-size:2rem;margin-bottom:10px;">🐿️</p>
+    <p><strong>DODAK</strong> - 따뜻한 마음 기록의 시작, 도닥이와 함께.</p>
+    <p style="margin-top:6px;font-size:0.85rem;">도닥도닥, 당신의 마음을 어루만져 드려요 🩷</p>
+</div>
+
+</body>
+</html>

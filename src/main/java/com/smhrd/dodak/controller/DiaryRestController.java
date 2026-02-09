@@ -33,7 +33,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/diaries")
 @RequiredArgsConstructor
@@ -103,19 +105,19 @@ public class DiaryRestController {
             this.diaryIdx = diary.getDiaryIdx();
             this.diaryTitle = diary.getDiaryTitle();
             this.diaryContent = diary.getDiaryContent();
-            
+
             // Member 정보 할당
-            this.memberId = diary.getMember().getId(); 
+            this.memberId = diary.getMember().getId();
             this.memberName = diary.getMember().getName();
-            
+
             // 날짜/시간 정보 할당
             this.createdAt = diary.getCreatedAt();
-            this.createdAtDate = diary.getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern("d")); // 'd'만 추출
-            
-            // ⭐️ Analysis 정보 복사
+            this.createdAtDate = diary.getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern("d"));
+
+            // Analysis 정보 복사
             Analysis analysis = diary.getAnalysis();
             if (analysis != null) {
-                this.modelName = analysis.getModelName();                
+                this.modelName = analysis.getModelName();
                 this.anxietyRatio = analysis.getAnxietyRatio();
                 this.sadnessRatio = analysis.getSadnessRatio();
                 this.joyRatio = analysis.getJoyRatio();
@@ -125,35 +127,29 @@ public class DiaryRestController {
                 this.neutralityRatio = analysis.getNeutralityRatio();
                 this.tirednessRatio = analysis.getTirednessRatio();
                 this.depressionRatio = analysis.getDepressionRatio();
-            } 
-            // analysis가 null일 경우, 모든 Ratio 필드는 기본값(null 또는 0)을 가집니다.
+            }
         }
-
-		private void createdAtDate(String format) {
-			// TODO Auto-generated method stub
-			
-		}
     }
 
     // --- C (Create: 일기 작성) ---
     @PostMapping
     public ResponseEntity<Diary> createDiary(@RequestBody DiaryRequest request, HttpSession session) {
         try {
-        	System.out.println("createDiary start");
-        	Diary diary = Diary.builder()
-        					.memberId(request.memberId)
-        					.diaryTitle(request.diaryTitle)
-        					.diaryContent(request.diaryContent)
-        					.file1(request.file1)
-        					.file2(request.file2)
-        					.file2(request.file2).build();
-        	// Service에서 일기 저장 및 AI 분석 요청까지 모두 처리
+            log.debug("createDiary start - memberId: {}", request.memberId);
+            Diary diary = Diary.builder()
+                    .memberId(request.memberId)
+                    .diaryTitle(request.diaryTitle)
+                    .diaryContent(request.diaryContent)
+                    .file1(request.file1)
+                    .file2(request.file2)
+                    .file3(request.file3).build();
+            // Service에서 일기 저장 및 AI 분석 요청까지 모두 처리
             Diary savedDiary = diaryService.writeDiaryAndAnalyze(diary);
-           
-            return new ResponseEntity<>(savedDiary, HttpStatus.CREATED); // 201 Created
+
+            return new ResponseEntity<>(savedDiary, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            // memberId가 유효하지 않은 경우
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST); // 400 Bad Request
+            log.warn("createDiary failed - invalid memberId: {}", request.memberId);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -176,18 +172,19 @@ public class DiaryRestController {
     @PutMapping("/{diaryIdx}")
     public ResponseEntity<Diary> updateDiary(@PathVariable Integer diaryIdx, @RequestBody DiaryRequest request) {
         try {
-        	System.out.println("updateDiary start");
-        	Diary diary = Diary.builder()
-        					.memberId(request.memberId)
-        					.diaryTitle(request.diaryTitle)
-        					.diaryContent(request.diaryContent)
-        					.file1(request.file1)
-        					.file2(request.file2)
-        					.file2(request.file2).build();
-        	// Service에서 일기 저장 및 AI 분석 요청까지 모두 처리
+            log.debug("updateDiary start - diaryIdx: {}", diaryIdx);
+            Diary diary = Diary.builder()
+                    .memberId(request.memberId)
+                    .diaryTitle(request.diaryTitle)
+                    .diaryContent(request.diaryContent)
+                    .file1(request.file1)
+                    .file2(request.file2)
+                    .file3(request.file3).build();
+            // Service에서 일기 저장 및 AI 분석 요청까지 모두 처리
             Diary updatedDiary = diaryService.updateDiaryAndAnalyze(diary, diaryIdx);
             return new ResponseEntity<>(updatedDiary, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
+            log.warn("updateDiary failed - diary not found: {}", diaryIdx);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -209,33 +206,28 @@ public class DiaryRestController {
      * 일기 목록을 검색 조건(RequestBody) 및 페이징(RequestParam)을 적용하여 조회합니다.
      * Endpoint: POST /api/diaries/list/{memberId}?page=0&size=5
      */
-    @PostMapping("/list/{memberId}") // ⭐️ POST로 변경
+    @PostMapping("/list/{memberId}")
     public ResponseEntity<Page<DiaryResponse>> getDiariesWithPaging(
             @PathVariable Integer memberId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestBody DiarySearchRequest searchRequest) { // ⭐️ @RequestBody로 검색 조건 받음
-        
-        System.out.println("memberId : " + memberId);
-        System.out.println("page : " + page);
-        System.out.println("size : " + size);
-        System.out.println("year : " + searchRequest.getYear()); // DTO 사용
-        System.out.println("keyword : " + searchRequest.getKeyword()); // DTO 사용
-        
-        // Pageable 객체 생성 (기존과 동일)
+            @RequestBody DiarySearchRequest searchRequest) {
+
+        log.debug("getDiariesWithPaging - memberId: {}, page: {}, size: {}, year: {}, keyword: {}",
+                memberId, page, size, searchRequest.getYear(), searchRequest.getKeyword());
+
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
 
-        // Service 호출 시 DTO에서 값 추출
         Page<DiaryResponse> diariesPage = diaryService.getDiariesWithPagingAndSearch(
-                memberId, 
-                searchRequest.getYear(), 
-                searchRequest.getMonth(), 
-                searchRequest.getDay(), 
-                searchRequest.getKeyword(), 
+                memberId,
+                searchRequest.getYear(),
+                searchRequest.getMonth(),
+                searchRequest.getDay(),
+                searchRequest.getKeyword(),
                 searchRequest.getSelectedMemberId(),
                 pageable);
-        
-        return new ResponseEntity<Page<DiaryResponse>>(diariesPage, HttpStatus.OK);
+
+        return new ResponseEntity<>(diariesPage, HttpStatus.OK);
     }
     
     @GetMapping("/today/{memberId}")
@@ -262,11 +254,10 @@ public class DiaryRestController {
             DiaryResponse dto = diaryService.getDiaryDetail(diaryId);
             return ResponseEntity.ok(dto);
         } catch (IllegalArgumentException e) {
-            // 일기를 찾지 못한 경우 404 Not Found 반환
+            log.warn("Diary not found - diaryId: {}", diaryId);
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
-            // 기타 서버 오류 500 Internal Server Error 반환
-            System.err.println("일기 상세 로드 실패: " + e.getMessage());
+            log.error("Failed to load diary detail - diaryId: {}", diaryId, e);
             return ResponseEntity.internalServerError().body("일기 상세 정보를 불러오는 데 실패했습니다.");
         }
     }

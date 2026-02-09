@@ -27,10 +27,12 @@ import com.smhrd.dodak.repository.MemberRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @AllArgsConstructor
-@Transactional(readOnly = true) // 기본적으로 읽기 전용 트랜잭션 적용
+@Transactional(readOnly = true)
 public class MemberService {
 	PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
@@ -79,19 +81,17 @@ public class MemberService {
 			try {
 				profileImage.transferTo(new File(filePath));
 				imgPath = "/uploads/" + fileName;
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (IllegalStateException | IOException e) {
+				log.error("Failed to save profile image: {}", fileName, e);
 			}
 			member.setProfileImg(imgPath);
 		}
-        
+
         Member savedMember = memberRepository.save(member);
-        
+
         String role = member.getRole();
-        if(role.equals("DOCTOR")) {
-        	int savedMemberId = savedMember.getId();
+        if ("DOCTOR".equals(role)) {
+            int savedMemberId = savedMember.getId();
         	Integer hospIdx = member.getHospIdx();
         	String specialty = member.getSpecialty();
         	doctorService.save(savedMemberId, hospIdx, specialty);
@@ -120,63 +120,60 @@ public class MemberService {
     	Member existMember = memberRepository.findById(member.getId())
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다. ID: " + member.getId()));
     	
+    	// 프론트에서 전달되지 않는 필드는 기존 DB 값 보존
+    	if (member.getRole() == null) {
+    		member.setRole(existMember.getRole());
+    	}
+    	if (member.getJoinedAt() == null) {
+    		member.setJoinedAt(existMember.getJoinedAt());
+    	}
+    	if (member.getProfileImg() == null) {
+    		member.setProfileImg(existMember.getProfileImg());
+    	}
+
     	String password = member.getPassword();
-    	if(password.length()>0) {
-    		String encPassword = passwordEncoder.encode(password);
-            member.setPassword(encPassword);	
-    	} else {    		
+    	if(password == null || password.length() == 0) {
     		member.setPassword(existMember.getPassword());
+    	} else {
+    		String encPassword = passwordEncoder.encode(password);
+            member.setPassword(encPassword);
     	}
         String imgPath = null;
 		String uploadDir = fileUploadConfig.getUploadDir();
 
 		if (profileImage != null && !profileImage.isEmpty()) {
-			if (!oldImgPath.isEmpty() && oldImgPath != null) {
-				// 경로 접근
+			// null 체크를 먼저 수행
+			if (oldImgPath != null && !oldImgPath.isEmpty()) {
 				Path oldPath = Paths.get(uploadDir, oldImgPath.replace("/uploads/", ""));
-				// 이미지 삭제
 				try {
 					Files.deleteIfExists(oldPath);
 				} catch (IOException e) {
-					e.printStackTrace();
+					log.error("Failed to delete old profile image: {}", oldImgPath, e);
 				}
-
 			}
-			// 이미지가 들어 왔을 때 파일의 이름 설정
-			// 랜덤 ID 값 설정
-			// UUID(Universally Unique IDentifier)
-			String fileName = UUID.randomUUID() + "_" + profileImage.getOriginalFilename();
 
-			// 경로 설정 -> 데이터 저장시 -> C:/upload/uuid이름지어진파일명.jpg
-			// uploadDir + fileName
-			// OS 에 따라 윈도우는 \ 리눅스나 맥 /
-			// OS 에 따라 경로 구분 자동처리
+			String fileName = UUID.randomUUID() + "_" + profileImage.getOriginalFilename();
 			String filePath = Paths.get(uploadDir, fileName).toString();
 
-			// 만약에 디렉토리가 없으면 생성하는 코드
 			File dir = new File(uploadDir);
 			if (!dir.exists()) {
-				// 폴더가 존재하지 않으면
 				dir.mkdir();
 			}
 
-			// image.transferTo(new File(경로)) --> 해당 경로에 이미지 삽입 코드
 			try {
 				profileImage.transferTo(new File(filePath));
 				imgPath = "/uploads/" + fileName;
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
+			} catch (IllegalStateException | IOException e) {
+				log.error("Failed to save profile image: {}", fileName, e);
 			}
 			member.setProfileImg(imgPath);
 		}
-        
+
         Member savedMember = memberRepository.save(member);
-        
+
         String role = member.getRole();
-        if(role.equals("DOCTOR")) {        	
-        	Integer savedMemberId = savedMember.getId();
+        if ("DOCTOR".equals(role)) {
+            Integer savedMemberId = savedMember.getId();
         	Integer hospIdx = member.getHospIdx();
         	String specialty = member.getSpecialty();
         	doctorService.save(savedMemberId, hospIdx, specialty);
@@ -278,7 +275,7 @@ public class MemberService {
             List<Member> patients = memberRepository.findAllById(assignedPatientIds);
             
             if (patients.size() != assignedPatientIds.size()) {
-                 System.err.println("Warning: " + (assignedPatientIds.size() - patients.size()) + " patient IDs were not found.");
+                log.warn("Warning: {} patient IDs were not found.", assignedPatientIds.size() - patients.size());
             }
 
             // Arrange 엔티티 리스트를 생성합니다.
@@ -291,10 +288,47 @@ public class MemberService {
 
             // 모든 신규 Arrange 엔티티를 저장합니다.
             arrangeService.saveAll(newArrangements);
-            
-            System.out.println("Successfully saved " + newArrangements.size() + " new assignments.");
+
+            log.info("Successfully saved {} new assignments.", newArrangements.size());
         } else {
-             System.out.println("No patients were assigned, clearing assignments complete.");
+            log.info("No patients were assigned, clearing assignments complete.");
         }
+    }
+
+    /**
+     * 환자 상태를 업데이트합니다. (1=경증, 2=중증)
+     * @param memberId 환자의 Member ID
+     * @param patientStatus 새로운 상태 값 (1 또는 2)
+     * @return 업데이트된 Member 엔티티
+     */
+    @Transactional
+    public Member updatePatientStatus(Integer memberId, Integer patientStatus) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다. ID: " + memberId));
+
+        member.setPatientStatus(patientStatus);
+        return memberRepository.save(member);
+    }
+
+    /**
+     * 의사에게 배정된 중증 환자 목록을 조회합니다. (patientStatus = 2)
+     * @param memberId 의사의 Member ID
+     * @return 중증 환자 목록
+     */
+    public List<Member> findSeverePatients(Integer memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다. ID: " + memberId));
+
+        Doctor doctor = doctorService.findByMember(member)
+            .orElseThrow(() -> new IllegalArgumentException("Doctor not found with ID: " + member.getId()));
+
+        List<Integer> assignedPatientIds = arrangeService.getAssignedPatientIds(doctor.getDoctIdx());
+
+        if (assignedPatientIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        // 배정된 환자 중 중증(patientStatus=2)인 환자만 조회
+        return memberRepository.findByRoleAndIdInAndPatientStatus("USER", assignedPatientIds, 2);
     }
 }

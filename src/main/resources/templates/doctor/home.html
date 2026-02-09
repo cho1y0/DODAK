@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head('DODAK - 의사 홈')}"></head>
+<body>
+
+<div th:replace="~{fragments/background :: dodak-background}"></div>
+<nav th:replace="~{fragments/doctor-navbar :: doctor-navbar('home')}"></nav>
+
+<div class="app-container">
+    <div class="app-card home-intro-card position-relative">
+        <h2 class="text-center fw-bold mb-5" style="color: #6c757d;">
+            DODAK: 일상을 '도닥'여주는 마음 기록 웹</h2>
+
+        <img src="/img/음료먹는도닥.png" alt="음료 마시는 도닥이" class="dodak-local-element dodak-home-corner-1">
+
+        <ul class="nav nav-tabs nav-tabs-custom justify-content-center mb-4" id="homeTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="mascot-tab" data-bs-toggle="tab"
+                        data-bs-target="#mascot-pane" type="button" role="tab"
+                        aria-controls="mascot-pane" aria-selected="true">
+                    <i class="bi bi-emoji-heart-eyes me-2"></i> 마스코트 소개
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="project-tab" data-bs-toggle="tab"
+                        data-bs-target="#project-pane" type="button" role="tab"
+                        aria-controls="project-pane" aria-selected="false">
+                    <i class="bi bi-journal-text me-2"></i> 프로젝트 설명
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="homeTabContent">
+            <!-- 마스코트 소개 탭 -->
+            <div class="tab-pane fade show active" id="mascot-pane" role="tabpanel" aria-labelledby="mascot-tab">
+                <img src="/img/구름도닥이.png" alt="떠있는 도닥이" class="dodak-local-element"
+                     style="position: absolute; top: 10px; left: 50px; width: 150px; opacity: 0.85; z-index: 10;">
+
+                <div class="row justify-content-center align-items-center g-4">
+                    <div class="col-12 col-md-4 d-flex justify-content-center">
+                        <div class="dodak-main-image-card">
+                            <img src="/img/활짝웃는도닥이.png" alt="도닥이 마스코트"
+                                 class="img-fluid rounded-3 shadow-sm p-2" style="max-height: 250px;">
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-8 dodak-intro-text text-center text-md-start">
+                        <h3 class="fw-bold mb-3" style="color: var(--text-color);">
+                            <span style="color: var(--accent-color);">따뜻한 동행:</span>
+                            마스코트 도닥이를 소개합니다!
+                        </h3>
+
+                        <p class="lead" style="color: #6a6a6a; margin-bottom: 1rem;">
+                            DODAK의 다정한 마스코트 **도닥이**가 당신의 **이야기**를 기다립니다.</p>
+
+                        <p style="color: var(--text-color);">도닥이는 항상 작은 스카프를 두르고
+                            다니며, 사용자님의 **'마음 일기'**를 가장 소중히 여기는 다람쥐입니다. 단순한 기록을 넘어, **감정의
+                            변화**와 **숨겨진 마음의 소리**를 귀 기울여 듣는 것이 도닥이의 중요한 역할입니다.</p>
+                        <p style="color: var(--text-color);">매일의 기록을 통해 당신의 감정을
+                            분석하고, 필요한 순간에 **따뜻한 배경 음악**이나 **맞춤형 힐링 테마**를 추천하여 지친 마음을 어루만져
+                            줍니다.</p>
+
+                        <p class="fw-bold fs-5 mt-4 p-3 rounded-3"
+                           style="color: #ffffff; background-color: var(--highlight-color);">
+                            "사용자님의 이야기에 귀 기울여<br class="d-md-none"> 지친 하루를 **따뜻하게
+                            도닥여** 드릴게요."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 프로젝트 설명 탭 -->
+            <div class="tab-pane fade" id="project-pane" role="tabpanel" aria-labelledby="project-tab">
+                <div class="project-description-section position-relative pt-3">
+                    <h3 class="fw-bold mb-4 text-center" style="color: #444;">[ 프로젝트 DODAK 설명 ]</h3>
+
+                    <img src="/img/생각하는도닥이.png" alt="생각하는 도닥이" class="dodak-local-element"
+                         style="position: absolute; top: -170px; left: 50px; width: 100px; opacity: 0.8; z-index: 10;">
+
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="feature-box">
+                                <i class="bi bi-pencil-square display-5 mb-2" style="color: var(--mood-joy);"></i>
+                                <h5 class="fw-bold">1. 감정 맞춤형 기록 환경</h5>
+                                <p>작성자의 일기 감정을 분석하여 실시간으로 맞춤 힐링(음악,영상등..)컨텐츠를 제공하여, 일기
+                                    작성에 대한 몰입감을 높여줍니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="feature-box">
+                                <i class="bi bi-file-earmark-bar-graph display-5 mb-2" style="color: var(--bs-info);"></i>
+                                <h5 class="fw-bold">2. 상담을 미리 돕는 AI 기록 분석</h5>
+                                <p>일기 내용을 AI가 꼼꼼히 읽고 중요한 감정 키워드를 미리 정리해 둡니다. 진단 리포트는 월별
+                                    보고서의 기반이 되어, 당신의 마음 상태를 한눈에 파악하고 더 깊이 있는 상담을 준비하는 데 큰 도움이
+                                    됩니다.</p>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="feature-box">
+                                <i class="bi bi-bar-chart-line display-5 mb-2" style="color: var(--mood-regret);"></i>
+                                <h5 class="fw-bold">3. 월별 감정 보고서 제공</h5>
+                                <p>정신과 전문의에게 환자의 월별 감정 변화와 통계를 시각화하여 제공함으로써, 환자의 상태를 빠르게
+                                    파악하고 상담을 진행할 수 있습니다</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="memberId" name="memberId" th:value="${session.memberId}">
+
+<div th:replace="~{fragments/scripts :: doctor-scripts}"></div>
+
+</body>
+</html>

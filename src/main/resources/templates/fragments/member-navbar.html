@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- 환자용 네비게이션 바 -->
+<nav th:fragment="member-navbar(activePage)" class="navbar navbar-expand-lg fixed-top custom-navbar shadow-sm show-navbar">
+    <div class="container-fluid app-container" id="menucon" style="display: none;">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" style="border: none;">
+            <i class="bi bi-list" style="font-size: 1.8rem; color: #6c757d;"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="nav nav-pills me-auto" id="mainTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a th:class="${activePage == 'home'} ? 'nav-link custom-nav-link active' : 'nav-link custom-nav-link'"
+                       href="/member/home">
+                        <img src="/img/dodak.png" alt="홈" class="nav-tab-icon"> 홈
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a th:class="${activePage == 'diary-write'} ? 'nav-link custom-nav-link active' : 'nav-link custom-nav-link'"
+                       href="/member/diary-write">
+                        <img src="/img/음료먹는도닥.png" alt="작성" class="nav-tab-icon" style="width: 50px;"> 오늘의 일기작성하기
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a th:class="${activePage == 'diary-list'} ? 'nav-link custom-nav-link active' : 'nav-link custom-nav-link'"
+                       href="/member/diary-list">
+                        <img src="/img/앉아서독서하는도닥이.png" alt="리스트" class="nav-tab-icon" style="width: 50px;"> 나의 일기 리스트
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a th:class="${activePage == 'mypage'} ? 'nav-link custom-nav-link active' : 'nav-link custom-nav-link'"
+                       href="/member/mypage">
+                        <img src="/img/활짝웃는도닥이.png" alt="도닥이 마이페이지 아이콘"
+                             style="height: 24px; width: auto; margin-right: 5px; vertical-align: middle;">
+                        마이페이지
+                    </a>
+                </li>
+            </ul>
+            <div class="d-flex ms-auto">
+                <a href="/logout" class="btn btn-sm btn-outline-secondary me-2 login-btn">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> 로그아웃
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

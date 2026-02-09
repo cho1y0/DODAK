@@ -12,20 +12,15 @@ import com.smhrd.dodak.entity.Member;
 import com.smhrd.dodak.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-/*
+/**
  * CustomUserDetailsService
- *  Security의 인증 과정에서 DB를 통해 사용자를 검증하는 !핵심! 클래스
- *  사용자가 로그인 폼에서 입력한 ID(username)를 받아 DB에서 해당 회원을 찾음
- *  찾은 회원 정보를 Spring Security 전용 User객체(UserDetails)로 변환하여 반환
- *  
- *  데이터 흐름
- *  [로그인 요청] -> UsernamePasswordAuthenticationFilter -> AuthenticationManager
- *                -> UserDetailsService(LoadUserByUsername 호출)
- *                -> MemberRepository(DB 조회)
- *                -> UserDetails 반환 -> SecurityContextHoler저장
- * */
-
+ * Security의 인증 과정에서 DB를 통해 사용자를 검증하는 핵심 클래스
+ * 사용자가 로그인 폼에서 입력한 ID(username)를 받아 DB에서 해당 회원을 찾음
+ * 찾은 회원 정보를 Spring Security 전용 User객체(UserDetails)로 변환하여 반환
+ */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
@@ -39,19 +34,15 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		// 1. DB(MemberRepository)를 통해 사용자 존재 여부 확인
-		// 1. DB(MemberRepository)를 통해 사용자 존재 여부 확인
-		System.out.println("username : " + username);
+		log.debug("loadUserByUsername - username: {}", username);
 
-		// Optional을 사용하여 DB에서 회원 정보를 조회하고, 없으면 예외를 발생시킵니다.
-		// 기존의 if (member != null) 로직은 Optional을 잘못 사용하는 방식입니다.
 		Optional<Member> optionalMember = memberRepository.findByUserId(username);
 
-		// 회원이 존재하지 않으면 UsernameNotFoundException을 던집니다.
-		Member member = optionalMember.orElseThrow(() -> new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다."));
-		System.out.println("loadUserByUsername end");
-		// 2. 조회된 Member 엔티티를 CustomUserDetails 객체로 변환하여 반환합니다.
-		return new CustomUserDetails(member); // ⭐ CustomUserDetails 사용
+		Member member = optionalMember.orElseThrow(
+				() -> new UsernameNotFoundException("사용자 정보를 찾을 수 없습니다: " + username));
+
+		log.debug("loadUserByUsername completed for user: {}", username);
+		return new CustomUserDetails(member);
 
 //		MemberVO member = memberRepository.findAll()
 //				.stream()

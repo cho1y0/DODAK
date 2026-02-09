@@ -4,12 +4,14 @@ import com.smhrd.dodak.entity.Arrange;
 import com.smhrd.dodak.service.ArrangeService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/arrangements")
 @RequiredArgsConstructor
@@ -68,6 +70,7 @@ public class ArrangeRestController {
             arrangeService.delete(arrangeIdx);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
         } catch (Exception e) {
+            log.error("Failed to delete arrangement - arrangeIdx: {}", arrangeIdx, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

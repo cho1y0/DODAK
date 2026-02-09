@@ -4,12 +4,14 @@ import com.smhrd.dodak.entity.Doctor;
 import com.smhrd.dodak.service.DoctorService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/doctors")
 @RequiredArgsConstructor
@@ -63,6 +65,7 @@ public class DoctorRestController {
             doctorService.delete(doctIdx);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
         } catch (Exception e) {
+            log.error("Failed to delete doctor - doctIdx: {}", doctIdx, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

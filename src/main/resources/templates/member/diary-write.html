@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head('DODAK - 일기 작성')}"></head>
+<body>
+
+<div th:replace="~{fragments/background :: dodak-background}"></div>
+<nav th:replace="~{fragments/member-navbar :: member-navbar('diary-write')}"></nav>
+
+<div class="app-container">
+    <div class="row">
+        <div class="col-12">
+            <div class="app-card">
+                <h4 class="fw-bold mb-4" style="color: #555;">오늘의 감성을 기록해요</h4>
+                <p class="text-muted" id="todayDateDisplay">날짜: </p>
+
+                <div class="mb-4">
+                    <label for="diaryMood" class="form-label fw-semibold">오늘의 기분 선택</label>
+                    <div class="mood-select" id="diaryMood">
+                        <button class="btn btn-outline-danger me-2" data-mood="분노" value="분노">분노</button>
+                        <button class="btn btn-outline-warning me-2" data-mood="불안" value="불안">불안</button>
+                        <button class="btn btn-outline-primary me-2" data-mood="슬픔" value="슬픔">슬픔</button>
+                        <button class="btn btn-outline-success me-2" data-mood="기쁨" value="기쁨">기쁨</button>
+                        <button class="btn btn-outline-info me-2" data-mood="후회" value="후회">후회</button>
+                        <button class="btn btn-outline-info me-2" data-mood="희망" value="희망">희망</button>
+                        <button class="btn btn-outline-info me-2" data-mood="중립" value="중립">중립</button>
+                        <button class="btn btn-outline-info me-2" data-mood="피로" value="피로">피로</button>
+                        <button class="btn btn-outline-info me-2" data-mood="우울" value="우울">우울</button>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label for="diaryTitle" class="block text-sm font-semibold text-gray-700 mb-2">제목</label>
+                    <input type="text"
+                           class="form-control w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150"
+                           id="diaryTitle" placeholder="오늘의 마음을 담아 제목을 입력하세요" maxlength="30"
+                           aria-describedby="titleCount">
+                    <input type="hidden" id="memberId" name="memberId" th:value="${session.memberId}">
+                    <input type="hidden" id="currentDiaryIdx" name="currentDiaryIdx">
+
+                    <p id="titleCount" class="text-xs text-right mt-1 text-gray-500">
+                        <span id="titleCurrentLength">0</span> / 30자
+                    </p>
+                </div>
+
+                <div class="mb-6">
+                    <label for="diaryContent" class="block text-sm font-semibold text-gray-700 mb-2">오늘의 이야기</label>
+                    <textarea
+                            class="form-control w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 resize-y"
+                            id="diaryContent" rows="10"
+                            placeholder="오늘 있었던 일이나 느꼈던 감정을 자유롭게 기록해보세요."
+                            aria-describedby="contentCount"></textarea>
+
+                    <p id="contentCount" class="text-xs text-right mt-1 text-gray-500">
+                        <span id="contentCurrentLength">0</span> / 1000자
+                    </p>
+                </div>
+
+                <div class="d-flex justify-content-between gap-2 mt-4">
+                    <button class="btn btn-lg btn-dark w-50" id="saveDiaryBtn">일기 저장하기</button>
+                    <button class="btn btn-lg btn-secondary w-50" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#StatsCollapseYoutube" aria-expanded="false"
+                            aria-controls="StatsCollapseYoutube">기분에 따른 추천 영상 목록보기</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="collapse" id="StatsCollapseYoutube">
+            <div class="row">
+                <div class="col-12">
+                    <div class="today-stats-card position-relative">
+                        <div class="atti-character"></div>
+                        <div class="today-stats-content">
+                            <h5 class="text-center fw-bold mb-4" style="color: #c94f79;">오늘의 기분 선택에 맞는 영상 목록</h5>
+                            <div class="atti-comment-section">
+                                <div class="atti-title">
+                                    <h5>도닥이가 추천해요!</h5>
+                                    <img src="/img/dodak.png" alt="도닥이 아이콘" class="atti-dodak-icon">
+                                </div>
+                                <div class="diary-list" id="youtubeResult"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="waitChk" value="0">
+
+<div th:replace="~{fragments/scripts :: member-scripts}"></div>
+<script src="/js/member/diary-write.js"></script>
+
+<!-- AI API URL 초기화 -->
+<script th:inline="javascript">
+    const AI_API_URL = /*[[${aiApiUrl}]]*/ '';
+</script>
+
+</body>
+</html>

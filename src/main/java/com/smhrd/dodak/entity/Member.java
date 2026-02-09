@@ -69,7 +69,11 @@ public class Member {
     
     @Column(name = "profile_image", nullable = true, length = 255)
     private String profileImg;
-    
+
+    // 환자 상태: 1=경증(기본), 2=중증
+    @Column(name = "patient_status", nullable = true)
+    private Integer patientStatus;
+
     @Transient
     private Integer hospIdx;
     

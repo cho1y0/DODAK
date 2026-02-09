@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head('DODAK - 대시보드')}"></head>
+<body>
+
+<div th:replace="~{fragments/background :: dodak-background}"></div>
+<nav th:replace="~{fragments/doctor-navbar :: doctor-navbar('dashboard')}"></nav>
+
+<style>
+/* 대시보드 스타일 */
+.dashboard-card {
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+.dashboard-section {
+    background: #fff;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    height: 100%;
+}
+.dashboard-section .section-title {
+    color: #555;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #eee;
+}
+.chart-container {
+    position: relative;
+    width: 100%;
+}
+.activity-log .activity-item {
+    padding: 0.75rem;
+    border-left: 3px solid #ddd;
+    margin-bottom: 0.5rem;
+    background: #f9f9f9;
+    border-radius: 0 8px 8px 0;
+    transition: background 0.2s;
+}
+.activity-log .activity-item:hover {
+    background: #f0f0f0;
+}
+.activity-log .activity-item.mood-joy { border-left-color: #FFD700; }
+.activity-log .activity-item.mood-sad { border-left-color: #4169E1; }
+.activity-log .activity-item.mood-anger { border-left-color: #DC143C; }
+.activity-log .activity-item.mood-anxiety { border-left-color: #FFA500; }
+.activity-log .activity-item.mood-depression { border-left-color: #483D8B; }
+.activity-log .activity-time {
+    font-size: 0.75rem;
+    color: #888;
+}
+.activity-log .activity-name {
+    font-weight: 600;
+    color: #333;
+}
+.activity-log .activity-title {
+    font-size: 0.9rem;
+    color: #666;
+}
+#dashSevereTable tbody tr {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#dashSevereTable tbody tr:hover {
+    background: #fff5f5;
+}
+#dashSevereTable thead.sticky-top {
+    z-index: 1; /* 모달(z-index: 1055)보다 낮게 설정 */
+}
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+.status-badge.severe { background: #ffebee; color: #c62828; }
+.status-badge.warning { background: #fff3e0; color: #e65100; }
+.status-badge.normal { background: #e8f5e9; color: #2e7d32; }
+</style>
+
+<div class="app-container">
+    <div class="app-card">
+        <h2 class="text-center fw-bold mb-4" style="color: #6c757d;">
+            <i class="bi bi-speedometer2 me-2"></i> 의사 대시보드
+        </h2>
+
+        <!-- 요약 카드 섹션 -->
+        <div class="row g-4 mb-4">
+            <!-- 총 배정 환자 수 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-card bg-primary text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">배정된 환자</h6>
+                            <h2 class="mb-0" id="dashTotalPatients">-</h2>
+                        </div>
+                        <i class="bi bi-people-fill" style="font-size: 2.5rem; opacity: 0.7;"></i>
+                    </div>
+                    <small>전체 담당 환자 수</small>
+                </div>
+            </div>
+
+            <!-- 중증 환자 수 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-card bg-danger text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">중증 환자</h6>
+                            <h2 class="mb-0" id="dashSeverePatients">-</h2>
+                        </div>
+                        <i class="bi bi-exclamation-triangle-fill" style="font-size: 2.5rem; opacity: 0.7;"></i>
+                    </div>
+                    <small>집중 관리 필요</small>
+                </div>
+            </div>
+
+            <!-- 이번 달 일기 수 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-card bg-success text-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">이번 달 일기</h6>
+                            <h2 class="mb-0" id="dashMonthlyDiaries">-</h2>
+                        </div>
+                        <i class="bi bi-journal-text" style="font-size: 2.5rem; opacity: 0.7;"></i>
+                    </div>
+                    <small>환자들의 기록</small>
+                </div>
+            </div>
+
+            <!-- 평균 행복 지수 -->
+            <div class="col-md-3 col-sm-6">
+                <div class="dashboard-card bg-warning text-dark">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">평균 행복지수</h6>
+                            <h2 class="mb-0" id="dashAvgHappiness">-</h2>
+                        </div>
+                        <i class="bi bi-emoji-smile-fill" style="font-size: 2.5rem; opacity: 0.7;"></i>
+                    </div>
+                    <small>전체 환자 평균</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- 차트 및 상세 정보 섹션 -->
+        <div class="row g-4 mb-4">
+            <!-- 감정 분포 차트 -->
+            <div class="col-md-6">
+                <div class="dashboard-section">
+                    <h5 class="section-title"><i class="bi bi-pie-chart-fill me-2"></i>전체 환자 감정 분포</h5>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="dashEmotionPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 주간 일기 작성 추이 -->
+            <div class="col-md-6">
+                <div class="dashboard-section">
+                    <h5 class="section-title"><i class="bi bi-graph-up me-2"></i>최근 7일 일기 작성 추이</h5>
+                    <div class="chart-container" style="height: 300px;">
+                        <canvas id="dashWeeklyLineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 환자 상태 테이블 및 알림 섹션 -->
+        <div class="row g-4">
+            <!-- 중증 환자 목록 -->
+            <div class="col-md-6">
+                <div class="dashboard-section">
+                    <h5 class="section-title text-danger">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>중증 환자 현황
+                    </h5>
+                    <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                        <table class="table table-hover table-sm" id="dashSevereTable">
+                            <thead class="table-light sticky-top">
+                            <tr>
+                                <th>환자명</th>
+                                <th>우울지수</th>
+                                <th>최근 일기</th>
+                                <th>상태</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr><td colspan="4" class="text-center text-muted">로딩 중...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 최근 활동 로그 -->
+            <div class="col-md-6">
+                <div class="dashboard-section">
+                    <h5 class="section-title">
+                        <i class="bi bi-clock-history me-2"></i>최근 일기 작성 현황
+                    </h5>
+                    <div class="activity-log" id="dashRecentActivity" style="max-height: 300px; overflow-y: auto;">
+                        <div class="text-center text-muted p-3">로딩 중...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 월별 감정 추이 (큰 차트) -->
+        <div class="row g-4 mt-2">
+            <div class="col-12">
+                <div class="dashboard-section">
+                    <h5 class="section-title"><i class="bi bi-bar-chart-line-fill me-2"></i>월별 감정 추이 (전체 환자)</h5>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="dashMonthlyBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="memberId" name="memberId" th:value="${session.memberId}">
+
+<!-- 일기 상세 보기 모달 -->
+<div th:replace="~{fragments/diary-detail-modal :: diary-detail-modal}"></div>
+
+<div th:replace="~{fragments/scripts :: doctor-scripts}"></div>
+<script src="/js/doctor/dashboard.js"></script>
+
+</body>
+</html>

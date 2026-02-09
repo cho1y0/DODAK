@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- 병원 검색/추가 모달 -->
+<div th:fragment="hospital-modal" id="hospitalModal" class="modal">
+    <div class="modal-content">
+        <span class="close-button">&times;</span>
+        <h3 class="modal-title">
+            <i class="fas fa-hospital"></i> 병원 검색 및 추가
+        </h3>
+
+        <div class="search-hospital-section">
+            <h4 class="sub-section-title">병원 검색</h4>
+            <div class="form-group">
+                <label for="hospitalSearchInput" class="required">병원 이름으로 검색</label>
+                <div class="input-group">
+                    <input type="text" id="hospitalSearchInput" class="form-control" placeholder="의료원">
+                    <button type="button" class="btn btn-secondary" id="searchHospitalBtn">검색</button>
+                </div>
+            </div>
+            <div id="hospitalSearchResults" class="search-results"></div>
+        </div>
+
+        <div class="add-hospital-section">
+            <h4 class="sub-section-title">병원 등록/수정</h4>
+            <p>찾는 병원이 없으신가요? 직접 등록해보세요.</p>
+            <button type="button" class="btn btn-primary" id="openAddHospitalFormBtn">병원 정보 입력</button>
+
+            <div id="newHospitalForm" class="new-hospital-form" style="display: none;">
+                <h5>병원 정보 입력</h5>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="newHospitalName" class="required">병원명</label>
+                        <input type="text" id="newHospitalName" name="newHospitalName" class="form-control" placeholder="병원 이름">
+                        <input type="hidden" id="newHospitalId" name="newHospitalId" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="newHospitalTel" class="required">대표 전화번호</label>
+                        <input type="text" id="newHospitalTel" name="newHospitalTel" class="form-control"
+                               placeholder="02-XXXX-XXXX 또는 010-XXXX-XXXX" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newHospitalZipCode" class="required">우편 번호</label>
+                        <div class="input-group">
+                            <input type="text" id="newHospitalZipCode" name="newHospitalZipCode" class="form-control"
+                                   placeholder="우편번호" readonly>
+                            <button type="button" class="btn btn-secondary" id="searchNewHospitalZipCodeBtn">검색</button>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="newHospitalAddr1" class="required">주소</label>
+                        <input type="text" id="newHospitalAddr1" name="newHospitalAddr1" class="form-control"
+                               placeholder="기본 주소" readonly>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="newHospitalAddr2">상세 주소</label>
+                        <input type="text" id="newHospitalAddr2" name="newHospitalAddr2" class="form-control"
+                               placeholder="상세 주소 입력">
+                    </div>
+                </div>
+
+                <div class="new-hospital-form-actions">
+                    <button type="button" class="btn btn-primary" id="saveNewHospitalBtn">저장</button>
+                    <button type="button" class="btn btn-secondary" id="cancelAddHospitalBtn">취소</button>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary" id="closeHospitalModalBtn">팝업 닫기</button>
+    </div>
+</div>
+</body>
+</html>

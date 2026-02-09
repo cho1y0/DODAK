@@ -15,7 +15,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 public class CustomAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
@@ -24,7 +26,7 @@ public class CustomAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         HttpServletRequest request,
         HttpServletResponse response,
         Authentication authentication) throws IOException, ServletException {
-		System.out.println("onAuthenticationSuccess start");
+		log.debug("onAuthenticationSuccess start");
     	// 1. 로그인한 사용자(Authentication)의 권한(Authority) 목록을 가져옵니다.
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         String targetUrl = "/"; // 기본 경로 설정 (권한이 없는 경우 또는 기본값)
@@ -37,8 +39,7 @@ public class CustomAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         	CustomUserDetails customUserDetails = (CustomUserDetails) principal;
         	String userId = customUserDetails.getUsername(); // 로그인 ID
         	Integer memberId = customUserDetails.getMemberId(); // ⭐ Member의 PK (id) 값 추출
-            System.out.println("onAuthenticationSuccess userId : " + userId);
-            System.out.println("onAuthenticationSuccess memberId : " + memberId);
+            log.debug("onAuthenticationSuccess userId: {}, memberId: {}", userId, memberId);
             // 세션 가져오기 또는 생성하기
             HttpSession session = request.getSession(); 
             
@@ -58,7 +59,7 @@ public class CustomAuthSuccessHandler extends SimpleUrlAuthenticationSuccessHand
         // 3. 권한 목록을 순회하며 적절한 URL을 결정합니다.
         for (GrantedAuthority authority : authorities) {
             String role = authority.getAuthority();
-            System.out.println("role : " + role);
+            log.debug("role: {}", role);
             if (role.equals("ROLE_USER")) {
                 // 'USER' 권한을 가진 사용자는 /member/main으로 이동
                 targetUrl = "/member/main";

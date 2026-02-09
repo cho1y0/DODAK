@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head('DODAK - 마이페이지')}"></head>
+<link rel="stylesheet" href="/css/addUser.css">
+<style>
+/* addUser.css body 스타일 override */
+body {
+    display: block !important;
+    padding: 0 !important;
+    background-color: transparent !important;
+}
+/* container 스타일 override */
+.app-container .container {
+    max-width: 100%;
+}
+.app-container .app-card {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+/* form-section 스타일 */
+.app-card .form-section {
+    max-width: 100%;
+}
+</style>
+<body>
+
+<div th:replace="~{fragments/background :: dodak-background}"></div>
+<nav th:replace="~{fragments/member-navbar :: member-navbar('mypage')}"></nav>
+
+<div class="app-container">
+    <div class="container">
+        <div class="app-card">
+            <h4 class="fw-bold mb-4" style="color: #555;">기본정보 수정</h4>
+
+            <form id="registerForm">
+                <input type="hidden" id="agreements" name="agreementYn" value="">
+                <input type="hidden" id="oldImgPath" name="oldImgPath" value="">
+
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-user"></i> 기본 정보
+                    </h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <div class="profile-section">
+                                <div class="profile-image-container" id="profileImageContainer" align="center">
+                                    <img src="https://placehold.co/120/DCC5AE/FFFFFF?text=PROFILE"
+                                         alt="프로필 이미지" style="width: 100%; height: 100%"
+                                         class="profile-image">
+                                    <input type="file" id="profileImageUpload" name="profileImage"
+                                           accept="image/*" style="display: none;">
+                                    <div class="overlay">클릭하여 이미지 변경</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="roleSelect" class="required">가입 역할</label>
+                            <select id="roleSelect" name="role" class="form-control" disabled="disabled">
+                                <option value="USER">일반 회원 (USER)</option>
+                                <option value="DOCTOR">의사 회원 (DOCTOR)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputId" class="required">아이디</label>
+                            <div class="input-group">
+                                <input type="text" readonly="readonly" id="inputId"
+                                       name="userId" class="form-control" placeholder="ID 입력"
+                                       maxlength="20" autocomplete="off">
+                                <button type="button" class="btn btn-secondary"
+                                        id="buttonIDCheck" disabled="disabled" onclick="checkId()">중복 체크</button>
+                            </div>
+                            <span class="help-text">5~20자, 영문+숫자 조합.</span>
+                            <small id="idMessage" class="form-text text-muted"></small>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputName" class="required">이름 (한글)</label>
+                            <input type="text" id="inputName" name="name" class="form-control"
+                                   placeholder="실명 입력 (한글)" maxlength="10" required="required">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password" class="required">비밀번호</label>
+                            <input type="password" name="password" class="form-control"
+                                   maxlength="20" id="password" placeholder="비밀번호 입력" required>
+                            <small class="help-text">8~20자, 영문+숫자+특수문자 조합.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="passwordConfirm" class="required">비밀번호 확인</label>
+                            <input type="password" name="passwordConfirm"
+                                   class="form-control" id="passwordConfirm"
+                                   placeholder="비밀번호 재입력" maxlength="20" required="required">
+                            <small class="help-text" id="passwordMatchText"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-mobile-alt"></i> 연락 정보
+                    </h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="inputPhone" class="required">휴대 전화</label>
+                            <input type="tel" class="form-control" id="inputPhone" name="phone"
+                                   placeholder="010-XXXX-XXXX" required="required">
+                        </div>
+                        <div class="form-group">
+                            <label for="inputEmail" class="required">이메일</label>
+                            <div class="input-group">
+                                <input type="email" class="form-control" id="inputEmail"
+                                       name="email" placeholder="example@dodak.com" required="required">
+                                <input type="hidden" class="form-control" id="inputEmailCheck" name="emailCheck">
+                                <button type="button" class="btn btn-secondary"
+                                        onclick="validateEmail()" id="buttonEmailCheck">중복 체크</button>
+                            </div>
+                            <small class="help-text">이메일 형식 검증 및 중복 불가.</small>
+                            <small class="help-text" id="emailMessage"></small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-home"></i> 주소 정보
+                    </h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="zipCode" class="required">우편 번호</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="zipCode"
+                                       placeholder="우편번호" name="zipCode" readonly required>
+                                <button type="button" class="btn btn-secondary" id="buttonPostcodeSearch">검색</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="streetAdr" class="required">주소</label>
+                            <input type="text" class="form-control" id="streetAdr" name="addr1"
+                                   placeholder="도로명 주소" readonly required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputAddressDetail">상세 주소</label>
+                        <input type="text" class="form-control" id="inputAddressDetail" name="addr2"
+                               placeholder="상세 주소 (선택 입력)">
+                    </div>
+                </div>
+
+                <div class="form-section" id="doctorInfoSection" style="display: none;">
+                    <h3 class="section-title">
+                        <i class="fas fa-hospital-alt"></i> 의사 정보
+                    </h3>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="hospNameDisplay" class="required">소속 병원</label>
+                            <div class="input-group">
+                                <input type="text" id="hospNameDisplay" class="form-control"
+                                       placeholder="병원 선택 버튼을 눌러주세요" readonly>
+                                <input type="hidden" id="hospIdx" name="hospIdx">
+                                <button type="button" class="btn btn-primary" id="openHospitalModalBtn">병원 선택/추가</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="inputSpecialty" class="required">전문 분야</label>
+                            <input type="text" id="inputSpecialty" name="specialty"
+                                   class="form-control" placeholder="예: 정신 건강의학과">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section agreement-section">
+                    <h3 class="section-title">
+                        <i class="fas fa-file-alt"></i> 마케팅 정보 수신 동의
+                    </h3>
+                    <div class="grid-2 agreement-checkboxes">
+                        <div class="form-group">
+                            <input type="checkbox" id="checkTerms3">
+                            <span class="checkbox-text">마케팅 정보 수신 동의 (이메일/SMS) (선택)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-actions" style="width: 100%" align="center">
+                    <button class="btn btn-submit-small" id="regBtn">회원 정보 수정</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="memberId" name="memberId" th:value="${session.memberId}">
+
+<div th:replace="~{fragments/hospital-modal :: hospital-modal}"></div>
+
+<div th:replace="~{fragments/scripts :: member-scripts}"></div>
+<script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script src="/js/member/mypage.js"></script>
+
+</body>
+</html>

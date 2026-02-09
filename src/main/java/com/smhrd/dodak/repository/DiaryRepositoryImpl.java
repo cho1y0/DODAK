@@ -19,7 +19,9 @@ import com.smhrd.dodak.entity.QDiary;
 import com.smhrd.dodak.entity.QMember;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 public class DiaryRepositoryImpl implements DiaryRepositoryCustom {
 
@@ -93,19 +95,25 @@ public class DiaryRepositoryImpl implements DiaryRepositoryCustom {
             try {
                 // year() 함수 사용 (예: 2025)
                 builder.and(diary.createdAt.year().eq(Integer.parseInt(year)));
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException e) {
+                log.debug("Invalid year format: {}", year);
+            }
         }
         if (month != null && !month.isEmpty()) {
             try {
                 // month() 함수 사용 (예: 10)
                 builder.and(diary.createdAt.month().eq(Integer.parseInt(month)));
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException e) {
+                log.debug("Invalid month format: {}", month);
+            }
         }
         if (day != null && !day.isEmpty()) {
             try {
                 // dayOfMonth() 함수 사용 (예: 20)
                 builder.and(diary.createdAt.dayOfMonth().eq(Integer.parseInt(day)));
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException e) {
+                log.debug("Invalid day format: {}", day);
+            }
         }
 
         // 3. 키워드 검색 조건 (제목 또는 내용)

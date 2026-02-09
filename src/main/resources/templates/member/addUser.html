@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="/css/addUser.css">
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="icon" type="image/x-icon" href="/img/휴식하는도닥이.png">	
 </head>
 <body>
 	<div class="container">
@@ -46,21 +47,21 @@
 						</select>
 					</div>
 					<div class="form-group">
-						<label for="userId" class="required">아이디</label>
+						<label for="inputId" class="required">아이디</label>
 						<div class="input-group">
 							<input type="text" id="inputId" name="userId"
 								class="form-control" placeholder="ID 입력" maxlength="20"
 								autocomplete="off">
 							<button type="button" class="btn btn-secondary"
-								id="buttonIDCheck" onclick="checkId()">중복 체크</button>
+								id="buttonIDCheck" onclick="checkId(event)">중복 체크</button>
 						</div>
-						<span class="help-text">5~20자, 영문+숫자 조합.</span> <small
+						<span class="help-text">5~20자, 사용할 수 있는 문자(영문,숫자).</span> <small
 							id="idMessage" class="form-text text-muted"></small>
 					</div>
 					<div class="form-group">
-						<label for="name" class="required">이름 (한글)</label> <input
+						<label for="inputName" class="required">이름</label> <input
 							type="text" id="inputName" name="name" class="form-control"
-							placeholder="실명 입력 (한글)" maxlength="10" required="required">
+							placeholder="실명 입력" maxlength="10" required="required">
 					</div>
 
 					<div class="form-group">
@@ -85,17 +86,17 @@
 				</h3>
 				<div class="grid-2">
 					<div class="form-group">
-						<label for="phone" class="required">휴대 전화</label> <input
+						<label for="inputPhone" class="required">휴대 전화</label> <input
 							type="tel" class="form-control" id="inputPhone" name="phone"
 							placeholder="010-XXXX-XXXX" required="required">
 					</div>
 					<div class="form-group">
-						<label for="email" class="required">이메일</label>
+						<label for="inputEmail" class="required">이메일</label>
 						<div class="input-group">
 							<input type="email" class="form-control" id="inputEmail"
 								name="email" placeholder="example@dodak.com" required="required">
 							<button type="button" class="btn btn-secondary"
-								onclick="validateEmail()" id="buttonEmailCheck">중복 체크</button>
+								onclick="validateEmail(event)" id="buttonEmailCheck">중복 체크</button>
 						</div>
 						<small class="help-text">이메일 형식 검증 및 중복 불가.</small> <small
 							class="help-text" id="emailMessage"></small>
@@ -119,13 +120,13 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="addr1" class="required">주소</label> <input type="text"
+						<label for="streetAdr" class="required">주소</label> <input type="text"
 							class="form-control" id="streetAdr" name="addr1"
 							placeholder="도로명 주소" readonly required>
 					</div>
 				</div>
 				<div class="form-group">
-					<label for="addr2">상세 주소</label> <input type="text"
+					<label for="inputAddressDetail">상세 주소</label> <input type="text"
 						class="form-control" id="inputAddressDetail" name="addr2"
 						placeholder="상세 주소 (선택 입력)">
 				</div>
@@ -138,7 +139,7 @@
 				</h3>
 				<div class="grid-2">
 					<div class="form-group">
-						<label for="hospitalName" class="required">소속 병원</label>
+						<label for="hospNameDisplay" class="required">소속 병원</label>
 						<div class="input-group">
 							<input type="text" id="hospNameDisplay" class="form-control"
 								placeholder="병원 선택 버튼을 눌러주세요" readonly> <input
@@ -148,7 +149,7 @@
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="specialty" class="required">전문 분야</label> <input
+						<label for="inputSpecialty" class="required">전문 분야</label> <input
 							type="text" id="inputSpecialty" name="specialty"
 							class="form-control" placeholder="예: 정신 건강의학과">
 					</div>
@@ -384,24 +385,46 @@
 	   toggleDoctorInfo();
 
 	   function checkPasswordMatch() {
-	       const password = passwordInput.value;
-	       const confirmPassword = passwordConfirmInput.value;
+	       	const password = passwordInput.value;
+	       	const confirmPassword = passwordConfirmInput.value;
 
-	       if (confirmPassword === '') {
-	           passwordMatchText.textContent = '';
-	           // 초기 메시지는 회색 도움말 텍스트와 구별되므로 색상 초기화는 불필요
-	           return;
-	       }
+	       	const minLength = 8;
+			const maxLength = 20;
 
-	       if (password === confirmPassword) {
-	           passwordMatchText.textContent = '비밀번호가 일치합니다.';
-	           // ⭐️ 화면 설계서에 가깝게 파란색 계열로 변경 ⭐️
-	           passwordMatchText.style.color = '#007bff'; 
-	       } else {
-	           passwordMatchText.textContent = '비밀번호가 일치하지 않습니다.';
-	           // ⭐️ 빨간색으로 변경 ⭐️
-	           passwordMatchText.style.color = '#dc3545'; 
-	       }
+	        // 1. 길이 검사 (8자 이상 20자 이하)
+	        if (password.length < minLength || password.length > maxLength) {	        	
+	        	passwordMatchText.textContent = `비밀번호는 ${minLength}~${maxLength}자 사이여야 합니다.`;
+				passwordMatchText.style.color = '#dc3545';
+				$('#password').focus();
+				return false;
+	        } else {
+	        	// 2. 조합 검사 (영문, 숫자, 특수문자 각각 최소 1개 포함)
+		        const hasLetter = /[a-zA-Z]/.test(password); // 영문 포함
+		        const hasNumber = /[0-9]/.test(password);     // 숫자 포함
+		        // 특수문자 정규식: /[^a-zA-Z0-9]/ -> 영문, 숫자가 아닌 모든 문자
+		        const hasSpecial = /[^a-zA-Z0-9]/.test(password); // 특수문자 포함
+
+		        if (!hasLetter || !hasNumber || !hasSpecial) {            
+		            passwordMatchText.textContent = "비밀번호는 영문, 숫자, 특수문자를 모두 포함해야 합니다.";
+					passwordMatchText.style.color = '#dc3545';
+		            $('#password').focus();
+		            return false;
+		        } else {
+		        	if (password === confirmPassword) {
+		 	           passwordMatchText.textContent = '비밀번호가 일치합니다.';
+		 	           // ⭐️ 화면 설계서에 가깝게 파란색 계열로 변경 ⭐️
+		 	           passwordMatchText.style.color = '#007bff'; 
+		 	           return true;
+		 	       } else {	 	       
+		 	           passwordMatchText.textContent = '비밀번호가 일치하지 않습니다.';
+		 	           // ⭐️ 빨간색으로 변경 ⭐️
+		 	           passwordMatchText.style.color = '#dc3545'; 
+		 	           return false;	           
+		 	       }
+		        }
+	        }
+
+	       
 	   }
 	   passwordInput.addEventListener('keyup', checkPasswordMatch);
 	   passwordConfirmInput.addEventListener('keyup', checkPasswordMatch);
@@ -474,34 +497,57 @@
 	
 	let isIdAvailable = false;
 	let isEmailAvailable = false;
+	let isPasswordAvailable = false;
         
         // **새로 추가된 변수**
     let isDoctor = false;
         
         // 아이디 중복 체크 함수
-       	let checkId = () => {
-       		const id = $('#inputId').val();       		
-       		$.ajax({
-       			url    : "/api/members/checkId",
-       			method : "get",      
-       			data   : {userId : id},
-       			success: function(response){
-       				if(!response){
-       					// 아이디가 중복 됨
-       					$("#idMessage").text("아이디가 중복되었습니다.").css({'color':'blue', 'font-weight':'normal'});
-       					isIdAvailable = false;
-       				} else {
-       					// 아이디가 중복되지 않음
-       					$("#idMessage").text("사용 가능한 아이디입니다.").css({'color':'red', 'font-weight':'normal'});
-       					isIdAvailable = true;
-       					
-       				}
-       			},
-       			error  : function(error){
-       				// 통신 실패
-       				$("#idMessage").text("통신에러");
-       			}       			
-       		});
+       	let checkId = (e) => {
+       		const id = $('#inputId').val();
+       		const minLength = 5;
+	        const maxLength = 20;
+
+	        // 1. 길이 검사 (5자 이상 20자 이하)
+	        if (id.length < minLength || id.length > maxLength) {
+	        	e.preventDefault();
+	            $("#idMessage").text(`아이디는 ${minLength}~${maxLength}자 사이여야 합니다.`).css({'color':'blue', 'font-weight':'normal'});
+	        	isIdAvailable = false;	            
+	        	$('#inputId').focus();
+	        } else {
+	        	// 2. 조합 검사 (영문과 숫자만 허용)
+		        // ^[a-zA-Z0-9]+$ : 영문(대소문자) 또는 숫자만 포함해야 함
+		        const idRegex = /^[a-zA-Z0-9]+$/;
+		        if (!idRegex.test(id)) {
+		        	e.preventDefault();
+		            $("#idMessage").text("아이디는 영문과 숫자만 조합하여 입력해야 합니다.").css({'color':'blue', 'font-weight':'normal'});
+		        	isIdAvailable = false;
+		        	$('#inputId').focus();
+		        } else {
+		        	$.ajax({
+		       			url    : "/api/members/checkId",
+		       			method : "get",      
+		       			data   : {userId : id},
+		       			success: function(response){
+		       				if(!response){
+		       					// 아이디가 중복 됨
+		       					$("#idMessage").text("아이디가 중복되었습니다.").css({'color':'blue', 'font-weight':'normal'});
+		       					isIdAvailable = false;
+		       					$('#inputId').focus();
+		       				} else {
+		       					// 아이디가 중복되지 않음
+		       					$("#idMessage").text("사용 가능한 아이디입니다.").css({'color':'red', 'font-weight':'normal'});
+		       					isIdAvailable = true;
+		       				}
+		       			},
+		       			error  : function(error){
+		       				$("#idMessage").text("통신에러");
+		       				isIdAvailable = false;
+		       				$('#inputId').focus();
+		       			}       			
+		       		});
+		        }
+	        }
         }
        	
        	let checkEmail = () => {
@@ -533,27 +579,38 @@
         $('#regBtn').on('click', function(e){        	
         	e.preventDefault();
         	// 1. 아이디 중복 체크
-        	checkId();        	
+        	checkId(e);        	
         	if(!isIdAvailable){
         		e.preventDefault();
 	        	alert("아이디 중복체크를 완료해 주세요.");
 	        	return;
 	        }
         	
-        	// 2. 비밀번호 일치 확인
-        	const pw = $('#password').val();
-        	const pwConfirm = $('#passwordConfirm').val();
+        	const name = $('#inputName').val();
+           	if(name.length == 0){
+           		e.preventDefault();
+           		alert("이름입력은 필수사항입니다.");
+           		$('#inputName').focus();
+           		return;
+           	}
         	
-        	if(pw !== pwConfirm) { 
+        	
+        	// 2. 비밀번호 일치 확인
+        	if(!checkPasswordMatch()){
         		e.preventDefault();
-	        	alert("비밀번호가 서로 일치하지 않습니다.");	     
-	        	return;
-	        }
+        		alert("비밀번호와 비밀번호 확인은 필수입니다.");
+        		passwordInput.focus();
+           		return;
+        	}
+        	
+        	
+        	
         	
         	// 3. 전화번호 형식 확인 (기존 함수는 반환값만 있고 호출이 없었음)
         	if (!isHyphenPhoneNumber($('#inputPhone').val())) {
                 e.preventDefault();
                 alert("휴대전화번호 형식을 확인해 주세요. (010-XXXX-XXXX)");
+                $('#inputPhone').focus();
                 return;
             }
         	
@@ -561,12 +618,14 @@
         	if(!validateEmail()){ // validateEmail()이 false 반환하면 형식 오류
         		e.preventDefault();
 	        	alert("유효한 이메일 주소를 입력해 주세요.");
+	        	$('#inputPhone').focus();
 	        	return;
 	        }
         	
         	if(!isEmailAvailable){ // 중복 체크 결과 확인
         		e.preventDefault();
 	        	alert("이메일 중복체크를 완료해 주세요.");
+	        	$('#inputPhone').focus();
 	        	return;
 	        }
             
@@ -575,39 +634,47 @@
                 if ($('#hospIdx').val() === '' || $('#inputSpecialty').val() === '') {
                     e.preventDefault();
                     alert("의사 회원은 병원 선택과 전문 분야 입력이 필수입니다.");
+                    $('#hospName').focus();
                     return;
                 }
             }
-        	// 6. 마케팅 정보 동의 처리
-        	if($('#checkTerms3').is(':checked')) {
-        		document.getElementById('agreements').value = "Y";
-        	} else {
-        		document.getElementById('agreements').value = "N";
-        	}
-        	
-        	const form = document.getElementById('registerForm');        	
-        	const formData = new FormData(form);
-        	
-        	$.ajax({
-        		  url: "/api/members/join",
-        		  type: "POST",
-        		  processData: false,
-        		  contentType: false,
-        		  data: formData,
-        		  success: function(savedMember, status, xhr) {
-        		    if (xhr.status === 201) {
-        		      console.log("생성된 회원:", savedMember);
-        		      alert(`회원가입 완료! 회원 이름: ${savedMember.name}`);
-        		      location.href = "/login";
-        		    } else {
-        		      alert("회원 생성 실패: " + xhr.status);
-        		    }
-        		  },
-        		  error: function(xhr, status, error) {
-        		    console.error("에러 발생:", error);
-        		    alert("회원가입 중 오류가 발생했습니다.");
-        		  }
-        		});
+            
+            if(!validateTermsAgreement()){
+            	e.preventDefault();	        	
+	        	$('#agreeTerms').focus();
+	        	return;
+            } else {
+            	// 6. 마케팅 정보 동의 처리
+            	if($('#checkTerms3').is(':checked')) {
+            		document.getElementById('agreements').value = "Y";
+            	} else {
+            		document.getElementById('agreements').value = "N";
+            	}
+            	
+            	const form = document.getElementById('registerForm');        	
+            	const formData = new FormData(form);
+            	
+            	$.ajax({
+            		  url: "/api/members/join",
+            		  type: "POST",
+            		  processData: false,
+            		  contentType: false,
+            		  data: formData,
+            		  success: function(savedMember, status, xhr) {
+            		    if (xhr.status === 201) {
+            		      console.log("생성된 회원:", savedMember);
+            		      alert(`회원가입 완료! 회원 이름: ${savedMember.name}`);
+            		      location.href = "/login";
+            		    } else {
+            		      alert("회원 생성 실패: " + xhr.status);
+            		    }
+            		  },
+            		  error: function(xhr, status, error) {
+            		    console.error("에러 발생:", error);
+            		    alert("회원가입 중 오류가 발생했습니다.");
+            		  }
+            	});
+            }
         });        
         // 주소 검색
         $("#buttonPostcodeSearch").on("click",function (e) {
@@ -703,7 +770,7 @@
         function searchHospitals() {
             const name = $('#hospitalSearchInput').val();
             if (!name.trim()) {
-                $('#hospitalSearchResults').html('<p class="text-danger text-center">검색할 병원 이름을 입력해주세요.</p>');
+                $('#hospitalSearchResults').html('<p class="text-danger text-center" align="center">검색할 병원 이름을 입력해주세요.</p>');
                 return;
             }
 
@@ -717,7 +784,7 @@
                 .then(data => displayResults(data))
                 .catch(error => {
                     console.error('Error fetching hospitals:', error);
-                    $('#hospitalSearchResults').html('<p class="text-danger text-center">병원 검색 중 오류가 발생했습니다.</p>');
+                    $('#hospitalSearchResults').html('<p class="text-danger text-center" align="center">병원 검색 중 오류가 발생했습니다.</p>');
                 });
         }
      // 2. 검색 결과 표시
@@ -726,7 +793,7 @@
             resultsDiv.empty(); // 기존 결과 비우기
             
             if (hospitals.length === 0) {
-                resultsDiv.append('<p class="text-danger text-center">검색할 병원 이름을 입력해주세요.</p>');
+                resultsDiv.append('<p class="text-danger text-center" align="center">검색어와 일치하는 병원이 없습니다.</p>');
                 return;
             }
 
@@ -903,6 +970,24 @@
 	            });
 	        }
 	    });
+	    /**
+	     * 약관 동의 필수 항목 유효성 검사
+	     * 필수 항목(이용 약관, 개인 정보 처리 방침) 두 가지 모두 체크되었는지 확인합니다.
+	     */
+	    function validateTermsAgreement() {
+	        // 1. 필수 약관 체크박스 요소 가져오기 (예시 ID 사용)
+	        const termOfUse = document.getElementById('agreeTerms'); // 이용 약관 동의 (필수)
+	        const privacyPolicy = document.getElementById('agreePrivacy'); // 개인 정보 처리 방침 동의 (필수)
+
+	        // 2. 두 필수 항목 모두 체크되었는지 검사
+	        if (!termOfUse.checked || !privacyPolicy.checked) {	        	
+	            alert("필수 약관(이용 약관 및 개인 정보 처리 방침)에 모두 동의해야 가입이 가능합니다.");
+	            return false; // 유효성 검사 실패
+	        }
+
+	        // 3. 모든 필수 항목이 체크됨
+	        return true; // 유효성 검사 성공
+	    }
     </script>
 </body>
 </html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- 의사용 네비게이션 -->
+<nav th:fragment="doctor-navbar(activePage)" class="navbar navbar-expand-lg fixed-top custom-navbar shadow-sm show-navbar">
+    <div class="container-fluid app-container" id="menucon" style="display: none;">
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false"
+                aria-label="Toggle navigation" style="border: none;">
+            <i class="bi bi-list" style="font-size: 1.8rem; color: #6c757d;"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="nav nav-pills me-auto" id="mainTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a th:href="@{/doctor/home}" th:class="'nav-link custom-nav-link' + (${activePage} == 'home' ? ' active' : '')">
+                        <img src="/img/dodak.png" alt="홈" class="nav-tab-icon"> 홈
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a th:href="@{/doctor/dashboard}" th:class="'nav-link custom-nav-link' + (${activePage} == 'dashboard' ? ' active' : '')">
+                        <img src="/img/생각하는도닥이.png" alt="대시보드" class="nav-tab-icon" style="width: 50px;"> 대시보드
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a th:href="@{/doctor/patient-stats}" th:class="'nav-link custom-nav-link' + (${activePage} == 'patient-stats' ? ' active' : '')">
+                        <img src="/img/문서보는도닥이.png" alt="통계" class="nav-tab-icon" style="width: 50px;"> 이달의 마음통계
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a th:href="@{/doctor/patient-diary-list}" th:class="'nav-link custom-nav-link' + (${activePage} == 'patient-diary-list' ? ' active' : '')">
+                        <img src="/img/앉아서독서하는도닥이.png" alt="리스트" class="nav-tab-icon" style="width: 50px;"> 환자 일기 리스트
+                    </a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a th:href="@{/doctor/mypage}" th:class="'nav-link custom-nav-link' + (${activePage} == 'mypage' ? ' active' : '')">
+                        <img src="/img/활짝웃는도닥이.png" alt="도닥이 마이페이지 아이콘"
+                             style="height: 24px; width: auto; margin-right: 5px; vertical-align: middle;">
+                        마이페이지
+                    </a>
+                </li>
+            </ul>
+
+            <li class="nav-item ms-auto danger-alert-container">
+                <a class="nav-link text-danger" href="#" id="dangerAlertIcon">
+                    <i class="bi bi-exclamation-triangle-fill" style="font-size: 1.2em" title="주의: 심각한 부정적 기록 알림"></i>
+                </a>
+                <ul class="danger-list-content" id="dangerAlertList">
+                    <h6 class="dropdown-header text-danger">심층 면담 필요 환자</h6>
+                    <li><span class="dropdown-item text-muted">로딩 중...</span></li>
+                </ul>
+            </li>
+
+            <div class="d-flex ms-auto">
+                <a href="/logout" class="btn btn-sm btn-outline-secondary me-2 login-btn">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> 로그아웃
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

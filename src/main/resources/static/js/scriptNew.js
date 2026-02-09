@@ -113,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
 			const selectedMood = this.dataset.mood;
 			updateMoodStats(selectedMood);
 		});
-	});
+	}, true);
 
 	updateMoodStats('기쁨');
 
@@ -138,22 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
 		});
 	}
 
-	const saveDiaryBtn = document.getElementById('saveDiaryBtn');
-	if (saveDiaryBtn) {
-		saveDiaryBtn.addEventListener('click', function() {
-			const selectedMood = document.querySelector('.mood-select button.selected')?.dataset.mood || '미선택';
-			const title = document.getElementById('diaryTitle').value;
-			const content = document.getElementById('diaryContent').value;
-
-			//alert(`[일기 저장 요청]\n선택된 기분: ${selectedMood}\n제목: ${title}\n내용: ${content.substring(0, 50)}...\n\n(실제 저장 로직은 서버에서 처리됩니다.)`);
-
-			document.getElementById('diaryTitle').value = '';
-			document.getElementById('diaryContent').value = '';
-			moodButtons.forEach(btn => btn.classList.remove('selected'));
-			document.querySelector('.mood-select button[data-mood="기쁨"]').classList.add('selected');
-			updateMoodStats('기쁨');
-		});
-	}
+	
 
 	const date = new Date();
 	const todayYear = date.getFullYear()
@@ -362,271 +347,12 @@ document.addEventListener('DOMContentLoaded', () => {
 		    let currentMemberId = null; // 현재 선택된 환자의 PK
 			
 
-			// --- 캘린더 렌더링 로직 (기존 함수 재활용) ---
-			function renderCalendar(year, month, analysisData = []) {
-				
-		        // 1. 연월 업데이트
-				$currentMonthDisplay.text(`${month}월`);
-				yearSelect.value = year;
-		        
-		        // 2. 달력 날짜 생성
-				const firstDayOfMonth = new Date(year, month - 1, 1).getDay(); // 0(일) ~ 6(토)
-				const daysInMonth = new Date(year, month, 0).getDate();
-				const todayDate = new Date();
-				const isCurrentMonth = todayDate.getFullYear() === year && todayDate.getMonth() + 1 === month;
-
-				let datesHtml = `
-		            <div class="calendar-header">월</div><div class="calendar-header">화</div><div class="calendar-header">수</div><div class="calendar-header">목</div><div class="calendar-header">금</div><div class="calendar-header">토</div><div class="calendar-header">일</div>
-		        `;
-		        
-				
-
-		        // 분석 데이터를 Day를 키로 하는 Map으로 변환
-		        const moodMap = new Map();
-		        // Analysis 엔티티의 Joy Ratio를 기반으로 달력 색상 결정
-		        const getMoodColor = (data) => {
-		            // Joy > 70 -> 기쁨 (var(--mood-joy))
-		            if (data.joyRatio > 40.0) return '#a5d6a7'; 
-		            // Sadness/Depression/Anxiety 합이 높을 때
-		            if (data.sadnessRatio + data.depressionRatio + data.anxietyRatio > 50.0) return '#90caf9'; 
-		            // Anger/Regret 높을 때
-		            if (data.angerRatio > 30.0 || data.regretRatio > 30.0) return '#ffb7b2';
-		            // Neutrality/Tiredness
-		            return '#bdbdbd';
-		        };
-		        
-		        analysisData.forEach(data => {
-					let isoString = data.createdAt;
-					// 1. 'T'를 기준으로 분리하여 날짜 부분("2025-11-12")을 가져옴
-					const fullDate = isoString.split('T')[0];
-
-					// 2. 하이픈('-')을 기준으로 분리: ["2025", "11", "12"]
-					const parts = fullDate.split('-');
-
-					// 3. 마지막 요소(인덱스 2)인 '일'을 가져옴
-					const day = parts[2];
-					console.log(day);
-		            moodMap.set(parseInt(day, 10), { 
-		                color: getMoodColor(data),
-		                data: data // 전체 데이터 저장
-		            });
-		        });
-
-				let weekStartOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1; // 월요일(1)부터 시작하도록 보정
-				for (let i = 0; i < weekStartOffset; i++) {
-					datesHtml += `<div></div>`;
-				}
-
-				for (let day = 1; day <= daysInMonth; day++) {
-					let moodStyle = '';
-					let className = 'calendar-day date';
-					const isToday = isCurrentMonth && day === todayDate.getDate();
-		            const dayData = moodMap.get(day);
-
-					if (isToday) {
-						className = 'calendar-day today';
-					}
-					
-		            if (dayData) {
-						moodStyle = `style="background-color: ${dayData.color}; color: white; cursor: pointer;"`;
-						className = 'calendar-day has-data';						
-						if (isToday) className = 'calendar-day today has-data';
-						datesHtml += `<div class="${className}" data-day="${day}" data-diary-idx="${dayData.data.diaryIdx}" data-date="${dayData.data.createdAt}" ${moodStyle}>${day}</div>`;
-					} else {
-		                moodStyle = '';
-		                className = isToday ? 'calendar-day today' : 'calendar-day date';
-						datesHtml += `<div class="${className}" data-day="${day}" ${moodStyle}>${day}</div>`;
-		            }
-					
-																			                        
-					
-				}
-
-				calendarGrid.innerHTML = datesHtml;
-				
-		        // 3. 차트 표시/숨김 및 제목 업데이트
-				const statsHeader = document.querySelector('#stats-panel .stats-header');
-				const statsContent = document.querySelector('.row.gx-4');
-				const diaryListContainer = document.querySelector('.diary-list-container');
-
-		        // 데이터 존재 여부에 따른 UI 처리
-				if (analysisData.length > 0) {
-					// 데이터가 있을 때: 통계 표시
-					if (statsHeader) {
-						statsHeader.innerHTML = `${month}월의 마음 속 이야기
-		                    <img src="/img/문서보는도닥이.png" alt="통계 도닥이" class="dodak-local-element dodak-stats-title-1">`;
-					}
-					if (statsContent) statsContent.style.display = 'flex';
-					if (diaryListContainer) diaryListContainer.style.display = 'block';
-				} else {
-					// 데이터가 없을 때: 준비 중 메시지 표시
-					if (statsHeader) {
-						statsHeader.innerHTML = `
-							<div class="text-center" style="width: 100%;">
-								<img src="/img/생각하는도닥이.png" alt="준비 중 도닥이 상단" style="width: 350px; margin-bottom: 15px;">
-								<h5 class="fw-bold mb-3" style="color: #0088ffff;">
-									${year}년 ${month}월의 통계는 아직 준비 중이에요!
-								</h5>
-								<img src="/img/휴식하는도닥이.png" alt="준비 중 도닥이 하단" style="width: 350px; margin-top: 15px;">
-							</div>
-						`;
-					}
-					if (statsContent) statsContent.style.display = 'none'; 
-					if (diaryListContainer) diaryListContainer.style.display = 'none'; 
-				}
-				bindCalendarEvents();
-				bindDiaryDetailEvents();
-			}
+			
 
 			
 			
 						
-		    // --- 핵심: 데이터 가져오기 및 렌더링 관리 함수 ---
-		    async function fetchAndRenderCharts(memberId, year, month) {
-				
-				
-				// 통계 카드 부모 요소 (우측 상단 col-12 col-lg-8)
-			    const statCardParent = document.querySelector('.col-12.col-lg-8');
-			    const chartGrid = statCardParent.querySelector('.chart-grid');
-				
-				// 🚨 중요: 데이터가 있을 때 복구할 원본 .chart-grid HTML을 미리 저장해야 합니다.
-			    // DOMContentLoaded 시점에 원본 HTML을 저장하는 로직이 필요합니다.
-			    // 데이터가 있을 때 복구할 원래 HTML (임시로 저장, 실제로는 DOM을 복제하여 저장해야 하지만 단순화를 위해 ID 부여)
-			    // 🚨 중요: HTML 원본 구조가 필요합니다. 만약 HTML이 서버에서 로드되지 않고 고정되어 있다면, 
-			    // 로드 시점에 원본을 미리 저장해야 합니다. 여기서는 동적으로 원본을 로드한다고 가정하고 로직만 구현합니다.
-			    const originalStatCardHTML = statCardParent.querySelector('.app-card').outerHTML; // 원본 HTML을 복사했다고 가정
-				
-				if (!memberId) {
-					// 환자가 선택되지 않았을 때의 초기 처리 (차트 영역 처리 및 통계 카드 숨김)
-			        renderCalendar(year, month, []);
-			        renderCharts([]);
-					elementShow('.row.gx-4');
-					
-			        return;
-			    }
-				
-				
-				
-		        
-		        // 🚨 실제 API 호출 부분 (Mock Service 호출)
-		        // 실제 환경에서는 백엔드 API 엔드포인트로 fetch 요청을 보내야 합니다.
-		        // 예: const response = await fetch(`/api/analysis/monthly?memberId=${memberId}&year=${year}&month=${month}`);
-		        // Mock 데이터로 대체합니다.
-		        console.log(`[DATA FETCH] 환자 ID: ${memberId}, 연월: ${year}-${month} 데이터 요청...`);
-				try {
-				        const url = `/api/analyses/monthly?memberId=${memberId}&year=${year}&month=${month}`;
-				        const response = await fetch(url, { method: 'GET' });
-
-				        if (response.ok) {
-				            const analysisData = await response.json();
-				            
-				            // 1. 달력 렌더링
-				            renderCalendar(year, month, analysisData);
-							latestAnalysisData = analysisData;
-				            if (analysisData.length > 0) {
-				                // --- 데이터가 있을 때 ---
-				                
-				                // 2. 우측 상단 통계 카드 내용 (chart-grid) 복구 및 데이터 바인딩
-				                chartGrid.innerHTML = originalChartGridHTML; // 원본 HTML 복구 (🚨 실제 데이터 바인딩 로직은 별도 구현 필요)
-
-				                // 3. 차트 렌더링
-				                renderCharts(analysisData);
-								
-								// 1. 종합 통계 및 TOP 3 일기 데이터 계산
-								const statsData = calculateMonthlyStatsAndTopDays(analysisData);
-								console.log(JSON.stringify(statsData));
-								// chartGrid는 우측 상단 통계 카드 내부의 .chart-grid 요소라고 가정합니다.
-								if (statsData && chartGrid) {
-								    const { monthlyStats, top3Days } = statsData;
-
-								    // =============================================================
-								    // 1. 월별 감정 지수 (프로그레스 바) 업데이트
-								    // =============================================================
-
-									// 1. 통계 카드의 부모 요소 (첫 번째 .p-3)를 명확히 지정합니다.
-									const statCardContent = chartGrid.querySelector('.p-3:first-child'); 
-									// OR: const statCardContent = chartGrid.children[0];
-
-									if (statCardContent) {
-									    // 종합 우울지수 업데이트
-									    // 우울 지수 바는 첫 번째 p-3 내부의 3번째 자식입니다.
-									    const sadnessBar = statCardContent.querySelector('.indicator-bar:nth-child(3)');
-									    
-									    if (sadnessBar) {
-									        sadnessBar.querySelector('.indicator-fill').style.width = `${monthlyStats.sadness.percentage}%`;
-									        
-									        // 지수 레벨 텍스트 업데이트 (indicator-bar 이전의 <p> 태그의 span)
-									        // sadnessBar.previousElementSibling은 두 번째 <p> (종합 우울지수)입니다.
-									        sadnessBar.previousElementSibling.querySelector('span').innerHTML = `${monthlyStats.sadness.level}`;
-									    }
-
-									    // 종합 행복지수 업데이트
-									    // 행복 지수 바는 첫 번째 p-3 내부의 5번째 자식입니다.
-									    const happinessBar = statCardContent.querySelector('.indicator-bar:nth-child(5)');
-									    
-									    if (happinessBar) {
-									        happinessBar.querySelector('.indicator-fill').style.width = `${monthlyStats.happiness.percentage}%`;
-									        
-									        // 지수 레벨 텍스트 업데이트 (indicator-bar 이전의 <p> 태그의 span)
-									        // happinessBar.previousElementSibling은 네 번째 <p> (종합 행복지수)입니다.
-									        happinessBar.previousElementSibling.querySelector('span').innerHTML = `${monthlyStats.happiness.level}`;
-									    }
-									} else {
-									    console.error("통계 카드 콘텐츠 (.p-3:first-child)를 찾을 수 없습니다.");
-									}
-
-
-								    // =============================================================
-								    // 2. TOP 3 일기 목록 업데이트
-								    // =============================================================
-								    
-								    // TOP 3 일기 목록을 담는 부모 요소 (예: .top-diary-list-container)
-								    const top3ListContainer = chartGrid.querySelector('.top-diary-list-container');
-									// [주의] top3Days 배열의 각 객체에 'diaryId' 필드가 있다고 가정합니다.
-									
-									if (top3ListContainer) {
-									    let listHtml = '';
-										
-									    if (top3Days.length > 0) {
-									        top3Days.forEach((day, index) => {
-												const diaryDate = new Date(day.createdAt).toLocaleDateString('ko-KR', {
-												                year: 'numeric', month: '2-digit', day: '2-digit', weekday: "long" , hour: "2-digit" , minute: "2-digit" 
-												            }).replace(/\. /g, '.').replace(/\.$/, '');	
-																						            
-									            const displayDate =diaryDate; 
-									            const title = day.diaryTitle || '제목 없음';
-												
-												
-									            listHtml += `
-									                <button class="top-diary-btn" 
-									                        data-diary-idx="${day.diaryIdx}" 
-									                        data-date="${day.createdAt}">
-									                    TOP ${index + 1} 일기: ${title} (${displayDate})
-									                </button>
-									            `;
-												console.log("listHtml : " + listHtml);
-									        });
-									    } // ... (else 로직 유지) ...
-
-									    top3ListContainer.innerHTML = listHtml;
-										
-									    
-									    // 🚨 목록 업데이트 후, 이벤트 리스너를 다시 바인딩합니다.
-									    bindDiaryDetailEvents();
-									}
-								}
-				                
-				            } else {
-				                
-								initializeAnalysisUI(year, month);
-				            }
-				        } 
-				        // ... (오류 처리 시에도 빈 데이터로 처리) ...
-				    } catch (error) {
-				        // ... (에러 발생 시 처리) ...				        
-						initializeAnalysisUI(year, month);						
-					}				
-		    }
+		    
 
 			// 이전 달 버튼 클릭 이벤트
 			prevMonthBtn.addEventListener('click', () => {				
@@ -782,39 +508,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 		// 탭 전환 이벤트 리스너 (jQuery를 사용하여 Bootstrap 이벤트 활용)
 		$('#pie-tab, #line-tab').on('shown.bs.tab', function (e) {
-		    // e.target은 클릭된 탭 버튼(#pie-tab 또는 #line-tab)
-		    // 탭 콘텐츠의 ID를 가져오려면 버튼의 'data-bs-target' 속성을 사용해야 합니다.
-		    const targetPaneId = $(e.target).data('bs-target'); // 예: '#pie-chart-pane'
-		    
-		    // '#'을 제거하고 ID 문자열만 가져옵니다.
-		    const activePaneId = targetPaneId ? targetPaneId.substring(1) : null; 
+			const $patientSelect = document.getElementById('patientSelect');
+			const selectedMemberId = $patientSelect.value ? parseInt($patientSelect.value) : null;
 
-		    // alert("탭 콘텐츠 ID 확인: " + activePaneId); // 디버깅용
+			// 달력 컨트롤에서 현재 표시된 날짜 복원 후 차트 다시 그리기
+			const displayedYear = parseInt(yearSelect.value, 10);
+			const displayedMonthText = currentMonthDisplay.textContent;
+			const displayedMonth = parseInt(displayedMonthText.replace('월', ''), 10);
 
-		    // 🚨 중요: latestAnalysisData 변수가 이 클로저에서 접근 가능해야 합니다.
-		    console.log("latestAnalysisData.length : " + latestAnalysisData.length );
-		    
-		    if (latestAnalysisData.length === 0) {
-		        return; 
-		    }
-		    
-		    // 차트 재생성
-		    if (activePaneId === 'pie-chart-pane') {
-		        // Line 차트 인스턴스 파괴 및 Pie 차트 재생성
-		        destroyLineChart();
-		        // 캔버스 재생성: 탭 콘텐츠 영역의 innerHTML을 덮어씌웁니다.
-		        document.getElementById('pie-chart-pane').innerHTML = '<canvas id="pie-chart" width="342px" height="342px"></canvas>';
-		        const pieData = createPieChartData(latestAnalysisData);
-		        pieChartDraw(pieData);
-		        
-		    } else if (activePaneId === 'line-chart-pane') {
-		        // Pie 차트 인스턴스 파괴 및 Line 차트 재생성
-		        destroyPieChart();
-		        // 캔버스 재생성
-		        document.getElementById('line-chart-pane').innerHTML = '<canvas id="line-chart" width="342px" height="342px"></canvas>';
-		        const lineData = createLineChartData(latestAnalysisData);
-		        lineChartDraw(lineData);
-		    }
+			fetchAndRenderCharts(selectedMemberId, displayedYear, displayedMonth);
 		});
 		// =================================================================
 
@@ -955,7 +657,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	                    '#ffb7b2',    // 분노 (빨강)
 	                    '#ffcc99',  // 불안 (주황)
 	                    '#c9a0dc',   // 후회 (청록)
-	                    '#4CAF50',              // 희망 (초록)
+	                    '#fff59d',              // 희망 (초록)
 	                    '#bdbdbd',  // 중립 (회색)
 	                    '#b0bec5',              // 피로 (보라)
 	                    '#7986cb'               // 우울 (짙은 파랑)
@@ -1254,4 +956,283 @@ document.addEventListener('DOMContentLoaded', () => {
 		        // if (window.myChartInstance) { window.myChartInstance.destroy(); }
 		    }
 		}
+		
+		// --- 캘린더 렌더링 로직 (기존 함수 재활용) ---
+		function renderCalendar(year, month, analysisData = []) {
+			const $currentMonthDisplay = $(currentMonthDisplay);
+	        // 1. 연월 업데이트
+			$currentMonthDisplay.text(`${month}월`);
+			yearSelect.value = year;
+	        
+	        // 2. 달력 날짜 생성
+			const firstDayOfMonth = new Date(year, month - 1, 1).getDay(); // 0(일) ~ 6(토)
+			const daysInMonth = new Date(year, month, 0).getDate();
+			const todayDate = new Date();
+			const isCurrentMonth = todayDate.getFullYear() === year && todayDate.getMonth() + 1 === month;
+
+			let datesHtml = `
+	            <div class="calendar-header">월</div><div class="calendar-header">화</div><div class="calendar-header">수</div><div class="calendar-header">목</div><div class="calendar-header">금</div><div class="calendar-header">토</div><div class="calendar-header">일</div>
+	        `;
+	        
+			
+
+	        // 분석 데이터를 Day를 키로 하는 Map으로 변환
+	        const moodMap = new Map();
+	        // Analysis 엔티티의 Joy Ratio를 기반으로 달력 색상 결정
+	        const getMoodColor = (data) => {
+				const moods = [];
+	            moods.push(data.anxietyRatio);
+	            moods.push(data.sadnessRatio)
+	            moods.push(data.joyRatio)
+	            moods.push(data.angerRatio)
+	            moods.push(data.regretRatio);
+	            moods.push(data.hopeRatio);            
+	            moods.push(data.tirednessRatio);
+	            moods.push(data.depressionRatio);
+	            moods.push(data.neutralityRatio);
+				
+	            const maxValue = Math.max(...moods);
+				const maxIndex = moods.indexOf(maxValue); 
+								
+	            if (maxIndex==0) return '#ffcc99';
+				else if(maxIndex==1) return '#90caf9';
+				else if(maxIndex==2) return '#a5d6a7';
+				else if(maxIndex==3) return '#ffb7b2';
+				else if(maxIndex==4) return '#c9a0dc';
+				else if(maxIndex==5) return '#fff59d';
+				else if(maxIndex==6) return '#b0bec5';
+				else if(maxIndex==7) return '#7986cb';
+				else if(maxIndex==8) return '#bdbdbd';
+				else return '#bdbdbd';
+	        };
+	        
+	        analysisData.forEach(data => {
+				let isoString = data.createdAt;
+				// 1. 'T'를 기준으로 분리하여 날짜 부분("2025-11-12")을 가져옴
+				const fullDate = isoString.split('T')[0];
+
+				// 2. 하이픈('-')을 기준으로 분리: ["2025", "11", "12"]
+				const parts = fullDate.split('-');
+
+				// 3. 마지막 요소(인덱스 2)인 '일'을 가져옴
+				const day = parts[2];
+				//console.log(day);
+	            moodMap.set(parseInt(day, 10), { 
+	                color: getMoodColor(data),
+	                data: data // 전체 데이터 저장
+	            });
+	        });
+
+			let weekStartOffset = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1; // 월요일(1)부터 시작하도록 보정
+			for (let i = 0; i < weekStartOffset; i++) {
+				datesHtml += `<div></div>`;
+			}
+
+			for (let day = 1; day <= daysInMonth; day++) {
+				let moodStyle = '';
+				let className = 'calendar-day date';
+				const isToday = isCurrentMonth && day === todayDate.getDate();
+	            const dayData = moodMap.get(day);
+
+				if (isToday) {
+					className = 'calendar-day today';
+				}
+				
+	            if (dayData) {
+					moodStyle = `style="background-color: ${dayData.color}; color: white; cursor: pointer;"`;
+					className = 'calendar-day has-data';						
+					if (isToday) className = 'calendar-day today has-data';
+					datesHtml += `<div class="${className}" data-day="${day}" data-diary-idx="${dayData.data.diaryIdx}" data-date="${dayData.data.createdAt}" ${moodStyle}>${day}</div>`;
+				} else {
+	                moodStyle = '';
+	                className = isToday ? 'calendar-day today' : 'calendar-day date';
+					datesHtml += `<div class="${className}" data-day="${day}" ${moodStyle}>${day}</div>`;
+	            }
+				
+																		                        
+				
+			}
+
+			calendarGrid.innerHTML = datesHtml;
+			
+	        // 3. 차트 표시/숨김 및 제목 업데이트
+			const statsHeader = document.querySelector('#stats-panel .stats-header');
+			const statsContent = document.querySelector('.row.gx-4');
+			const diaryListContainer = document.querySelector('.diary-list-container');
+
+	        // 데이터 존재 여부에 따른 UI 처리
+			if (analysisData.length > 0) {
+				// 데이터가 있을 때: 통계 표시
+				if (statsHeader) {
+					statsHeader.innerHTML = `${month}월의 마음 속 이야기
+	                    <img src="/img/문서보는도닥이.png" alt="통계 도닥이" class="dodak-local-element dodak-stats-title-1">`;
+				}
+				if (statsContent) statsContent.style.display = 'flex';
+				if (diaryListContainer) diaryListContainer.style.display = 'block';
+			} else {
+				// 데이터가 없을 때: 준비 중 메시지 표시
+				if (statsHeader) {
+					statsHeader.innerHTML = `
+						<div class="text-center" style="width: 100%;">
+							<img src="/img/생각하는도닥이.png" alt="준비 중 도닥이 상단" style="width: 350px; margin-bottom: 15px;">
+							<h5 class="fw-bold mb-3" style="color: #0088ffff;">
+								${year}년 ${month}월의 통계는 아직 준비 중이에요!
+							</h5>
+							<img src="/img/휴식하는도닥이.png" alt="준비 중 도닥이 하단" style="width: 350px; margin-top: 15px;">
+						</div>
+					`;
+				}
+				if (statsContent) statsContent.style.display = 'flex'; 
+				if (diaryListContainer) diaryListContainer.style.display = 'none'; 
+			}
+			bindCalendarEvents();
+			bindDiaryDetailEvents();
+		}
+		
+		// --- 핵심: 데이터 가져오기 및 렌더링 관리 함수 ---
+	async function fetchAndRenderCharts(memberId, year, month) {
+						
+						
+		// 통계 카드 부모 요소 (우측 상단 col-12 col-lg-8)
+	    const statCardParent = document.querySelector('.col-12.col-lg-8');
+	    const chartGrid = statCardParent.querySelector('.chart-grid');
+		
+		// 🚨 중요: 데이터가 있을 때 복구할 원본 .chart-grid HTML을 미리 저장해야 합니다.
+	    // DOMContentLoaded 시점에 원본 HTML을 저장하는 로직이 필요합니다.
+	    // 데이터가 있을 때 복구할 원래 HTML (임시로 저장, 실제로는 DOM을 복제하여 저장해야 하지만 단순화를 위해 ID 부여)
+	    // 🚨 중요: HTML 원본 구조가 필요합니다. 만약 HTML이 서버에서 로드되지 않고 고정되어 있다면, 
+	    // 로드 시점에 원본을 미리 저장해야 합니다. 여기서는 동적으로 원본을 로드한다고 가정하고 로직만 구현합니다.
+	    const originalStatCardHTML = statCardParent.querySelector('.app-card').outerHTML; // 원본 HTML을 복사했다고 가정
+		
+		if (!memberId) {
+			// 환자가 선택되지 않았을 때의 초기 처리 (차트 영역 처리 및 통계 카드 숨김)
+	        renderCalendar(year, month, []);
+	        renderCharts([]);
+			elementShow('.row.gx-4');
+			
+	        return;
+	    }
+		
+		
+		
+        
+        // 🚨 실제 API 호출 부분 (Mock Service 호출)
+        // 실제 환경에서는 백엔드 API 엔드포인트로 fetch 요청을 보내야 합니다.
+        // 예: const response = await fetch(`/api/analysis/monthly?memberId=${memberId}&year=${year}&month=${month}`);
+        // Mock 데이터로 대체합니다.
+        //console.log(`[DATA FETCH] 환자 ID: ${memberId}, 연월: ${year}-${month} 데이터 요청...`);
+		try {
+	        const url = `/api/analyses/monthly?memberId=${memberId}&year=${year}&month=${month}`;
+	        const response = await fetch(url, { method: 'GET' });
+
+	        if (response.ok) {
+	            const analysisData = await response.json();
+	            
+	            // 1. 달력 렌더링
+	            renderCalendar(year, month, analysisData);
+				//latestAnalysisData = analysisData;
+	            if (analysisData.length > 0) {
+	                // --- 데이터가 있을 때 ---
+	                
+	                // 2. 우측 상단 통계 카드 내용 (chart-grid) 복구 및 데이터 바인딩
+	                chartGrid.innerHTML = originalChartGridHTML; // 원본 HTML 복구 (🚨 실제 데이터 바인딩 로직은 별도 구현 필요)
+
+	                // 3. 차트 렌더링
+	                renderCharts(analysisData);
+					
+					// 1. 종합 통계 및 TOP 3 일기 데이터 계산
+					const statsData = calculateMonthlyStatsAndTopDays(analysisData);
+					//console.log(JSON.stringify(statsData));
+					// chartGrid는 우측 상단 통계 카드 내부의 .chart-grid 요소라고 가정합니다.
+					if (statsData && chartGrid) {
+					    const { monthlyStats, top3Days } = statsData;
+
+					    // =============================================================
+					    // 1. 월별 감정 지수 (프로그레스 바) 업데이트
+					    // =============================================================
+
+						// 1. 통계 카드의 부모 요소 (첫 번째 .p-3)를 명확히 지정합니다.
+						const statCardContent = chartGrid.querySelector('.p-3:first-child'); 
+						// OR: const statCardContent = chartGrid.children[0];
+
+						if (statCardContent) {
+						    // 종합 우울지수 업데이트
+						    // 우울 지수 바는 첫 번째 p-3 내부의 3번째 자식입니다.
+						    const sadnessBar = statCardContent.querySelector('.indicator-bar:nth-child(3)');
+						    
+						    if (sadnessBar) {
+						        sadnessBar.querySelector('.indicator-fill').style.width = `${monthlyStats.sadness.percentage}%`;
+						        
+						        // 지수 레벨 텍스트 업데이트 (indicator-bar 이전의 <p> 태그의 span)
+						        // sadnessBar.previousElementSibling은 두 번째 <p> (종합 우울지수)입니다.
+						        sadnessBar.previousElementSibling.querySelector('span').innerHTML = `${monthlyStats.sadness.level}`;
+						    }
+
+						    // 종합 행복지수 업데이트
+						    // 행복 지수 바는 첫 번째 p-3 내부의 5번째 자식입니다.
+						    const happinessBar = statCardContent.querySelector('.indicator-bar:nth-child(5)');
+						    
+						    if (happinessBar) {
+						        happinessBar.querySelector('.indicator-fill').style.width = `${monthlyStats.happiness.percentage}%`;
+						        
+						        // 지수 레벨 텍스트 업데이트 (indicator-bar 이전의 <p> 태그의 span)
+						        // happinessBar.previousElementSibling은 네 번째 <p> (종합 행복지수)입니다.
+						        happinessBar.previousElementSibling.querySelector('span').innerHTML = `${monthlyStats.happiness.level}`;
+						    }
+						} else {
+						    console.error("통계 카드 콘텐츠 (.p-3:first-child)를 찾을 수 없습니다.");
+						}
+
+
+					    // =============================================================
+					    // 2. TOP 3 일기 목록 업데이트
+					    // =============================================================
+					    
+					    // TOP 3 일기 목록을 담는 부모 요소 (예: .top-diary-list-container)
+					    const top3ListContainer = chartGrid.querySelector('.top-diary-list-container');
+						// [주의] top3Days 배열의 각 객체에 'diaryId' 필드가 있다고 가정합니다.
+						
+						if (top3ListContainer) {
+						    let listHtml = '';
+							
+						    if (top3Days.length > 0) {
+						        top3Days.forEach((day, index) => {
+									const diaryDate = new Date(day.createdAt).toLocaleDateString('ko-KR', {
+									                year: 'numeric', month: '2-digit', day: '2-digit', weekday: "long" , hour: "2-digit" , minute: "2-digit" 
+									            }).replace(/\. /g, '.').replace(/\.$/, '');	
+																			            
+						            const displayDate =diaryDate; 
+						            const title = day.diaryTitle || '제목 없음';
+									
+									
+						            listHtml += `
+						                <button class="top-diary-btn" 
+						                        data-diary-idx="${day.diaryIdx}" 
+						                        data-date="${day.createdAt}">
+						                    TOP ${index + 1} 일기: ${title} (${displayDate})
+						                </button>
+						            `;
+									//console.log("listHtml : " + listHtml);
+						        });
+						    } // ... (else 로직 유지) ...
+
+						    top3ListContainer.innerHTML = listHtml;
+							
+						    
+						    // 🚨 목록 업데이트 후, 이벤트 리스너를 다시 바인딩합니다.
+						    bindDiaryDetailEvents();
+						}
+					}
+	                
+	            } else {
+	                
+					initializeAnalysisUI(year, month);
+	            }
+	        } 
+	        // ... (오류 처리 시에도 빈 데이터로 처리) ...
+	    } catch (error) {
+	        // ... (에러 발생 시 처리) ...				        
+			initializeAnalysisUI(year, month);						
+		}				
+    }
 });

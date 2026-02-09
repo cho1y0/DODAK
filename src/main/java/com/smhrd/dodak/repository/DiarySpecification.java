@@ -7,7 +7,9 @@ import org.springframework.data.jpa.domain.Specification;
 import com.smhrd.dodak.entity.Diary;
 
 import jakarta.persistence.criteria.Expression;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DiarySpecification {
 	// 1. 필수 조건: 회원 ID 필터링 Specification
 	public static Specification<Diary> byMemberId(Integer memberId) {
@@ -54,7 +56,8 @@ public class DiarySpecification {
 			Optional.ofNullable(year).filter(s -> !s.isEmpty()).ifPresent(y -> {
 				try {
 					finalPredicate.getExpressions().add(criteriaBuilder.equal(dateYear, Integer.parseInt(y)));
-				} catch (NumberFormatException ignored) {
+				} catch (NumberFormatException e) {
+					log.debug("Invalid year format: {}", y);
 				}
 			});
 
@@ -62,7 +65,8 @@ public class DiarySpecification {
 			Optional.ofNullable(month).filter(s -> !s.isEmpty()).ifPresent(m -> {
 				try {
 					finalPredicate.getExpressions().add(criteriaBuilder.equal(dateMonth, Integer.parseInt(m)));
-				} catch (NumberFormatException ignored) {
+				} catch (NumberFormatException e) {
+					log.debug("Invalid month format: {}", m);
 				}
 			});
 
@@ -70,7 +74,8 @@ public class DiarySpecification {
 			Optional.ofNullable(day).filter(s -> !s.isEmpty()).ifPresent(d -> {
 				try {
 					finalPredicate.getExpressions().add(criteriaBuilder.equal(dateDay, Integer.parseInt(d)));
-				} catch (NumberFormatException ignored) {
+				} catch (NumberFormatException e) {
+					log.debug("Invalid day format: {}", d);
 				}
 			});
 

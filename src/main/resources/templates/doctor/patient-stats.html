@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: common-head('DODAK - 환자 통계')}"></head>
+<body>
+
+<div th:replace="~{fragments/background :: dodak-background}"></div>
+<nav th:replace="~{fragments/doctor-navbar :: doctor-navbar('patient-stats')}"></nav>
+
+<div class="app-container">
+    <div class="row gx-4">
+        <div class="col-12 col-lg-4 d-flex">
+            <div class="app-card calendar-card flex-grow-1 position-relative">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <select class="form-select form-select-sm fw-bold me-auto"
+                            style="width: 120px; color: #6c757d;" id="yearSelect">
+                    </select>
+
+                    <div class="d-flex align-items-center">
+                        <h5 class="fw-bold m-0 me-3" style="color: #333; font-size: 1.15rem;"
+                            id="currentMonthDisplay">--월</h5>
+
+                        <div class="btn-group" role="group" aria-label="Month Navigation">
+                            <button type="button" class="btn btn-sm btn-outline-secondary month-prev-btn"
+                                    style="border-right: none;">
+                                <i class="bi bi-chevron-left"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary month-next-btn">
+                                <i class="bi bi-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <img src="/img/앉아서독서하는도닥이.png" alt="달력 도닥이"
+                     class="dodak-local-element dodak-stats-calendar-2"
+                     style="top: 620px; width: 200px; right: 23%;">
+
+                <div class="calendar-grid mb-4" id="calendarGrid">
+                    <div class="calendar-header">월</div>
+                    <div class="calendar-header">화</div>
+                    <div class="calendar-header">수</div>
+                    <div class="calendar-header">목</div>
+                    <div class="calendar-header">금</div>
+                    <div class="calendar-header">토</div>
+                    <div class="calendar-header">일</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-8">
+            <div class="app-card">
+                <div class="d-flex align-items-center mt-2 mb-3">
+                    <img src="/img/dodak.png" alt="도닥이 아이콘"
+                         style="width: 2em; height: 2em; margin-right: 10px;">
+                    <div class="chat-bubble flex-grow-1">이번 달의 감정 패턴과 비율을 분석해봤어.</div>
+                    <!-- 환자 선택 드롭다운 박스 -->
+                    <div class="patient-select-wrapper">
+                        <select class="form-select form-select-sm fw-bold"
+                                style="width: 200px; height: 50px;" id="patientSelect">
+                            <option value="" disabled selected>환자 선택</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="chart-grid">
+                    <div class="p-3">
+                        <h5 class="fw-bold mb-3" style="color: #444;">이 달의 마음 상태</h5>
+                        <p class="mb-1 fw-semibold d-flex justify-content-between align-items-center">
+                            종합 우울지수 <span id="depressionStatus" style="font-size: 0.9em; color: #d0021b;">보통</span>
+                        </p>
+                        <div class="indicator-bar mb-3">
+                            <div class="indicator-fill" id="depressionBar"
+                                 style="width: 0%; background-color: var(--mood-sad);"></div>
+                            <div class="indicator-level" id="depressionLevel">-단계</div>
+                        </div>
+                        <p class="mb-1 fw-semibold d-flex justify-content-between align-items-center">
+                            종합 행복지수 <span id="happinessStatus" style="font-size: 0.9em; color: #69a74e;">보통</span>
+                        </p>
+                        <div class="indicator-bar mb-3">
+                            <div class="indicator-fill" id="happinessBar"
+                                 style="width: 0%; background-color: var(--mood-joy);"></div>
+                            <div class="indicator-level" id="happinessLevel">-단계</div>
+                        </div>
+                        <p class="text-center mt-4" style="font-size: 0.9em; color: #888;" id="analysisNote">환자를 선택해주세요</p>
+                    </div>
+                    <div class="p-3">
+                        <h6 class="text-center">가장 부정적이었던 날</h6>
+                        <div class="d-flex align-items-center mb-3">
+                            <span style="font-size: 1.5em;">😥</span>
+                            <div class="chat-bubble flex-grow-1 m-0">가장 우울했던 날 TOP 3 일기</div>
+                        </div>
+                        <div class="top-diary-list-container" id="topDiaryList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="atti-comment-section">
+        <ul class="nav nav-tabs nav-justified" id="chartTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pie-tab" data-bs-toggle="tab"
+                        data-bs-target="#pie-chart-pane" type="button" role="tab"
+                        aria-controls="pie-chart-pane" aria-selected="true">종합 마음 추이 차트</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="line-tab" data-bs-toggle="tab"
+                        data-bs-target="#line-chart-pane" type="button" role="tab"
+                        aria-controls="line-chart-pane" aria-selected="false">행복/우울 지수변화 차트</button>
+            </li>
+        </ul>
+
+        <div class="tab-content atti-chart-tab-content" id="chartTabsContent">
+            <div class="tab-pane fade show active" id="pie-chart-pane"
+                 role="tabpanel" aria-labelledby="pie-tab" tabindex="0" align="center">
+                <canvas id="pie-chart" width="342px" height="342px"></canvas>
+            </div>
+
+            <div class="tab-pane fade" id="line-chart-pane" role="tabpanel"
+                 aria-labelledby="line-tab" tabindex="0" align="center">
+                <canvas id="line-chart" width="342px" height="342px"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="memberId" name="memberId" th:value="${session.memberId}">
+
+<!-- 일기 상세 보기 모달 -->
+<div th:replace="~{fragments/diary-detail-modal :: diary-detail-modal}"></div>
+
+<div th:replace="~{fragments/scripts :: doctor-scripts}"></div>
+<script src="/js/calendar.js"></script>
+<script src="/js/doctor/patient-stats.js"></script>
+
+</body>
+</html>

@@ -17,11 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.smhrd.dodak.controller.DiaryRestController.DiaryResponse;
 import com.smhrd.dodak.entity.Analysis;
+import com.smhrd.dodak.entity.DashboardStatsResponse;
+import com.smhrd.dodak.entity.PatientStatsResponse;
 import com.smhrd.dodak.service.AnalysisService;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/analyses")
 @RequiredArgsConstructor
@@ -122,10 +126,11 @@ public class AnalysisRestController {
             analysisService.delete(analysisIdx);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
         } catch (Exception e) {
+            log.error("Failed to delete analysis - analysisIdx: {}", analysisIdx, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
+
     /**
      * 특정 환자의 특정 연월에 대한 감정 분석 데이터를 조회합니다.
      * * @param memberId 조회할 환자의 PK
@@ -148,7 +153,49 @@ public class AnalysisRestController {
             // 데이터가 없는 경우 204 No Content 또는 빈 리스트 (200 OK) 반환
             return ResponseEntity.ok(analysisData);
         }
-        
+
         return ResponseEntity.ok(analysisData);
+    }
+
+    /**
+     * 특정 환자의 월간 종합 통계를 조회합니다.
+     * @param memberId 환자의 Member ID
+     * @param year 조회 연도 (YYYY)
+     * @param month 조회 월 (1~12)
+     * @return 집계된 통계 데이터 (파이차트, 라인차트, 부정적인 날, 종합지표)
+     */
+    @GetMapping("/stats/{memberId}")
+    public ResponseEntity<PatientStatsResponse> getPatientStats(
+            @PathVariable Integer memberId,
+            @RequestParam("year") int year,
+            @RequestParam("month") int month) {
+
+        log.debug("Fetching patient stats - memberId: {}, year: {}, month: {}", memberId, year, month);
+
+        try {
+            PatientStatsResponse stats = analysisService.getPatientMonthlyStats(memberId, year, month);
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            log.error("Failed to fetch patient stats - memberId: {}", memberId, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * 의사 대시보드 통계를 조회합니다.
+     * @param memberId 의사의 Member ID
+     * @return 대시보드 통계 데이터 (요약, 감정평균, 주간추이, 월간추이, 최근활동, 중증환자)
+     */
+    @GetMapping("/dashboard/{memberId}")
+    public ResponseEntity<DashboardStatsResponse> getDashboardStats(@PathVariable Integer memberId) {
+        log.debug("Fetching dashboard stats for doctor - memberId: {}", memberId);
+
+        try {
+            DashboardStatsResponse stats = analysisService.getDashboardStats(memberId);
+            return ResponseEntity.ok(stats);
+        } catch (Exception e) {
+            log.error("Failed to fetch dashboard stats - memberId: {}", memberId, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

@@ -34,10 +34,11 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
 		http.authorizeHttpRequests(auth ->auth
-				.requestMatchers("/", "/calendar",  "/login", "/hospital/searchPopup", "/api/hospitals/*", 
-						         "/api/hospitals/save","/api/hospitals/all", "/api/hospitals/search", 
-						         "/hospital/addForm" , "/join", "/api/members/checkId", "/api/members/checkEmail", 
+				.requestMatchers("/", "/calendar",  "/login", "/hospital/searchPopup", "/api/hospitals/*",
+						         "/api/hospitals/save","/api/hospitals/all", "/api/hospitals/search",
+						         "/hospital/addForm" , "/join", "/api/members/checkId", "/api/members/checkEmail",
 						         "/api/members/join", "/api/members/user", "/joinProc","/addUser",
+						         "/api/password/**",
 						         "/css/**", "/js/**", "/img/**" , "/view/**").permitAll() // 비회원 접근 허용
 				.requestMatchers("/doctor/**", "/api/members/users/**", "/api/members/assignments", "/api/analyses/monthly", "/api/diaries/detail/*").hasRole("DOCTOR") // 관리자 권한 필요한
 				.requestMatchers("/member/**", "/api/members/info/*", "/api/members/update").hasAnyRole("USER","DOCTOR") // 로그인된 모든 사용자 접근 가능

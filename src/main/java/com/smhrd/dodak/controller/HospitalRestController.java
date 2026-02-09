@@ -19,7 +19,9 @@ import com.smhrd.dodak.service.HospitalService;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/hospitals")
 @RequiredArgsConstructor
@@ -41,10 +43,8 @@ public class HospitalRestController {
     @PostMapping("/save")
     public ResponseEntity<Hospital> createHospital(@RequestBody HospitalRequest request) {
         // DTO를 Entity로 변환
-    	System.out.println("createHospital 호출됨");
-    	System.out.println("request.getHospName()" + request.getHospName());
-    	System.out.println("request.getZipCode()" + request.getZipCode());
-    	System.out.println("request.getTel()" + request.getTel());
+    	log.debug("createHospital - hospName: {}, zipCode: {}, tel: {}",
+    			request.getHospName(), request.getZipCode(), request.getTel());
         Hospital newHospital = Hospital.builder()
             .hospName(request.getHospName())
             .zipCode(request.getZipCode())
@@ -60,14 +60,14 @@ public class HospitalRestController {
     // --- R (Read: 전체 병원 조회) ---
     @GetMapping("/all")
     public ResponseEntity<List<Hospital>> getAllHospitals() {
-    	System.out.println("getAllHospitals 호출됨");
+    	log.debug("getAllHospitals called");
         return new ResponseEntity<>(hospitalService.findAll(), HttpStatus.OK);
     }
     
     // --- R (Read: 병원 이름으로 검색) ---
     @GetMapping("/search")
     public ResponseEntity<List<Hospital>> searchHospitalsByName(@RequestParam("name") String name) {
-    	System.out.println("name : " + name);
+    	log.debug("searchHospitalsByName - name: {}", name);
         List<Hospital> hospitals = hospitalService.findByHospName(name);
         return new ResponseEntity<>(hospitals, HttpStatus.OK);
     }
@@ -75,7 +75,7 @@ public class HospitalRestController {
     // --- R (Read: 병원 상세 조회 - PK) ---
     @GetMapping("/{hospIdx}")
     public ResponseEntity<Hospital> getHospitalById(@PathVariable Integer hospIdx) {
-    	System.out.println("getHospitalById : " + hospIdx);
+    	log.debug("getHospitalById - hospIdx: {}", hospIdx);
         return hospitalService.findById(hospIdx)
                 .map(hospital -> new ResponseEntity<>(hospital, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND)); // 404 Not Found
@@ -107,6 +107,7 @@ public class HospitalRestController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
         } catch (Exception e) {
             // FK 제약 조건 위반 등의 예외 처리
+            log.error("Failed to delete hospital - hospIdx: {}", hospIdx, e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

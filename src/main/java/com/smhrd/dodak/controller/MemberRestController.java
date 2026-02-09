@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -28,7 +29,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
@@ -106,17 +109,18 @@ public class MemberRestController {
             return new ResponseEntity<>(null, HttpStatus.CONFLICT); // 409 Conflict
         } catch (Exception e) {
             // 파일 처리 중 발생할 수 있는 IO 예외 등을 처리합니다.
+            log.error("Failed to join member - userId: {}", member.getUserId(), e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
         }
     }
-    
+
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Member> update(
-        @ModelAttribute Member member, // Receives non-file fields (username, email, etc.)
+        @ModelAttribute Member member,
         @RequestParam String oldImgPath,
         @RequestParam("profileImage") MultipartFile profileImage) {
-    	
-    	System.out.println("member : " + member.toString());
+
+        log.debug("Update member: {}", member);
         try {
             Member savedMember = memberService.update(member, profileImage, oldImgPath);
             
@@ -126,6 +130,7 @@ public class MemberRestController {
             return new ResponseEntity<>(null, HttpStatus.CONFLICT); // 409 Conflict
         } catch (Exception e) {
             // 파일 처리 중 발생할 수 있는 IO 예외 등을 처리합니다.
+            log.error("Failed to update member - memberId: {}", member.getId(), e);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
         }
     }
@@ -144,19 +149,19 @@ public class MemberRestController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND)); // 404 Not Found
     }
     
- // --- R (Read: 회원 상세 조회 - ID) ---
+    // --- R (Read: 회원 상세 조회 - ID) ---
     @PostMapping("/member")
-    public ResponseEntity<Member> getMemberByUserId2(@RequestParam String userId){
-    	System.out.println("getMemberByUserId2 " + userId);
+    public ResponseEntity<Member> getMemberByUserId2(@RequestParam String userId) {
+        log.debug("getMemberByUserId2: {}", userId);
         return memberService.findByUserId(userId)
                 .map(member -> new ResponseEntity<>(member, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND)); // 404 Not Found
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-    
+
     @GetMapping("/checkId")
-	public boolean checkId(@RequestParam String userId) {
-    	System.out.println("checkId : " + userId);
-		Optional<Member> member = memberService.findByUserId(userId);
+    public boolean checkId(@RequestParam String userId) {
+        log.debug("checkId: {}", userId);
+        Optional<Member> member = memberService.findByUserId(userId);
 		if(!member.isEmpty()) {			
 			return false;
 		} else {			
@@ -204,24 +209,22 @@ public class MemberRestController {
     
     @GetMapping("/users/unassigned/{memberId}")
     public ResponseEntity<List<Member>> getUnassignedUsers(@PathVariable Integer memberId) {
-        // memberId를 findUnassignedUsers 메서드에 전달합니다.
         List<Member> users = memberService.findUnassignedUsers(memberId);
-        System.out.println("getUnassignedUsers length : " + users.size());
+        log.debug("getUnassignedUsers length: {}", users.size());
         if (users.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(users, HttpStatus.OK); // 200 OK
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
-    
+
     @GetMapping("/users/assigned/{memberId}")
     public ResponseEntity<List<Member>> getAssignedUsers(@PathVariable Integer memberId) {
-        // memberId를 findUnassignedUsers 메서드에 전달합니다.
         List<Member> users = memberService.findAssignedUsers(memberId);
-        System.out.println("getAssignedUsers length : " + users.size());
+        log.debug("getAssignedUsers length: {}", users.size());
         if (users.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(users, HttpStatus.OK); // 200 OK
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
     
  // =======================================================
@@ -235,28 +238,83 @@ public class MemberRestController {
      */
     @PostMapping("/assignments")
     public ResponseEntity<Void> saveFinalAssignments(
-        @RequestBody PatientAssignmentRequest request) {
-        
-        System.out.println("Received assignment request for doctId: " + request.getMemberId());
-        System.out.println("Assigned patient IDs: " + request.getAssignedPatientIds());
+            @RequestBody PatientAssignmentRequest request) {
 
-        // 기본 유효성 검사
+        log.debug("Received assignment request for memberId: {}, patientIds: {}",
+                request.getMemberId(), request.getAssignedPatientIds());
+
         if (request.getMemberId() == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // 400 Bad Request
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         try {
-            // Service 계층으로 로직 위임 (doctId는 Doctor의 PK이므로 Integer 타입)
             memberService.saveAssignments(request.getMemberId(), request.getAssignedPatientIds());
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content (성공)
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
-            // Doctor 또는 Patient ID가 유효하지 않을 때 (Service에서 throw)
-            System.err.println("Assignment error (Not Found): " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 404 Not Found
+            log.warn("Assignment error (Not Found): {}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            System.err.println("Error saving assignments: " + e.getMessage());
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR); // 500 Internal Server Error
+            log.error("Error saving assignments", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    } 
-    
+    }
+
+    // =======================================================
+    // 📢 환자 상태 업데이트 (1=경증, 2=중증)
+    // =======================================================
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PatientStatusRequest {
+        private Integer patientStatus; // 1=경증, 2=중증
+    }
+
+    /**
+     * PATCH: 환자 상태 토글/업데이트
+     * URL: /api/members/{id}/patient-status
+     * @param id 환자의 Member ID
+     * @param request 새로운 상태 값
+     * @return 업데이트된 Member 정보
+     */
+    @PatchMapping("/{id}/patient-status")
+    public ResponseEntity<Member> updatePatientStatus(
+            @PathVariable Integer id,
+            @RequestBody PatientStatusRequest request) {
+
+        log.debug("Updating patient status for memberId: {}, newStatus: {}",
+                id, request.getPatientStatus());
+
+        if (request.getPatientStatus() == null ||
+            (request.getPatientStatus() != 1 && request.getPatientStatus() != 2)) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            Member updatedMember = memberService.updatePatientStatus(id, request.getPatientStatus());
+            return new ResponseEntity<>(updatedMember, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error updating patient status for memberId: {}", id, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * GET: 의사에게 배정된 중증 환자 목록 조회
+     * URL: /api/members/severe/{memberId}
+     * @param memberId 의사의 Member ID
+     * @return 중증 환자 목록
+     */
+    @GetMapping("/severe/{memberId}")
+    public ResponseEntity<List<Member>> getSeverePatients(@PathVariable Integer memberId) {
+        try {
+            List<Member> severePatients = memberService.findSeverePatients(memberId);
+            if (severePatients.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(severePatients, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error fetching severe patients for memberId: {}", memberId, e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

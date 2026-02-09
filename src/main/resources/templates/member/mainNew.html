@@ -19,6 +19,14 @@
 	src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="icon" type="image/x-icon" href="/img/휴식하는도닥이.png">
+<style>
+/* 기본 폰트 적용 및 포커스 시 테두리 색상 조정 */
+.form-control:focus {
+	border-color: #4f46e5; /* indigo-600 */
+	box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+}
+</style>
 </head>
 <body>
 
@@ -257,20 +265,38 @@
 										value="후회">우울 💙</button>
 								</div>
 							</div>
-							<div class="mb-4">
-								<label for="diaryTitle" class="form-label fw-semibold">제목</label>
-								<input type="text" class="form-control" id="diaryTitle"
-									placeholder="오늘의 마음을 담아 제목을 입력하세요"> <input
-									type="hidden" id="memberId" name="memberId"
+
+
+							<div class="mb-6">
+								<label for="diaryTitle"
+									class="block text-sm font-semibold text-gray-700 mb-2">제목</label>
+								<input type="text"
+									class="form-control w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150"
+									id="diaryTitle" placeholder="오늘의 마음을 담아 제목을 입력하세요"
+									maxlength="30" aria-describedby="titleCount"> <input
+									type="hidden" id="memberId" name="memberId" maxlength="10"
 									th:value="${session.memberId}"> <input type="hidden"
 									id="currentDiaryIdx" name="currentDiaryIdx">
 
+								<p id="titleCount" class="text-xs text-right mt-1 text-gray-500">
+									<span id="titleCurrentLength">0</span> / 30자
+								</p>
 							</div>
-							<div class="mb-4">
-								<label for="diaryContent" class="form-label fw-semibold">오늘의
+
+							<div class="mb-6">
+								<label for="diaryContent"
+									class="block text-sm font-semibold text-gray-700 mb-2">오늘의
 									이야기</label>
-								<textarea class="form-control" id="diaryContent" rows="10"
-									placeholder="오늘 있었던 일이나 느꼈던 감정을 자유롭게 기록해보세요."></textarea>
+								<textarea
+									class="form-control w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-150 resize-y"
+									id="diaryContent" rows="10"
+									placeholder="오늘 있었던 일이나 느꼈던 감정을 자유롭게 기록해보세요."
+									aria-describedby="contentCount"></textarea>
+
+								<p id="contentCount"
+									class="text-xs text-right mt-1 text-gray-500">
+									<span id="contentCurrentLength">0</span> / 1000자
+								</p>
 							</div>
 							<div class="d-flex justify-content-between gap-2 mt-4">
 								<button class="btn btn-lg btn-dark w-50" id="saveDiaryBtn">일기
@@ -282,22 +308,22 @@
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="collapse" id="StatsCollapseYoutube">
-					<div class="row">
-						<div class="col-12">
-							<div class="today-stats-card position-relative">
-								<div class="atti-character"></div>
-								<div class="today-stats-content">
-									<h5 class="text-center fw-bold mb-4" style="color: #c94f79;">오늘의
-										기분 선택에 맞는 영상 목록</h5>
-									<div class="atti-comment-section">
-										<div class="atti-title">
-											<h5>도닥이가 추천해요!</h5>
-											<img src="/img/dodak.png" alt="도닥이 아이콘"
-												class="atti-dodak-icon">
+					<div class="collapse" id="StatsCollapseYoutube">
+						<div class="row">
+							<div class="col-12">
+								<div class="today-stats-card position-relative">
+									<div class="atti-character"></div>
+									<div class="today-stats-content">
+										<h5 class="text-center fw-bold mb-4" style="color: #c94f79;">오늘의
+											기분 선택에 맞는 영상 목록</h5>
+										<div class="atti-comment-section">
+											<div class="atti-title">
+												<h5>도닥이가 추천해요!</h5>
+												<img src="/img/dodak.png" alt="도닥이 아이콘"
+													class="atti-dodak-icon">
+											</div>
+											<div class="diary-list" id="youtubeResult"></div>
 										</div>
-										<div class="diary-list" id="youtubeResult"></div>
 									</div>
 								</div>
 							</div>
@@ -305,7 +331,6 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="tab-pane fade" id="list-panel" role="tabpanel"
 				aria-labelledby="list-tab">
 				<div class="row">
@@ -364,7 +389,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 			<div class="tab-pane fade" id="mypage-panel">
 				<div class="container">
 					<ul class="nav nav-tabs sub-nav-tabs" id="myPageInnerTab"
@@ -374,7 +399,7 @@
 								data-bs-toggle="tab" data-bs-target="#info-pane" type="button"
 								role="tab" aria-controls="info-pane" aria-selected="true">
 								기본정보 수정</button>
-						</li>						
+						</li>
 					</ul>
 					<div class="tab-content pt-3" id="myPageInnerTabContent">
 
@@ -413,7 +438,7 @@
 											</select>
 										</div>
 										<div class="form-group">
-											<label for="userId" class="required">아이디</label>
+											<label for="inputId" class="required">아이디</label>
 											<div class="input-group">
 												<input type="text" readonly="readonly" id="inputId"
 													name="userId" class="form-control" placeholder="ID 입력"
@@ -426,7 +451,7 @@
 												id="idMessage" class="form-text text-muted"></small>
 										</div>
 										<div class="form-group">
-											<label for="name" class="required">이름 (한글)</label> <input
+											<label for="inputName" class="required">이름 (한글)</label> <input
 												type="text" id="inputName" name="name" class="form-control"
 												placeholder="실명 입력 (한글)" maxlength="10" required="required">
 										</div>
@@ -453,16 +478,18 @@
 									</h3>
 									<div class="grid-2">
 										<div class="form-group">
-											<label for="phone" class="required">휴대 전화</label> <input
+											<label for="inputPhone" class="required">휴대 전화</label> <input
 												type="tel" class="form-control" id="inputPhone" name="phone"
 												placeholder="010-XXXX-XXXX" required="required">
 										</div>
 										<div class="form-group">
-											<label for="email" class="required">이메일</label>
+											<label for="inputEmail" class="required">이메일</label>
 											<div class="input-group">
 												<input type="email" class="form-control" id="inputEmail"
 													name="email" placeholder="example@dodak.com"
 													required="required">
+												<input type="hidden" class="form-control" id="inputEmailCheck"
+													name="emailCheck">
 												<button type="button" class="btn btn-secondary"
 													onclick="validateEmail()" id="buttonEmailCheck">중복
 													체크</button>
@@ -489,13 +516,13 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label for="addr1" class="required">주소</label> <input
+											<label for="streetAdr" class="required">주소</label> <input
 												type="text" class="form-control" id="streetAdr" name="addr1"
 												placeholder="도로명 주소" readonly required>
 										</div>
 									</div>
 									<div class="form-group">
-										<label for="addr2">상세 주소</label> <input type="text"
+										<label for="inputAddressDetail">상세 주소</label> <input type="text"
 											class="form-control" id="inputAddressDetail" name="addr2"
 											placeholder="상세 주소 (선택 입력)">
 									</div>
@@ -508,7 +535,7 @@
 									</h3>
 									<div class="grid-2">
 										<div class="form-group">
-											<label for="hospitalName" class="required">소속 병원</label>
+											<label for="hospNameDisplay" class="required">소속 병원</label>
 											<div class="input-group">
 												<input type="text" id="hospNameDisplay" class="form-control"
 													placeholder="병원 선택 버튼을 눌러주세요" readonly> <input
@@ -518,7 +545,7 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label for="specialty" class="required">전문 분야</label> <input
+											<label for="inputSpecialty" class="required">전문 분야</label> <input
 												type="text" id="inputSpecialty" name="specialty"
 												class="form-control" placeholder="예: 정신 건강의학과">
 										</div>
@@ -631,35 +658,34 @@
 		</div>
 	</div>
 	<div class="modal fade" id="diaryDetailModal" tabindex="-1"
-				aria-labelledby="diaryDetailModalLabel" aria-hidden="true">
-				<div class="modal-dialog modal-lg">
-					<div class="modal-content">
-						<div class="modal-header">
-							<h5 class="modal-title" id="diaryDetailModalLabel"></h5>
-							<button type="button" class="btn-close" data-bs-dismiss="modal"
-								aria-label="Close"></button>
-						</div>
-						<div class="modal-body">
-							<p class="text-muted mb-3" id="modal-date-info"></p>
+		aria-labelledby="diaryDetailModalLabel" >
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="diaryDetailModalLabel"></h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<p class="text-muted mb-3" id="modal-date-info"></p>
 
-							<div id="modal-diary-content"
-								style="max-height: 400px; overflow-y: auto; padding: 10px; border: 1px solid #eee; border-radius: 5px;">
-							</div>
-
-							<h6 class="mt-4 border-bottom pb-1">AI 분석 결과</h6>
-							<div id="modal-analysis-result"></div>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary"
-								data-bs-dismiss="modal">닫기</button>
-						</div>
+					<div id="modal-diary-content"
+						style="max-height: 400px; overflow-y: auto; padding: 10px; border: 1px solid #eee; border-radius: 5px;">
 					</div>
+
+					<h6 class="mt-4 border-bottom pb-1">AI 분석 결과</h6>
+					<div id="modal-analysis-result"></div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">닫기</button>
 				</div>
 			</div>
+		</div>
+	</div>
 
 	<script
 		src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="/js/scriptNew.js"></script>
 	<script src="/js/calendar.js"></script>
 
 	<script>
@@ -680,7 +706,7 @@
 					
 					keyword = selectedValue;					
 					$.ajax({
-						url : "http://192.168.0.5:8000/youtube/search",
+						url : "[[${aiApiUrl}]]/youtube/search",
 						method : "POST",
 						contentType : "application/json",
 						data : JSON.stringify({
@@ -801,6 +827,7 @@
         const memberId = $('#memberId').val();
         
         if (!diaryTitle || !diaryContent) {
+        	
             alert("제목과 오늘의 이야기를 모두 입력해주세요.");
             return;
         }
@@ -836,7 +863,7 @@
                 $('#diaryContent').val('');
                 $('#diaryMood button').removeClass('active btn-mood-selected');
                 selectedMood = null;
-
+                loadTodayDiary();
                 // 통계 탭 등으로 전환 유도 (예시)
                 // $('#stats-tab').tab('show'); 
             },
@@ -968,7 +995,7 @@
                 throw new Error(`HTTP Error: ${response.status}`);
             }
             const pageData = await response.json();
-            console.log("pageData content : " + JSON.stringify(pageData.content));
+            console.log("pageData content : " + JSON.stringify(pageData));
             // UI 업데이트
             renderDiaryList(pageData.content);
             renderPagination(pageData.page);
@@ -1159,14 +1186,17 @@
 
     // --- 5. 초기 로드 ---
     document.addEventListener('DOMContentLoaded', () => {
-        if (MEMBER_ID) {
-            // DOMContentLoaded 시점이 아닌, 탭이 활성화되는 시점에 호출하는 것이 더 효율적일 수 있습니다.
-            // 여기서는 DOM 로드 후 바로 호출합니다.
-            //loadDiaries(0); 
-            loadTodayDiary();
-        } else {
-            $diaryListContainer.innerHTML = '<p class="text-danger text-center">로그인한 사용자 정보를 찾을 수 없습니다.</p>';
-        }
+    	$('#write-tab').on('shown.bs.tab', function (e) {
+    		if (MEMBER_ID) {
+                // DOMContentLoaded 시점이 아닌, 탭이 활성화되는 시점에 호출하는 것이 더 효율적일 수 있습니다.
+                // 여기서는 DOM 로드 후 바로 호출합니다.
+                //loadDiaries(0); 
+                loadTodayDiary();
+                
+            } else {
+                $diaryListContainer.innerHTML = '<p class="text-danger text-center">로그인한 사용자 정보를 찾을 수 없습니다.</p>';
+            }
+    	});        
     });
     
     function fillModalWithData(diary) {
@@ -1217,7 +1247,7 @@
      * 오늘 작성된 일기가 있는지 확인하고 폼을 채웁니다.
      */
     async function loadTodayDiary() {
-        if (!MEMBER_ID || MEMBER_ID === '1') return; // 테스트 ID '1'일 경우 요청하지 않음
+        if (!MEMBER_ID) return;
 
         try {
             const url = `/api/diaries/today/${MEMBER_ID}`;
@@ -1328,14 +1358,14 @@
              //console.log("새 일기 저장 완료:", savedDiary);
              
              // 10초 대기가 있으므로 적절한 메시지를 표시
-             alert("새로운 일기 저장이 완료되었으며, AI 분석을 요청했습니다. 잠시 후 '통계' 탭에서 결과를 확인해주세요.");
+             alert("일기 수정이 완료되었으며, AI 분석을 요청했습니다. 잠시 후 '통계' 탭에서 결과를 확인해주세요.");
              
              // 성공 후 입력 필드 초기화
              $('#diaryTitle').val('');
              $('#diaryContent').val('');
              $('#diaryMood button').removeClass('active btn-mood-selected');
              selectedMood = null;
-
+             loadTodayDiary();
              // 통계 탭 등으로 전환 유도 (예시)
              // $('#stats-tab').tab('show'); 
          },
@@ -1366,6 +1396,7 @@
 		const $inputName = document.getElementById('inputName');
 		const $inputPhone = document.getElementById('inputPhone');
 		const $inputEmail = document.getElementById('inputEmail');
+		const $inputEmailCheck = document.getElementById('inputEmailCheck');
 		const $zipCode = document.getElementById('zipCode');
 		const $streetAdr = document.getElementById('streetAdr');
 		const $inputAddressDetail = document.getElementById('inputAddressDetail');
@@ -1384,9 +1415,12 @@
 		
 		const roleSelect = document.getElementById('roleSelect');
 		const doctorInfoSection = document.getElementById('doctorInfoSection');
+		
+		const nameInput = document.getElementById('inputName');
 		const passwordInput = document.getElementById('password');
 		const passwordConfirmInput = document.getElementById('passwordConfirm');
 		const passwordMatchText = document.getElementById('passwordMatchText');
+		const emailInputElement = document.getElementById('inputEmail');
 		const newHospitalId = document.getElementById('newHospitalId');
 		const newHospitalName = document.getElementById('newHospitalName');
 		const newHospitalTel = document.getElementById('newHospitalTel');
@@ -1442,29 +1476,63 @@
 	   }
 	   roleSelect.addEventListener('change', toggleDoctorInfo);
 	   toggleDoctorInfo();
+	   function validateEmail() {
+       	var emailInput = document.getElementById('inputEmail');
+          	var email = emailInput.value;
+          	if (emailCheck(email)) {        		
+          		$("#emailMessage").text("유효한 이메일 주소입니다.").css({'color':'blue', 'font-weight':'normal'});
+          		checkEmail(); // 유효하면 중복 체크 호출
+          		return true;
+          	} else {        		
+          		$("#emailMessage").text("유효하지 않은 이메일 주소입니다.").css({'color':'red', 'font-weight':'normal'});	
+          		isEmailAvailable = false; // 형식 오류 시 중복 가능성도 false로
+          		return false;
+          	}
+       }
 
 	   function checkPasswordMatch() {
-	       const password = passwordInput.value;
-	       const confirmPassword = passwordConfirmInput.value;
+	       	const password = passwordInput.value;
+	       	const confirmPassword = passwordConfirmInput.value;
 
-	       if (confirmPassword === '') {
-	           passwordMatchText.textContent = '';
-	           // 초기 메시지는 회색 도움말 텍스트와 구별되므로 색상 초기화는 불필요
-	           return;
-	       }
+	       	const minLength = 8;
+			const maxLength = 20;
 
-	       if (password === confirmPassword) {
-	           passwordMatchText.textContent = '비밀번호가 일치합니다.';
-	           // ⭐️ 화면 설계서에 가깝게 파란색 계열로 변경 ⭐️
-	           passwordMatchText.style.color = '#007bff'; 
-	       } else {
-	           passwordMatchText.textContent = '비밀번호가 일치하지 않습니다.';
-	           // ⭐️ 빨간색으로 변경 ⭐️
-	           passwordMatchText.style.color = '#dc3545'; 
-	       }
+	        // 1. 길이 검사 (8자 이상 20자 이하)
+	        if (password.length < minLength || password.length > maxLength) {	        	
+	        	passwordMatchText.textContent = `비밀번호는 ${minLength}~${maxLength}자 사이여야 합니다.`;
+				passwordMatchText.style.color = '#dc3545';
+				$('#password').focus();
+				return false;
+	        } else {
+	        	// 2. 조합 검사 (영문, 숫자, 특수문자 각각 최소 1개 포함)
+		        const hasLetter = /[a-zA-Z]/.test(password); // 영문 포함
+		        const hasNumber = /[0-9]/.test(password);     // 숫자 포함
+		        // 특수문자 정규식: /[^a-zA-Z0-9]/ -> 영문, 숫자가 아닌 모든 문자
+		        const hasSpecial = /[^a-zA-Z0-9]/.test(password); // 특수문자 포함
+
+		        if (!hasLetter || !hasNumber || !hasSpecial) {            
+		            passwordMatchText.textContent = "비밀번호는 영문, 숫자, 특수문자를 모두 포함해야 합니다.";
+					passwordMatchText.style.color = '#dc3545';
+		            $('#password').focus();
+		            return false;
+		        } else {
+		        	if (password === confirmPassword) {
+		 	           passwordMatchText.textContent = '비밀번호가 일치합니다.';
+		 	           // ⭐️ 화면 설계서에 가깝게 파란색 계열로 변경 ⭐️
+		 	           passwordMatchText.style.color = '#007bff'; 
+		 	           return true;
+		 	       } else {	 	       
+		 	           passwordMatchText.textContent = '비밀번호가 일치하지 않습니다.';
+		 	           // ⭐️ 빨간색으로 변경 ⭐️
+		 	           passwordMatchText.style.color = '#dc3545'; 
+		 	           return false;	           
+		 	       }
+		        }
+	        }	       
 	   }
 	   passwordInput.addEventListener('keyup', checkPasswordMatch);
 	   passwordConfirmInput.addEventListener('keyup', checkPasswordMatch);
+	   emailInputElement.addEventListener('keyup', validateEmail);
 
 	   closeHospitalModalBtns.forEach(btn => {
 	       btn.addEventListener('click', () => {
@@ -1541,43 +1609,61 @@
        		});
         }
        	
-       	let checkEmail = () => {
-       		const email = $('#inputEmail').val();       		
-       		
-       		$.ajax({
-       			url    : "/api/members/checkEmail",
-       			method : "get",
-       			data   : {email : email},
-       			success: function(response){
-       				if(!response){
-       					// 이메일이 중복 됨
-       					$("#emailMessage").text("이메일이 중복되었습니다.").css({'color':'blue', 'font-weight':'normal'});
-       					isEmailAvailable = false;
-       				} else {
-       					// 이메일이 중복되지 않음
-       					$("#emailMessage").text("사용 가능한 이메일입니다.").css({'color':'red', 'font-weight':'normal'});
-       					isEmailAvailable = true;
-       					
-       				}
-       			},
-       			error  : function(error){
-       				// 통신 실패
-       				$("#emailMessage").text("통신에러");
-       			}       			
-       		});
+       	let checkEmail = () => {     		
+       		const email = $('#inputEmail').val();
+       		const emailCheckInput = $('#inputEmailCheck').val();
+       		console.log(`${email} : ${emailCheckInput}`);
+       		if(emailCheckInput === email){
+        		$("#emailMessage").text("사용 가능한 이메일입니다.").css({'color':'blue', 'font-weight':'normal'});
+				isEmailAvailable = true;
+				return true;
+        	} else {
+	       		$.ajax({
+	       			url    : "/api/members/checkEmail",
+	       			method : "get",
+	       			data   : {email : email},
+	       			success: function(response){
+	       				if(!response){
+	       					// 이메일이 중복 됨
+	       					$("#emailMessage").text("이메일이 중복되었습니다.").css({'color':'red', 'font-weight':'normal'});
+	       					isEmailAvailable = false;
+	       				} else {
+	       					// 이메일이 중복되지 않음
+	       					$("#emailMessage").text("사용 가능한 이메일입니다.").css({'color':'blue', 'font-weight':'normal'});
+	       					isEmailAvailable = true;
+	       					
+	       				}
+	       			},
+	       			error  : function(error){
+	       				// 통신 실패
+	       				$("#emailMessage").text("통신에러");
+	       			}       			
+	       		});
+        	}
         }
         // 폼 태그 제출 검토
-        $('#regBtn').on('click', function(e){        	
+        $('#regBtn').on('click', function(e){
+        	const inputName = $('#inputName').val();
+        	if(inputName.length>0){
+        		
+        	} else {
+        		e.preventDefault();
+        		alert("이름 항목은 필수입니다.");
+        		nameInput.focus();
+              	return;
+        	}
+        	
         	e.preventDefault();
-        	// 2. 비밀번호 일치 확인
         	const pw = $('#password').val();
         	const pwConfirm = $('#passwordConfirm').val();
         	if(pw.length>0 && pwConfirm.length>0 ){
-	        	if(pw !== pwConfirm) { 
-	        		e.preventDefault();
-		        	alert("비밀번호가 서로 일치하지 않습니다.");	     
-		        	return;
-		        }
+           		// 2. 비밀번호 일치 확인
+               	if(!checkPasswordMatch()){
+               		e.preventDefault();
+               		alert("비밀번호와 비밀번호 확인은 필수입니다.");
+               		passwordInput.focus();
+                  		return;
+               	}
         	}
         	
         	// 3. 전화번호 형식 확인 (기존 함수는 반환값만 있고 호출이 없었음)
@@ -1587,21 +1673,41 @@
                 return;
             }
         	
-        	
-        	
         	if(!isEmailAvailable){ // 중복 체크 결과 확인
         		e.preventDefault();
+        		const emailInput = $('#inputEmail').val();        		
+        		if(emailInput.length>0){
         		// 4. 이메일 유효성 및 중복 확인
-            	if(!validateEmail()){ // validateEmail()이 false 반환하면 형식 오류
-            		e.preventDefault();
-    	        	alert("유효한 이메일 주소를 입력해 주세요.");
-    	        	return;
-    	        }
+					if(!validateEmail()){ // validateEmail()이 false 반환하면 형식 오류
+						e.preventDefault();
+						alert("유효한 이메일 주소를 입력해 주세요.");
+						return;
+					}
+        		} else {
+        			$("#emailMessage").text("이메일 중복체크는 필수입니다.").css({'color':'red', 'font-weight':'normal'});	
+        			isEmailAvailable = false;
+        			return;
+        		}
+	        } else {
+	        	const emailInput = $('#inputEmail').val();
+        		var resultDiv = document.getElementById('emailMessage');
+	        	if(emailInput.length>0){
+	        		
+	        	} else {
+	        		$("#emailMessage").text("이메일 중복체크는 필수입니다.").css({'color':'red', 'font-weight':'normal'});	        		        		
+        			isEmailAvailable = false;
+        			return;
+	        	}
 	        }
             
             // 5. DOCTOR 필드 필수 검사 추가
-            if (isDoctor) {
-                if ($('#hospIdx').val() === '' || $('#inputSpecialty').val() === '') {
+            if (roleSelect.value === 'DOCTOR') {
+            	const hospIdx = $('#hospIdx').val();
+            	const inputSpecialty = $('#inputSpecialty').val();
+            	console.log(`${hospIdx.length} : ${inputSpecialty.length}`);
+                if (hospIdx.length > 0 && inputSpecialty.length > 0 ) {
+                	
+                } else {
                     e.preventDefault();
                     alert("의사 회원은 병원 선택과 전문 분야 입력이 필수입니다.");
                     return;
@@ -1668,24 +1774,6 @@
         		return false; 
         	}else{
         		return true;
-        	}
-        }
-        
-        // 이메일 유효성 검사 및 중복 체크 함수 호출
-        function validateEmail() {
-        	var emailInput = document.getElementById('inputEmail');
-        	var resultDiv = document.getElementById('emailMessage');
-
-        	var email = emailInput.value;
-
-        	if (emailCheck(email)) {
-        		resultDiv.innerHTML = '유효한 이메일 주소입니다.';
-        		checkEmail(); // 유효하면 중복 체크 호출
-        		return true;
-        	} else {
-        		resultDiv.innerHTML = '유효하지 않은 이메일 주소입니다.';
-        		isEmailAvailable = false; // 형식 오류 시 중복 가능성도 false로
-        		return false;
         	}
         }
         
@@ -1964,6 +2052,7 @@
             $inputName.value = member.name || '';
             $inputPhone.value = member.phone || '';
             $inputEmail.value = member.email || '';
+            $inputEmailCheck.value = member.email || '';
 
             // 주소 정보 설정
             $zipCode.value = member.zipCode || '';
@@ -2010,10 +2099,83 @@
     window.addEventListener('load', () => {
         const loggedInMemberId = MEMBER_ID; // ⭐️ 실제 로그인된 사용자 ID로 변경 필요 ⭐️
         loadMemberData(loggedInMemberId);
+        countTxt ();
     });
 
+	
+    function countTxt () {
+    	const titleInput = document.getElementById('diaryTitle');
+        const contentTextarea = document.getElementById('diaryContent');
+    	
+    	const titleCounter = document.getElementById('titleCurrentLength');
+        const contentCounter = document.getElementById('contentCurrentLength');
 
-    
+        // 최대 글자수 정의
+        // titleInput은 HTML의 maxlength="20"로 제한되지만, JS에서도 상수로 관리합니다.
+        const MAX_TITLE_LENGTH = 30;
+        const MAX_CONTENT_LENGTH = 1000;
+
+        /**
+         * 입력 필드의 글자 수를 확인하고 카운터를 업데이트합니다.
+         * 제한을 초과하면 입력을 잘라냅니다.
+         * @param {HTMLInputElement | HTMLTextAreaElement} element - 입력 요소
+         * @param {number} maxLength - 최대 글자수
+         * @param {HTMLElement} counterElement - 현재 글자수를 표시할 요소
+         */
+        const updateCharacterCount = (element, maxLength, counterElement) => {
+            let currentLength = element.value.length;
+
+            // 제한 초과 시 글자수 자르기
+            if (currentLength > maxLength) {
+                element.value = element.value.substring(0, maxLength);
+                currentLength = maxLength; // 현재 길이를 최대 길이로 업데이트
+            }
+
+            // 카운터 업데이트
+            counterElement.textContent = currentLength;
+
+            // 제한에 도달하면 카운터 텍스트 색상을 변경합니다.
+            if (currentLength >= maxLength) {
+                counterElement.parentElement.classList.replace('text-gray-500', 'text-red-500');
+            } else {
+                counterElement.parentElement.classList.replace('text-red-500', 'text-gray-500');
+            }
+        };
+
+        // 1. 제목 입력 (20자 제한) 이벤트 리스너 설정
+        // input type="text"는 maxlength 속성으로 제한되므로, JS는 카운터 업데이트 역할만 합니다.
+        titleInput.addEventListener('input', () => {
+            updateCharacterCount(titleInput, MAX_TITLE_LENGTH, titleCounter);
+        });
+        
+        // 2. 내용 입력 (1000자 제한) 이벤트 리스너 설정
+        // textarea는 JS로 직접 제한 및 카운터 업데이트를 수행합니다.
+        contentTextarea.addEventListener('input', () => {
+            updateCharacterCount(contentTextarea, MAX_CONTENT_LENGTH, contentCounter);
+        });
+        
+        // 페이지 로드 시 초기 글자 수 설정 (폼에 값이 이미 채워져 있을 경우 대비)
+        updateCharacterCount(titleInput, MAX_TITLE_LENGTH, titleCounter);
+        updateCharacterCount(contentTextarea, MAX_CONTENT_LENGTH, contentCounter);
+    }
+
+</script>
+
+<!-- 외부 JavaScript 모듈 파일 (기능별 분리) -->
+<script src="/js/member/common.js"></script>
+<script src="/js/member/diaryWrite.js"></script>
+<script src="/js/member/diaryList.js"></script>
+<script src="/js/member/mypage.js"></script>
+<script src="/js/member/hospital.js"></script>
+
+<!-- Thymeleaf 변수 초기화 -->
+<script th:inline="javascript">
+    // 서버에서 전달받은 AI API URL 초기화
+    const AI_API_URL = /*[[${aiApiUrl}]]*/ '';
+    if (typeof initializeCommon === 'function' && AI_API_URL) {
+        // YouTube 검색 등 AI API 관련 기능 초기화
+        // initializeCommon(AI_API_URL); // 기존 인라인 스크립트와 중복 방지를 위해 주석 처리
+    }
 </script>
 </body>
 </html>
